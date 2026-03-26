@@ -17,7 +17,7 @@
   "dependencies": {
     "@astrojs/node": "^10.0.3",
     "@repo/ui": "*",
-    "astro": "^6.0.5"
+    "astro": "^6.0.8"
   },
   "devDependencies": {
     "@repo/biome-config": "^",
