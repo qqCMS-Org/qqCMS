@@ -15,6 +15,7 @@
     "check-types": "next typegen && tsc --noEmit"
   },
   "dependencies": {
+    "@astrojs/node": "^10.0.3",
     "@repo/ui": "*",
     "astro": "^6.0.5"
   },
