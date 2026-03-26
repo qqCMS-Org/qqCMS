@@ -4,25 +4,29 @@ services:
       context: .
       target: api
     restart: unless-stopped
-    ports:
-      - "3000:3000"
+    networks:
+      - dokploy-network
 
   admin:
     build:
       context: .
       target: admin
     restart: unless-stopped
-    ports:
-      - "3001:80"
+    networks:
+      - dokploy-network
 
   web:
     build:
       context: .
       target: web
     restart: unless-stopped
-    ports:
-      - "3002:3002"
     environment:
       - HOST=0.0.0.0
       - PORT=3002
       - REVALIDATE_SECRET=${REVALIDATE_SECRET}
+    networks:
+      - dokploy-network
+
+networks:
+  dokploy-network:
+    external: true
