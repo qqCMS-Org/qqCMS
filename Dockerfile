@@ -7,7 +7,7 @@ COPY packages/ ./packages/
 # ── api ───────────────────────────────────────────────────────────────────────
 FROM base AS api
 COPY apps/api/ ./apps/api/
-RUN bun install --frozen-lockfile
+RUN bun install
 WORKDIR /app/apps/api
 EXPOSE 3000
 CMD ["bun", "run", "src/index.ts"]
@@ -15,7 +15,7 @@ CMD ["bun", "run", "src/index.ts"]
 # ── admin builder ─────────────────────────────────────────────────────────────
 FROM base AS admin-builder
 COPY apps/admin/ ./apps/admin/
-RUN bun install --frozen-lockfile
+RUN bun install
 RUN cd apps/admin && bun run build
 
 FROM nginx:alpine AS admin
@@ -26,7 +26,7 @@ CMD ["nginx", "-g", "daemon off;"]
 # ── web builder ───────────────────────────────────────────────────────────────
 FROM base AS web-builder
 COPY apps/web/ ./apps/web/
-RUN bun install --frozen-lockfile
+RUN bun install
 RUN cd apps/web && bun run build
 
 FROM oven/bun:1.3-alpine AS web
