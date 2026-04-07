@@ -1,5 +1,5 @@
 {
-  "version": "2.9",
+  "version": "2.10",
   "children": [
     {
       "type": "frame",
@@ -6533,32 +6533,39 @@
                                 8,
                                 12
                               ],
+                              "justifyContent": "space_between",
                               "alignItems": "center",
                               "children": [
                                 {
-                                  "type": "icon_font",
-                                  "id": "RJcHj",
-                                  "width": 14,
-                                  "height": 14,
-                                  "iconFontName": "link",
-                                  "iconFontFamily": "lucide",
-                                  "fill": "$text_secondary"
-                                },
-                                {
-                                  "type": "text",
-                                  "id": "gkgvD",
-                                  "fill": "$text_secondary",
-                                  "content": "footer_links",
-                                  "fontFamily": "Geist Mono",
-                                  "fontSize": 13,
-                                  "fontWeight": "normal"
+                                  "type": "frame",
+                                  "id": "D7nUT",
+                                  "name": "g1",
+                                  "gap": 8,
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "icon_font",
+                                      "id": "RJcHj",
+                                      "width": 14,
+                                      "height": 14,
+                                      "iconFontName": "link",
+                                      "iconFontFamily": "lucide",
+                                      "fill": "$text_secondary"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "gkgvD",
+                                      "fill": "$text_secondary",
+                                      "content": "footer_links",
+                                      "fontFamily": "Geist Mono",
+                                      "fontSize": 13,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
                                 },
                                 {
                                   "type": "frame",
                                   "id": "1OC8g",
-                                  "layoutPosition": "absolute",
-                                  "x": 184,
-                                  "y": 10,
                                   "width": 20,
                                   "height": 16,
                                   "fill": "$bg_overlay",
@@ -6590,32 +6597,39 @@
                                 8,
                                 12
                               ],
+                              "justifyContent": "space_between",
                               "alignItems": "center",
                               "children": [
                                 {
-                                  "type": "icon_font",
-                                  "id": "6ENYn",
-                                  "width": 14,
-                                  "height": 14,
-                                  "iconFontName": "pin",
-                                  "iconFontFamily": "lucide",
-                                  "fill": "$text_secondary"
-                                },
-                                {
-                                  "type": "text",
-                                  "id": "PwUf0",
-                                  "fill": "$text_secondary",
-                                  "content": "header_nav",
-                                  "fontFamily": "Geist Mono",
-                                  "fontSize": 13,
-                                  "fontWeight": "normal"
+                                  "type": "frame",
+                                  "id": "taTqr",
+                                  "name": "g2",
+                                  "gap": 8,
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "icon_font",
+                                      "id": "6ENYn",
+                                      "width": 14,
+                                      "height": 14,
+                                      "iconFontName": "pin",
+                                      "iconFontFamily": "lucide",
+                                      "fill": "$text_secondary"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "PwUf0",
+                                      "fill": "$text_secondary",
+                                      "content": "header_nav",
+                                      "fontFamily": "Geist Mono",
+                                      "fontSize": 13,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
                                 },
                                 {
                                   "type": "frame",
                                   "id": "9dMC8",
-                                  "layoutPosition": "absolute",
-                                  "x": 184,
-                                  "y": 10,
                                   "width": 20,
                                   "height": 16,
                                   "fill": "$bg_overlay",
@@ -6648,6 +6662,7 @@
                                 8,
                                 12
                               ],
+                              "justifyContent": "space_between",
                               "alignItems": "center",
                               "children": [
                                 {
@@ -6661,29 +6676,35 @@
                                   "height": 16
                                 },
                                 {
-                                  "type": "icon_font",
-                                  "id": "fYV9e",
-                                  "width": 14,
-                                  "height": 14,
-                                  "iconFontName": "package",
-                                  "iconFontFamily": "lucide",
-                                  "fill": "$accent"
-                                },
-                                {
-                                  "type": "text",
-                                  "id": "3GCNK",
-                                  "fill": "$text_primary",
-                                  "content": "products",
-                                  "fontFamily": "Geist Mono",
-                                  "fontSize": 13,
-                                  "fontWeight": "500"
+                                  "type": "frame",
+                                  "id": "Q80bp",
+                                  "name": "g3",
+                                  "gap": 8,
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "icon_font",
+                                      "id": "fYV9e",
+                                      "width": 14,
+                                      "height": 14,
+                                      "iconFontName": "package",
+                                      "iconFontFamily": "lucide",
+                                      "fill": "$accent"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "3GCNK",
+                                      "fill": "$text_primary",
+                                      "content": "products",
+                                      "fontFamily": "Geist Mono",
+                                      "fontSize": 13,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
                                 },
                                 {
                                   "type": "frame",
                                   "id": "RqoO9",
-                                  "layoutPosition": "absolute",
-                                  "x": 184,
-                                  "y": 10,
                                   "width": 20,
                                   "height": 16,
                                   "fill": "$bg_overlay",
@@ -6705,31 +6726,6 @@
                               ]
                             }
                           ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "kdfyA",
-                      "name": "new_item",
-                      "width": "fill_container",
-                      "cornerRadius": "$radius_md",
-                      "stroke": {
-                        "thickness": 1,
-                        "fill": "$border_subtle"
-                      },
-                      "padding": 12,
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "LqG17",
-                          "fill": "$text_tertiary",
-                          "content": "+ New collection",
-                          "fontFamily": "Geist Mono",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
                         }
                       ]
                     }
@@ -6787,7 +6783,7 @@
                               "type": "text",
                               "id": "dcVBI",
                               "fill": "$text_tertiary",
-                              "content": "12 entries · 5 fields",
+                              "content": "12 entries · 4 fields",
                               "fontFamily": "Geist Mono",
                               "fontSize": 12,
                               "fontWeight": "normal"
@@ -6896,6 +6892,13 @@
                               "type": "frame",
                               "id": "84qqR",
                               "width": 100,
+                              "padding": [
+                                0,
+                                32,
+                                0,
+                                0
+                              ],
+                              "justifyContent": "end",
                               "children": [
                                 {
                                   "type": "text",
@@ -6986,6 +6989,13 @@
                               "type": "frame",
                               "id": "nYUTJ",
                               "width": 100,
+                              "padding": [
+                                0,
+                                32,
+                                0,
+                                0
+                              ],
+                              "justifyContent": "end",
                               "children": [
                                 {
                                   "type": "text",
@@ -7088,6 +7098,13 @@
                               "type": "frame",
                               "id": "UUJm3",
                               "width": 100,
+                              "padding": [
+                                0,
+                                32,
+                                0,
+                                0
+                              ],
+                              "justifyContent": "end",
                               "children": [
                                 {
                                   "type": "text",
@@ -7190,6 +7207,13 @@
                               "type": "frame",
                               "id": "RRPsu",
                               "width": 100,
+                              "padding": [
+                                0,
+                                32,
+                                0,
+                                0
+                              ],
+                              "justifyContent": "end",
                               "children": [
                                 {
                                   "type": "text",
@@ -7292,6 +7316,13 @@
                               "type": "frame",
                               "id": "Clp8K",
                               "width": 100,
+                              "padding": [
+                                0,
+                                32,
+                                0,
+                                0
+                              ],
+                              "justifyContent": "end",
                               "children": [
                                 {
                                   "type": "text",
@@ -7394,6 +7425,13 @@
                               "type": "frame",
                               "id": "k4qCV",
                               "width": 100,
+                              "padding": [
+                                0,
+                                32,
+                                0,
+                                0
+                              ],
+                              "justifyContent": "end",
                               "children": [
                                 {
                                   "type": "text",
@@ -7496,6 +7534,13 @@
                               "type": "frame",
                               "id": "Kxs8s",
                               "width": 100,
+                              "padding": [
+                                0,
+                                32,
+                                0,
+                                0
+                              ],
+                              "justifyContent": "end",
                               "children": [
                                 {
                                   "type": "text",
