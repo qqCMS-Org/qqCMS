@@ -402,8 +402,8 @@
     {
       "type": "frame",
       "id": "lXPwP",
-      "x": 8258,
-      "y": 209,
+      "x": 7217,
+      "y": 0,
       "name": "pages/",
       "layout": "vertical",
       "gap": 80,
@@ -9139,6 +9139,7 @@
                   "type": "ref",
                   "ref": "LCa7z",
                   "name": "sidebarRef",
+                  "height": "fill_container",
                   "descendants": {
                     "EKHR8": {
                       "fill": "$bg_elevated"
@@ -9160,7 +9161,8 @@
                       "id": "UyiMk",
                       "type": "ref",
                       "ref": "ArmD6",
-                      "name": "topbarRef"
+                      "name": "topbarRef",
+                      "width": "fill_container"
                     },
                     {
                       "type": "frame",
@@ -9334,6 +9336,7 @@
                   "type": "ref",
                   "ref": "LCa7z",
                   "name": "sidebarRef",
+                  "height": "fill_container",
                   "descendants": {
                     "EKHR8": {
                       "fill": "$bg_elevated"
@@ -9355,7 +9358,8 @@
                       "id": "Cp6zx",
                       "type": "ref",
                       "ref": "ArmD6",
-                      "name": "topbarRef"
+                      "name": "topbarRef",
+                      "width": "fill_container"
                     },
                     {
                       "type": "frame",
@@ -9676,8 +9680,8 @@
     {
       "type": "frame",
       "id": "y077x",
-      "x": 1712,
-      "y": -16,
+      "x": 1837,
+      "y": -3110,
       "name": "components/",
       "layout": "vertical",
       "gap": 80,
