@@ -83,20 +83,20 @@
 
 ### Settings
 
-- [ ] **Settings — General**
-  - [ ] Left settings nav (General, Localization, Danger zone)
-  - [ ] Panel "Project": Project name field, Admin URL field
-  - [ ] Panel "Appearance": toggles
-  - [ ] Panel "API": API URL field, Swagger UI toggle
+- [x] **Settings — General**
+  - [x] Left settings nav (General, Localization, Danger zone)
+  - [x] Panel "Project": Project name field, Admin URL field
+  - [x] Panel "Appearance": toggles
+  - [x] Panel "API": API URL field, Swagger UI toggle
 
-- [ ] **Settings — Localization**
-  - [ ] Locale list with Default badge and remove button
-  - [ ] "+ Add locale" button
-  - [ ] Localization behavior toggles
+- [x] **Settings — Localization**
+  - [x] Locale list with Default badge and remove button
+  - [x] "+ Add locale" button
+  - [x] Localization behavior toggles
 
-- [ ] **Settings — Danger Zone**
-  - [ ] Danger-colored panel
-  - [ ] Actions: Reset / Revoke / Delete with confirmation
+- [x] **Settings — Danger Zone**
+  - [x] Danger-colored panel
+  - [x] Actions: Reset / Revoke / Delete with confirmation
 
 ### Dashboard
 
@@ -116,10 +116,10 @@
 
 ## 🔲 New Components — Needed for Remaining Pages
 
-- [ ] Settings Nav (left settings panel, separate from the main Sidebar)
-- [ ] Settings Section (section heading + content block)
-- [ ] Locale Row (flag/code · Default badge · remove button)
-- [ ] Danger Action Row (action description + danger button)
+- [x] Settings Nav (left settings panel, separate from the main Sidebar)
+- [x] Settings Section (section heading + content block)
+- [x] Locale Row (flag/code · Default badge · remove button)
+- [x] Danger Action Row (action description + danger button)
 - [ ] Stats Card (icon + number + label)
 - [ ] Activity Feed Item (icon + description + timestamp)
 - [ ] API Key Row (name · permissions · date · revoke button)

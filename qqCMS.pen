@@ -7403,9 +7403,1413 @@
           "type": "frame",
           "id": "duueA",
           "name": "Settings/",
-          "width": "fit_content(0)",
-          "height": "fit_content(0)",
-          "gap": 40
+          "gap": 40,
+          "children": [
+            {
+              "type": "frame",
+              "id": "3LHMO",
+              "name": "Settings — General",
+              "width": 1440,
+              "height": 900,
+              "fill": "$bg_base",
+              "children": [
+                {
+                  "id": "ciD8X",
+                  "type": "ref",
+                  "ref": "LCa7z",
+                  "height": "fill_container",
+                  "name": "sgSidebar",
+                  "descendants": {
+                    "WQIvS": {
+                      "fill": "$accent_subtle"
+                    },
+                    "1RQoX": {
+                      "opacity": 1
+                    },
+                    "h9NYb": {
+                      "fill": "$text_primary"
+                    },
+                    "yAif6": {
+                      "fill": "$text_primary",
+                      "fontWeight": "500"
+                    }
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "H1t3M",
+                  "name": "main_content",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "id": "DaYDy",
+                      "type": "ref",
+                      "ref": "ArmD6",
+                      "width": "fill_container",
+                      "name": "sgTopbar",
+                      "descendants": {
+                        "5nHTz": {
+                          "content": "Settings"
+                        },
+                        "xXlmM": {
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "0njQD",
+                              "width": 0,
+                              "height": 0
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Z7tv0",
+                      "name": "settings_body",
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "KQJ4T",
+                          "name": "settings_nav",
+                          "width": 200,
+                          "height": "fill_container",
+                          "fill": "$bg_surface",
+                          "stroke": {
+                            "thickness": {
+                              "right": 1
+                            },
+                            "fill": "$border_subtle"
+                          },
+                          "layout": "vertical",
+                          "gap": 4,
+                          "padding": [
+                            24,
+                            16
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "XFobW",
+                              "name": "sgNavTitle",
+                              "fill": "$text_tertiary",
+                              "content": "Settings",
+                              "fontFamily": "Geist Mono",
+                              "fontSize": 10,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "U8CMP",
+                              "name": "nav_general_active",
+                              "width": "fill_container",
+                              "fill": "$accent_subtle",
+                              "cornerRadius": "$radius_md",
+                              "gap": 8,
+                              "padding": [
+                                8,
+                                12
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "icon_font",
+                                  "id": "Lgjdp",
+                                  "name": "sgNavGeneralIcon",
+                                  "width": 14,
+                                  "height": 14,
+                                  "iconFontName": "settings-2",
+                                  "iconFontFamily": "lucide",
+                                  "fill": "$accent"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "1osr7",
+                                  "name": "sgNavGeneralText",
+                                  "fill": "$accent",
+                                  "content": "General",
+                                  "fontFamily": "Geist Mono",
+                                  "fontSize": 12,
+                                  "fontWeight": "500"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "x2Y0p",
+                              "name": "nav_localization",
+                              "width": "fill_container",
+                              "cornerRadius": "$radius_md",
+                              "gap": 8,
+                              "padding": [
+                                8,
+                                12
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "icon_font",
+                                  "id": "4WaIo",
+                                  "name": "sgNavLocaleIcon",
+                                  "width": 14,
+                                  "height": 14,
+                                  "iconFontName": "globe",
+                                  "iconFontFamily": "lucide",
+                                  "fill": "$text_secondary"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "CUMiQ",
+                                  "name": "sgNavLocaleText",
+                                  "fill": "$text_secondary",
+                                  "content": "Localization",
+                                  "fontFamily": "Geist Mono",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "CqSqM",
+                              "name": "nav_danger",
+                              "width": "fill_container",
+                              "cornerRadius": "$radius_md",
+                              "gap": 8,
+                              "padding": [
+                                8,
+                                12
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "icon_font",
+                                  "id": "DhZcE",
+                                  "name": "sgNavDangerIcon",
+                                  "width": 14,
+                                  "height": 14,
+                                  "iconFontName": "triangle-alert",
+                                  "iconFontFamily": "lucide",
+                                  "fill": "$text_secondary"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "okwOi",
+                                  "name": "sgNavDangerText",
+                                  "fill": "$text_secondary",
+                                  "content": "Danger Zone",
+                                  "fontFamily": "Geist Mono",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "Bxnlp",
+                          "name": "settings_content",
+                          "clip": true,
+                          "width": "fill_container",
+                          "height": "fill_container",
+                          "layout": "vertical",
+                          "gap": 32,
+                          "padding": [
+                            32,
+                            40
+                          ],
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "M8l9o",
+                              "name": "panel_project",
+                              "width": "fill_container",
+                              "fill": "$bg_elevated",
+                              "cornerRadius": "$radius_lg",
+                              "stroke": {
+                                "thickness": 1,
+                                "fill": "$border_subtle"
+                              },
+                              "layout": "vertical",
+                              "gap": 20,
+                              "padding": 24,
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "idmkO",
+                                  "name": "panel_header",
+                                  "width": "fill_container",
+                                  "justifyContent": "space_between",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "VjZL2",
+                                      "name": "sgProjTitle",
+                                      "fill": "$text_primary",
+                                      "content": "Project",
+                                      "fontFamily": "Geist Mono",
+                                      "fontSize": 14,
+                                      "fontWeight": "500"
+                                    },
+                                    {
+                                      "id": "KkIx3",
+                                      "type": "ref",
+                                      "ref": "BvyRu",
+                                      "width": "fit_content",
+                                      "name": "sgProjSave",
+                                      "descendants": {
+                                        "wDh2S": {
+                                          "content": "Save changes"
+                                        }
+                                      }
+                                    }
+                                  ]
+                                },
+                                {
+                                  "id": "TpNLu",
+                                  "type": "ref",
+                                  "ref": "QJQJM",
+                                  "width": "fill_container",
+                                  "name": "sgProjNameInput",
+                                  "descendants": {
+                                    "2mKgT": {
+                                      "content": "Project name"
+                                    },
+                                    "QvXj0": {
+                                      "content": "My qqCMS Project"
+                                    },
+                                    "eHInb": {
+                                      "content": "Display name shown in the browser tab"
+                                    }
+                                  }
+                                },
+                                {
+                                  "id": "rNh9H",
+                                  "type": "ref",
+                                  "ref": "QJQJM",
+                                  "width": "fill_container",
+                                  "name": "sgProjUrlInput",
+                                  "descendants": {
+                                    "2mKgT": {
+                                      "content": "Admin URL"
+                                    },
+                                    "QvXj0": {
+                                      "content": "https://admin.example.com"
+                                    },
+                                    "eHInb": {
+                                      "content": "Base URL for the admin interface"
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "bsJoq",
+                              "name": "panel_appearance",
+                              "width": "fill_container",
+                              "fill": "$bg_elevated",
+                              "cornerRadius": "$radius_lg",
+                              "stroke": {
+                                "thickness": 1,
+                                "fill": "$border_subtle"
+                              },
+                              "layout": "vertical",
+                              "gap": 16,
+                              "padding": 24,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "hPxUI",
+                                  "name": "sgAppTitle",
+                                  "fill": "$text_primary",
+                                  "content": "Appearance",
+                                  "fontFamily": "Geist Mono",
+                                  "fontSize": 14,
+                                  "fontWeight": "500"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "xdwwe",
+                                  "name": "sgAppDivider",
+                                  "width": "fill_container",
+                                  "height": 1,
+                                  "fill": "$border_subtle"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "djCGT",
+                                  "name": "toggle_row",
+                                  "width": "fill_container",
+                                  "justifyContent": "space_between",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "kYV5n",
+                                      "name": "sgToggleRow1Label",
+                                      "layout": "vertical",
+                                      "gap": 2,
+                                      "children": [
+                                        {
+                                          "type": "text",
+                                          "id": "AIE39",
+                                          "name": "sgToggleRow1Title",
+                                          "fill": "$text_primary",
+                                          "content": "Dark mode",
+                                          "fontFamily": "Geist Mono",
+                                          "fontSize": 12,
+                                          "fontWeight": "500"
+                                        },
+                                        {
+                                          "type": "text",
+                                          "id": "HzHMC",
+                                          "name": "sgToggleRow1Desc",
+                                          "fill": "$text_secondary",
+                                          "content": "Use dark theme across the admin interface",
+                                          "fontFamily": "Geist Mono",
+                                          "fontSize": 11,
+                                          "fontWeight": "normal"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "id": "3LJhQ",
+                                      "type": "ref",
+                                      "ref": "c246c",
+                                      "name": "sgToggle1"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "tXvv9",
+                                  "name": "toggle_row_2",
+                                  "width": "fill_container",
+                                  "justifyContent": "space_between",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "0zYJV",
+                                      "name": "sgToggleRow2Label",
+                                      "layout": "vertical",
+                                      "gap": 2,
+                                      "children": [
+                                        {
+                                          "type": "text",
+                                          "id": "8GaR8",
+                                          "name": "sgToggleRow2Title",
+                                          "fill": "$text_primary",
+                                          "content": "Compact sidebar",
+                                          "fontFamily": "Geist Mono",
+                                          "fontSize": 12,
+                                          "fontWeight": "500"
+                                        },
+                                        {
+                                          "type": "text",
+                                          "id": "u40tE",
+                                          "name": "sgToggleRow2Desc",
+                                          "fill": "$text_secondary",
+                                          "content": "Collapse sidebar labels, show only icons",
+                                          "fontFamily": "Geist Mono",
+                                          "fontSize": 11,
+                                          "fontWeight": "normal"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "id": "g3KZ2",
+                                      "type": "ref",
+                                      "ref": "9ml21",
+                                      "name": "sgToggle2"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "QLXLn",
+                              "name": "panel_api",
+                              "width": "fill_container",
+                              "fill": "$bg_elevated",
+                              "cornerRadius": "$radius_lg",
+                              "stroke": {
+                                "thickness": 1,
+                                "fill": "$border_subtle"
+                              },
+                              "layout": "vertical",
+                              "gap": 16,
+                              "padding": 24,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "ABqe1",
+                                  "name": "sgApiTitle",
+                                  "fill": "$text_primary",
+                                  "content": "API",
+                                  "fontFamily": "Geist Mono",
+                                  "fontSize": 14,
+                                  "fontWeight": "500"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "2gIew",
+                                  "name": "sgApiDivider",
+                                  "width": "fill_container",
+                                  "height": 1,
+                                  "fill": "$border_subtle"
+                                },
+                                {
+                                  "id": "VTVhw",
+                                  "type": "ref",
+                                  "ref": "QJQJM",
+                                  "width": "fill_container",
+                                  "name": "sgApiUrlInput",
+                                  "descendants": {
+                                    "2mKgT": {
+                                      "content": "API URL"
+                                    },
+                                    "QvXj0": {
+                                      "content": "https://api.example.com"
+                                    },
+                                    "eHInb": {
+                                      "content": "Public-facing base URL for the API"
+                                    }
+                                  }
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "WNgpj",
+                                  "name": "swagger_row",
+                                  "width": "fill_container",
+                                  "justifyContent": "space_between",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "0D6V3",
+                                      "name": "sgApiToggleLabel",
+                                      "layout": "vertical",
+                                      "gap": 2,
+                                      "children": [
+                                        {
+                                          "type": "text",
+                                          "id": "ym3ev",
+                                          "name": "sgApiToggleTitle",
+                                          "fill": "$text_primary",
+                                          "content": "Swagger UI",
+                                          "fontFamily": "Geist Mono",
+                                          "fontSize": 12,
+                                          "fontWeight": "500"
+                                        },
+                                        {
+                                          "type": "text",
+                                          "id": "MJDgt",
+                                          "name": "sgApiToggleDesc",
+                                          "fill": "$text_secondary",
+                                          "content": "Enable interactive API documentation at /api/docs",
+                                          "fontFamily": "Geist Mono",
+                                          "fontSize": 11,
+                                          "fontWeight": "normal"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "id": "ECCzx",
+                                      "type": "ref",
+                                      "ref": "c246c",
+                                      "name": "sgApiToggleControl"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "CgOZg",
+              "name": "Settings — Localization",
+              "width": 1440,
+              "height": 900,
+              "fill": "$bg_base",
+              "children": [
+                {
+                  "id": "HZn85",
+                  "type": "ref",
+                  "ref": "LCa7z",
+                  "height": "fill_container",
+                  "name": "slSidebar",
+                  "descendants": {
+                    "WQIvS": {
+                      "fill": "$accent_subtle"
+                    },
+                    "1RQoX": {
+                      "opacity": 1
+                    },
+                    "h9NYb": {
+                      "fill": "$text_primary"
+                    },
+                    "yAif6": {
+                      "fill": "$text_primary",
+                      "fontWeight": "500"
+                    }
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "EWkc4",
+                  "name": "main_content",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "id": "ml0co",
+                      "type": "ref",
+                      "ref": "ArmD6",
+                      "width": "fill_container",
+                      "name": "slTopbar",
+                      "descendants": {
+                        "5nHTz": {
+                          "content": "Settings"
+                        },
+                        "xXlmM": {
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "UTT6j",
+                              "width": 0,
+                              "height": 0
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "type": "frame",
+                      "id": "WBmy1",
+                      "name": "settings_body",
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "BRcsM",
+                          "name": "settings_nav",
+                          "width": 200,
+                          "height": "fill_container",
+                          "fill": "$bg_surface",
+                          "stroke": {
+                            "thickness": {
+                              "right": 1
+                            },
+                            "fill": "$border_subtle"
+                          },
+                          "layout": "vertical",
+                          "gap": 4,
+                          "padding": [
+                            24,
+                            16
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "fAWX4",
+                              "name": "slNavTitle",
+                              "fill": "$text_tertiary",
+                              "content": "Settings",
+                              "fontFamily": "Geist Mono",
+                              "fontSize": 10,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "8IsxZ",
+                              "name": "nav_general",
+                              "width": "fill_container",
+                              "cornerRadius": "$radius_md",
+                              "gap": 8,
+                              "padding": [
+                                8,
+                                12
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "icon_font",
+                                  "id": "a1kW5",
+                                  "name": "slNavGenIcon",
+                                  "width": 14,
+                                  "height": 14,
+                                  "iconFontName": "settings-2",
+                                  "iconFontFamily": "lucide",
+                                  "fill": "$text_secondary"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "6Ly85",
+                                  "name": "slNavGenTxt",
+                                  "fill": "$text_secondary",
+                                  "content": "General",
+                                  "fontFamily": "Geist Mono",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "qjvO1",
+                              "name": "nav_localization_active",
+                              "width": "fill_container",
+                              "fill": "$accent_subtle",
+                              "cornerRadius": "$radius_md",
+                              "gap": 8,
+                              "padding": [
+                                8,
+                                12
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "icon_font",
+                                  "id": "fvXRb",
+                                  "name": "slNavLocIcon",
+                                  "width": 14,
+                                  "height": 14,
+                                  "iconFontName": "globe",
+                                  "iconFontFamily": "lucide",
+                                  "fill": "$accent"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "fagTw",
+                                  "name": "slNavLocTxt",
+                                  "fill": "$accent",
+                                  "content": "Localization",
+                                  "fontFamily": "Geist Mono",
+                                  "fontSize": 12,
+                                  "fontWeight": "500"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "Rd836",
+                              "name": "nav_danger",
+                              "width": "fill_container",
+                              "cornerRadius": "$radius_md",
+                              "gap": 8,
+                              "padding": [
+                                8,
+                                12
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "icon_font",
+                                  "id": "KpWRi",
+                                  "name": "slNavDanIcon",
+                                  "width": 14,
+                                  "height": 14,
+                                  "iconFontName": "triangle-alert",
+                                  "iconFontFamily": "lucide",
+                                  "fill": "$text_secondary"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "p3eGK",
+                                  "name": "slNavDanTxt",
+                                  "fill": "$text_secondary",
+                                  "content": "Danger Zone",
+                                  "fontFamily": "Geist Mono",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "hdIfa",
+                          "name": "settings_content",
+                          "clip": true,
+                          "width": "fill_container",
+                          "height": "fill_container",
+                          "layout": "vertical",
+                          "gap": 32,
+                          "padding": [
+                            32,
+                            40
+                          ],
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "ULdl0",
+                              "name": "panel_locales",
+                              "width": "fill_container",
+                              "fill": "$bg_elevated",
+                              "cornerRadius": "$radius_lg",
+                              "stroke": {
+                                "thickness": 1,
+                                "fill": "$border_subtle"
+                              },
+                              "layout": "vertical",
+                              "gap": 24,
+                              "padding": 24,
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "WbeC9",
+                                  "name": "slLocHeader",
+                                  "layout": "vertical",
+                                  "gap": 4,
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "joH75",
+                                      "name": "slLocTitle",
+                                      "fill": "$text_primary",
+                                      "content": "Locales",
+                                      "fontFamily": "Geist Mono",
+                                      "fontSize": 14,
+                                      "fontWeight": "500"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "reXXQ",
+                                      "name": "slLocDesc",
+                                      "fill": "$text_secondary",
+                                      "content": "Manage the languages available for your content.",
+                                      "fontFamily": "Geist Mono",
+                                      "fontSize": 12,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "waiI9",
+                                  "name": "slLocList",
+                                  "width": "fill_container",
+                                  "layout": "vertical",
+                                  "gap": 8,
+                                  "children": [
+                                    {
+                                      "id": "ItTAL",
+                                      "type": "ref",
+                                      "ref": "6QN1L",
+                                      "width": "fill_container",
+                                      "name": "slLocEn"
+                                    },
+                                    {
+                                      "id": "zxOKu",
+                                      "type": "ref",
+                                      "ref": "6QN1L",
+                                      "width": "fill_container",
+                                      "name": "slLocEt",
+                                      "descendants": {
+                                        "kNccO": {
+                                          "content": "et"
+                                        },
+                                        "YO4nD": {
+                                          "content": "Estonian"
+                                        },
+                                        "8bdxf": {
+                                          "enabled": false
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "id": "YhTkr",
+                                      "type": "ref",
+                                      "ref": "6QN1L",
+                                      "width": "fill_container",
+                                      "name": "slLocRu",
+                                      "descendants": {
+                                        "kNccO": {
+                                          "content": "ru"
+                                        },
+                                        "YO4nD": {
+                                          "content": "Russian"
+                                        },
+                                        "8bdxf": {
+                                          "enabled": false
+                                        }
+                                      }
+                                    }
+                                  ]
+                                },
+                                {
+                                  "id": "SZJW7",
+                                  "type": "ref",
+                                  "ref": "zGm0B",
+                                  "width": "fit_content",
+                                  "name": "slLocAdd",
+                                  "descendants": {
+                                    "IVkGY": {
+                                      "content": "+ Add locale"
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "rZPgy",
+                              "name": "panel_behavior",
+                              "width": "fill_container",
+                              "fill": "$bg_elevated",
+                              "cornerRadius": "$radius_lg",
+                              "stroke": {
+                                "thickness": 1,
+                                "fill": "$border_subtle"
+                              },
+                              "layout": "vertical",
+                              "gap": 16,
+                              "padding": 24,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "fdg1Y",
+                                  "name": "slBehTitle",
+                                  "fill": "$text_primary",
+                                  "content": "Behavior",
+                                  "fontFamily": "Geist Mono",
+                                  "fontSize": 14,
+                                  "fontWeight": "500"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "NAuxY",
+                                  "name": "slBehDivider",
+                                  "width": "fill_container",
+                                  "height": 1,
+                                  "fill": "$border_subtle"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "HIc50",
+                                  "name": "slToggleRow",
+                                  "width": "fill_container",
+                                  "justifyContent": "space_between",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "MoXJh",
+                                      "name": "slToggleLbl",
+                                      "layout": "vertical",
+                                      "gap": 2,
+                                      "children": [
+                                        {
+                                          "type": "text",
+                                          "id": "4Febi",
+                                          "name": "slToggleTitle",
+                                          "fill": "$text_primary",
+                                          "content": "Prefix default locale",
+                                          "fontFamily": "Geist Mono",
+                                          "fontSize": 12,
+                                          "fontWeight": "500"
+                                        },
+                                        {
+                                          "type": "text",
+                                          "id": "8uSfl",
+                                          "name": "slToggleDesc",
+                                          "fill": "$text_secondary",
+                                          "content": "Include locale code in URLs for the default language",
+                                          "fontFamily": "Geist Mono",
+                                          "fontSize": 11,
+                                          "fontWeight": "normal"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "id": "cB6jL",
+                                      "type": "ref",
+                                      "ref": "9ml21",
+                                      "name": "slToggleControl"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "oaNGI",
+              "name": "Settings — Danger Zone",
+              "width": 1440,
+              "height": 900,
+              "fill": "$bg_base",
+              "children": [
+                {
+                  "id": "6s3Gx",
+                  "type": "ref",
+                  "ref": "LCa7z",
+                  "height": "fill_container",
+                  "name": "sdSidebar",
+                  "descendants": {
+                    "WQIvS": {
+                      "fill": "$accent_subtle"
+                    },
+                    "1RQoX": {
+                      "opacity": 1
+                    },
+                    "h9NYb": {
+                      "fill": "$text_primary"
+                    },
+                    "yAif6": {
+                      "fill": "$text_primary",
+                      "fontWeight": "500"
+                    }
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "AzgQv",
+                  "name": "main_content",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "id": "n8Hs7",
+                      "type": "ref",
+                      "ref": "ArmD6",
+                      "width": "fill_container",
+                      "name": "sdTopbar",
+                      "descendants": {
+                        "5nHTz": {
+                          "content": "Settings"
+                        },
+                        "xXlmM": {
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "E5KJw",
+                              "width": 0,
+                              "height": 0
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Q0mTI",
+                      "name": "settings_body",
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "uSOsR",
+                          "name": "settings_nav",
+                          "width": 200,
+                          "height": "fill_container",
+                          "fill": "$bg_surface",
+                          "stroke": {
+                            "thickness": {
+                              "right": 1
+                            },
+                            "fill": "$border_subtle"
+                          },
+                          "layout": "vertical",
+                          "gap": 4,
+                          "padding": [
+                            24,
+                            16
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "HLf2y",
+                              "name": "sdNavTitle",
+                              "fill": "$text_tertiary",
+                              "content": "Settings",
+                              "fontFamily": "Geist Mono",
+                              "fontSize": 10,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "352Fn",
+                              "name": "nav_general",
+                              "width": "fill_container",
+                              "cornerRadius": "$radius_md",
+                              "gap": 8,
+                              "padding": [
+                                8,
+                                12
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "icon_font",
+                                  "id": "XRBzb",
+                                  "name": "sdNavGenIcon",
+                                  "width": 14,
+                                  "height": 14,
+                                  "iconFontName": "settings-2",
+                                  "iconFontFamily": "lucide",
+                                  "fill": "$text_secondary"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "7Yqe2",
+                                  "name": "sdNavGenTxt",
+                                  "fill": "$text_secondary",
+                                  "content": "General",
+                                  "fontFamily": "Geist Mono",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "1QBC5",
+                              "name": "nav_localization",
+                              "width": "fill_container",
+                              "cornerRadius": "$radius_md",
+                              "gap": 8,
+                              "padding": [
+                                8,
+                                12
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "icon_font",
+                                  "id": "R8Z2s",
+                                  "name": "sdNavLocIcon",
+                                  "width": 14,
+                                  "height": 14,
+                                  "iconFontName": "globe",
+                                  "iconFontFamily": "lucide",
+                                  "fill": "$text_secondary"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "3VTiX",
+                                  "name": "sdNavLocTxt",
+                                  "fill": "$text_secondary",
+                                  "content": "Localization",
+                                  "fontFamily": "Geist Mono",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "hDsTN",
+                              "name": "nav_danger_active",
+                              "width": "fill_container",
+                              "fill": "$accent_subtle",
+                              "cornerRadius": "$radius_md",
+                              "gap": 8,
+                              "padding": [
+                                8,
+                                12
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "icon_font",
+                                  "id": "WuPSy",
+                                  "name": "sdNavDanIcon",
+                                  "width": 14,
+                                  "height": 14,
+                                  "iconFontName": "triangle-alert",
+                                  "iconFontFamily": "lucide",
+                                  "fill": "$accent"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "fgjfV",
+                                  "name": "sdNavDanTxt",
+                                  "fill": "$accent",
+                                  "content": "Danger Zone",
+                                  "fontFamily": "Geist Mono",
+                                  "fontSize": 12,
+                                  "fontWeight": "500"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "wjC7e",
+                          "name": "settings_content",
+                          "clip": true,
+                          "width": "fill_container",
+                          "height": "fill_container",
+                          "layout": "vertical",
+                          "gap": 32,
+                          "padding": [
+                            32,
+                            40
+                          ],
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "GkKZc",
+                              "name": "panel_danger",
+                              "width": "fill_container",
+                              "fill": "$danger_subtle",
+                              "cornerRadius": "$radius_lg",
+                              "stroke": {
+                                "thickness": 1,
+                                "fill": "$danger"
+                              },
+                              "layout": "vertical",
+                              "gap": 24,
+                              "padding": 24,
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "kJ1rJ",
+                                  "name": "sdDanHeader",
+                                  "layout": "vertical",
+                                  "gap": 4,
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "igPzg",
+                                      "name": "sdDanTitle",
+                                      "fill": "$danger",
+                                      "content": "Danger Zone",
+                                      "fontFamily": "Geist Mono",
+                                      "fontSize": 14,
+                                      "fontWeight": "500"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "E21Zc",
+                                      "name": "sdDanDesc",
+                                      "fill": "$text_primary",
+                                      "content": "Irreversible and destructive actions.",
+                                      "fontFamily": "Geist Mono",
+                                      "fontSize": 12,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "PR4Fu",
+                                  "name": "sdRow1",
+                                  "width": "fill_container",
+                                  "stroke": {
+                                    "thickness": {
+                                      "bottom": 1
+                                    },
+                                    "fill": "$danger"
+                                  },
+                                  "padding": [
+                                    0,
+                                    0,
+                                    16,
+                                    0
+                                  ],
+                                  "justifyContent": "space_between",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "LcZfc",
+                                      "name": "sdRow1Lbl",
+                                      "layout": "vertical",
+                                      "gap": 2,
+                                      "children": [
+                                        {
+                                          "type": "text",
+                                          "id": "NLQLz",
+                                          "name": "sdRow1Title",
+                                          "fill": "$text_primary",
+                                          "content": "Reset application cache",
+                                          "fontFamily": "Geist Mono",
+                                          "fontSize": 12,
+                                          "fontWeight": "500"
+                                        },
+                                        {
+                                          "type": "text",
+                                          "id": "fr8ME",
+                                          "name": "sdRow1Desc",
+                                          "fill": "$text_secondary",
+                                          "content": "Clears all generated static pages and cached API responses.",
+                                          "fontFamily": "Geist Mono",
+                                          "fontSize": 11,
+                                          "fontWeight": "normal"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "id": "f4gJq",
+                                      "type": "ref",
+                                      "ref": "fP5VW",
+                                      "name": "sdRow1Btn",
+                                      "descendants": {
+                                        "cb1ls": {
+                                          "content": "Reset cache"
+                                        }
+                                      }
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "ropB9",
+                                  "name": "sdRow2",
+                                  "width": "fill_container",
+                                  "stroke": {
+                                    "thickness": {
+                                      "bottom": 1
+                                    },
+                                    "fill": "$danger"
+                                  },
+                                  "padding": [
+                                    16,
+                                    0
+                                  ],
+                                  "justifyContent": "space_between",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "kjqHV",
+                                      "name": "sdRow2Lbl",
+                                      "layout": "vertical",
+                                      "gap": 2,
+                                      "children": [
+                                        {
+                                          "type": "text",
+                                          "id": "n9Wow",
+                                          "name": "sdRow2Title",
+                                          "fill": "$text_primary",
+                                          "content": "Revoke all API keys",
+                                          "fontFamily": "Geist Mono",
+                                          "fontSize": 12,
+                                          "fontWeight": "500"
+                                        },
+                                        {
+                                          "type": "text",
+                                          "id": "R79qP",
+                                          "name": "sdRow2Desc",
+                                          "fill": "$text_secondary",
+                                          "content": "Immediately invalidates all existing user and system API keys.",
+                                          "fontFamily": "Geist Mono",
+                                          "fontSize": 11,
+                                          "fontWeight": "normal"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "id": "yhvYl",
+                                      "type": "ref",
+                                      "ref": "fP5VW",
+                                      "name": "sdRow2Btn",
+                                      "descendants": {
+                                        "cb1ls": {
+                                          "content": "Revoke keys"
+                                        }
+                                      }
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "TBiUv",
+                                  "name": "sdRow3",
+                                  "width": "fill_container",
+                                  "padding": [
+                                    16,
+                                    0,
+                                    0,
+                                    0
+                                  ],
+                                  "justifyContent": "space_between",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "h7Xwh",
+                                      "name": "sdRow3Lbl",
+                                      "layout": "vertical",
+                                      "gap": 2,
+                                      "children": [
+                                        {
+                                          "type": "text",
+                                          "id": "sKH47",
+                                          "name": "sdRow3Title",
+                                          "fill": "$text_primary",
+                                          "content": "Delete project",
+                                          "fontFamily": "Geist Mono",
+                                          "fontSize": 12,
+                                          "fontWeight": "500"
+                                        },
+                                        {
+                                          "type": "text",
+                                          "id": "xc71X",
+                                          "name": "sdRow3Desc",
+                                          "fill": "$text_secondary",
+                                          "content": "Permanently delete this project and all its data. This cannot be undone.",
+                                          "fontFamily": "Geist Mono",
+                                          "fontSize": 11,
+                                          "fontWeight": "normal"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "id": "3UCei",
+                                      "type": "ref",
+                                      "ref": "fP5VW",
+                                      "name": "sdRow3Btn",
+                                      "descendants": {
+                                        "cb1ls": {
+                                          "content": "Delete project"
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
           "type": "frame",
@@ -9589,9 +10993,108 @@
           "type": "frame",
           "id": "o7AHB",
           "name": "Settings/",
-          "width": "fit_content(0)",
-          "height": "fit_content(0)",
-          "gap": 40
+          "gap": 40,
+          "children": [
+            {
+              "type": "frame",
+              "id": "6QN1L",
+              "name": "Locale Row",
+              "reusable": true,
+              "width": 480,
+              "fill": "$bg_elevated",
+              "cornerRadius": "$radius_md",
+              "stroke": {
+                "thickness": 1,
+                "fill": "$border_subtle"
+              },
+              "gap": 12,
+              "padding": [
+                10,
+                16
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "77SFa",
+                  "name": "localeLeft",
+                  "gap": 10,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "kNccO",
+                      "name": "locale_code",
+                      "fill": "$text_primary",
+                      "content": "en",
+                      "fontFamily": "Geist Mono",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "YO4nD",
+                      "name": "locale_name",
+                      "fill": "$text_secondary",
+                      "content": "English",
+                      "fontFamily": "Geist Mono",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "dmYxl",
+                  "name": "localeRight",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "8bdxf",
+                      "name": "default_badge",
+                      "height": 16,
+                      "fill": "$accent_subtle",
+                      "cornerRadius": "$radius_sm",
+                      "padding": [
+                        2,
+                        8
+                      ],
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "p8etJ",
+                          "name": "defaultBadgeText",
+                          "fill": "$accent",
+                          "content": "Default",
+                          "fontFamily": "Geist Mono",
+                          "fontSize": 10,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "rZ3tB",
+                      "type": "ref",
+                      "ref": "PO6up",
+                      "width": "fit_content",
+                      "name": "removeBtn",
+                      "descendants": {
+                        "RdlaP": {
+                          "content": "Remove",
+                          "fontSize": 11
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         }
       ]
     }
