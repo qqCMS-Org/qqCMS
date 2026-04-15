@@ -107,10 +107,10 @@
 
 ### API Keys
 
-- [ ] **API Keys** *(not yet designed)*
-  - [ ] Key list: name, permissions, created date
-  - [ ] Create new key modal
-  - [ ] Revoke key action
+- [x] **API Keys** *(not yet designed)*
+  - [x] Key list: name, permissions, created date
+  - [x] Create new key modal
+  - [x] Revoke key action
 
 ---
 
@@ -122,4 +122,4 @@
 - [x] Danger Action Row (action description + danger button)
 - [x] Stats Card (icon + number + label)
 - [x] Activity Feed Item (icon + description + timestamp)
-- [ ] API Key Row (name · permissions · date · revoke button)
+- [x] API Key Row (name · permissions · date · revoke button)
