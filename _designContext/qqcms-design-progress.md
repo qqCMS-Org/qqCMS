@@ -100,10 +100,10 @@
 
 ### Dashboard
 
-- [ ] **Dashboard** *(not yet designed)*
-  - [ ] Stats cards: Pages count, Collections count, Media count
-  - [ ] Recent activity feed
-  - [ ] Quick links to frequently edited content
+- [x] **Dashboard**
+  - [x] Stats cards: Pages count, Collections count, Media count
+  - [x] Recent activity feed
+  - [x] Quick links to frequently edited content
 
 ### API Keys
 
@@ -120,6 +120,6 @@
 - [x] Settings Section (section heading + content block)
 - [x] Locale Row (flag/code · Default badge · remove button)
 - [x] Danger Action Row (action description + danger button)
-- [ ] Stats Card (icon + number + label)
-- [ ] Activity Feed Item (icon + description + timestamp)
+- [x] Stats Card (icon + number + label)
+- [x] Activity Feed Item (icon + description + timestamp)
 - [ ] API Key Row (name · permissions · date · revoke button)
