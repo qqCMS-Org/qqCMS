@@ -7,9 +7,10 @@ Use together with `qqcms-context.md` (tokens, components, design system).
 
 ## 1. File Organization in Pencil.dev
 
-The file is divided into two root sections: `pages/` and `components/`.
+The file is divided into three root sections: `pages/`, `components/` and `adaptive-pages/`.
 Each section is a vertical auto layout (column) where groups flow top to bottom.
 Each group inside is a horizontal auto layout (row) where frames/components flow left to right.
+All responsive/adaptive layouts (mobile, tablet) must be placed inside the `adaptive-pages/` section rather than mixed with desktop pages.
 
 ### `pages/` structure
 
@@ -56,7 +57,7 @@ components/                     ← vertical auto layout
 
 ### Auto layout rules for the sections themselves
 
-- `pages/` and `components/`: direction — vertical, gap — 80px
+- `pages/`, `components/` and `adaptive-pages/`: direction — vertical, gap — 80px
 - Groups inside (`Pages/`, `Shared/`, etc.): direction — horizontal, gap — 40px, align — top
 
 ---

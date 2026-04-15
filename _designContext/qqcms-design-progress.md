@@ -123,3 +123,22 @@
 - [x] Stats Card (icon + number + label)
 - [x] Activity Feed Item (icon + description + timestamp)
 - [x] API Key Row (name · permissions · date · revoke button)
+
+---
+
+## 🔲 Responsive Design (Adaptive) — To Do
+
+### Core Components
+- [ ] **Sidebar**: Overlay mode for mobile (burger menu)
+- [ ] **Topbar**: Mobile variation with menu trigger
+- [ ] **Data Table**: Horizontal scroll or card-based fallback for narrow screens
+
+### Adapting Pages
+- [ ] **Pages List**: Adjust card grid columns (1 col mobile, 2 cols tablet)
+- [ ] **Page Editor**: Move right panel below the editor, make TipTap toolbar scrollable
+- [ ] **Collections**: Stack left navigation panel above table/schema
+- [ ] **Media Library**: Adjust grid to 2-3 columns on mobile
+- [ ] **Settings**: Stack side navigation above content panels
+- [ ] **Dashboard**: Convert 3-column stats cards to vertical stack
+- [ ] **API Keys**: Make row layout wrap or horizontally scrollable
+- [ ] **Modals**: Full width on mobile screens (100% width, bottom sheet or fill)
