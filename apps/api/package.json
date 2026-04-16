@@ -15,11 +15,22 @@
     "check:write": "bunx biome check --write ."
   },
   "dependencies": {
-    "elysia": "latest"
+    "@elysiajs/cors": "^1.4.1",
+    "@elysiajs/jwt": "^1.4.1",
+    "@elysiajs/static": "^1.4.9",
+    "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^12.9.0",
+    "drizzle-orm": "^0.45.2",
+    "elysia": "latest",
+    "postgres": "^3.4.9",
+    "valibot": "^1.3.1"
   },
   "devDependencies": {
     "@repo/biome-config": "*",
     "@repo/typescript-config": "*",
-    "bun-types": "latest"
+    "@types/bcryptjs": "^3.0.0",
+    "@types/better-sqlite3": "^7.6.13",
+    "bun-types": "latest",
+    "drizzle-kit": "^0.31.10"
   }
 }

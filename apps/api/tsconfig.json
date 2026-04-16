@@ -1,8 +1,17 @@
 {
-  "extends": "@repo/typescript-config/base.json",
   "compilerOptions": {
-    "baseUrl": ".",
+    "strict": true,
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "moduleDetection": "force",
+    "lib": ["ES2022"],
     "types": ["bun-types"],
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "noUncheckedIndexedAccess": true,
+    "baseUrl": ".",
     "paths": {
       "@core/*": ["src/core/*"],
       "@modules/*": ["src/modules/*"],
