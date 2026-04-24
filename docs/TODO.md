@@ -20,11 +20,11 @@
 - [ ] Refactor `packages/ui/src` into a shared library structure aligned with FSD principles
 
 ## Phase 3: Backend Initialization
-- [ ] Initialize Elysia server in `apps/api`
+- [x] Initialize Elysia server in `apps/api`
 - [ ] Set up Drizzle with dual-DB support (SQLite & PostgreSQL)
 
 ## Phase 4: CI/CD & Tooling
-- [ ] Configure Biome for unified formatting across monorepo
+- [x] Configure Biome for unified formatting across monorepo
 - [ ] Set up Turborepo remote caching (if applicable)
 
 ## Phase 5: Feature Implementation

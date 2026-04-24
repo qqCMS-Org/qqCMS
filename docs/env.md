@@ -1,6 +1,6 @@
 # Environment Variables
 
-> **Status: PARTIALLY IMPLEMENTED** — `.env.example` does not exist yet. Variables listed here are defined in the SRS.
+> **Status: IMPLEMENTED** — `.env.example` and validation logic are set up in `apps/api`.
 
 ## Required Variables
 
@@ -17,6 +17,7 @@ These must be set before the API server starts. The server validates their prese
 
 | Variable | Description | Default |
 |---|---|---|
+| `DEBUG` | Enable debug logging output | `false` |
 | `DATABASE_URL` | DB connection string. If not set → SQLite | — (SQLite) |
 | `UPLOAD_DIR` | Path to file upload directory | `./uploads` |
 | `PUBLIC_CLIENT_URL` | URL of the public Astro client (for rebuild webhook) | — |
@@ -36,22 +37,41 @@ DATABASE_URL=postgresql://user:password@localhost:5432/qqcms
 
 ```sh
 # Run once to generate ADMIN_PASSWORD_HASH
-bun -e "console.log(await Bun.password.hash('yourpassword'))"
+bun -e "import bcrypt from 'bcryptjs'; console.log(await bcrypt.hash('YOUR_PASSWORD', 10));"
 ```
 
 ## `.env.example`
 
-> **Not created yet.** Should be committed to the repo with all keys and no real values.
+> **Created in `apps/api/.env.example`.**
 
 ```sh
-# apps/api/.env.example (to be created)
-ADMIN_LOGIN=
-ADMIN_PASSWORD_HASH=
-JWT_SECRET=
-CORS_ORIGINS=http://localhost:4321,http://localhost:4322
+# Admin credentials
+# login: admin / password: admin
+# Bcrypt embeds the salt inside the hash — no separate SALT variable needed.
+# To generate a new hash run:
+#   bun -e "import bcrypt from 'bcryptjs'; console.log(await bcrypt.hash('YOUR_PASSWORD', 10));"
+ADMIN_LOGIN=admin
+ADMIN_PASSWORD_HASH=$2b$10$9DKY3FWLDwBeJ7D7aR9u3eIcsDuOQx6yCmMZ.YDr/fxgalr6W8aBm
+
+# Debug logging (set to "true" to enable Logger.debug() output)
+DEBUG=false
+
+# JWT
+JWT_SECRET=your-super-secret-jwt-key
+
+# CORS
+CORS_ORIGINS=http://localhost:3001,http://localhost:3000
+
+# Database (leave empty to use SQLite)
 DATABASE_URL=
+
+# File uploads
 UPLOAD_DIR=./uploads
-PUBLIC_CLIENT_URL=http://localhost:4321
+
+# Public client URL (for rebuild webhook)
+PUBLIC_CLIENT_URL=http://localhost:3001
+
+# Server port
 PORT=3000
 ```
 
