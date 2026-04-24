@@ -1,6 +1,6 @@
 # Database
 
-> **Status: NOT IMPLEMENTED** — Drizzle schema and migrations are not yet created. `apps/api` is empty.
+> **Status: IMPLEMENTED** — Schema, migrations, and dual-DB instance are in place. Initial migration generated at `apps/api/src/db/migrations/0000_smart_stranger.sql`.
 
 ## Driver Strategy
 
