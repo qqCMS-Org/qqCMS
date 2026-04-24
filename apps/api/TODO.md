@@ -35,12 +35,12 @@
 
 ### 3.3 Repositories
 
-- [ ] Create `src/db/repository/pages.ts` — `getPages`, `getPage`, `insertPage`, `updatePage`, `deletePage`
-- [ ] Create `src/db/repository/page-translations.ts` — `getTranslationsByPage`, `upsertTranslation`, `deleteTranslation`
-- [ ] Create `src/db/repository/navigation-items.ts` — `getNavigationItems`, `getNavigationItem`, `insertNavigationItem`, `updateNavigationItem`, `deleteNavigationItem`, `reorderNavigationItems`
-- [ ] Create `src/db/repository/media.ts` — `getMediaFiles`, `getMediaFile`, `insertMedia`, `deleteMedia`
-- [ ] Create `src/db/repository/languages.ts` — `getLanguages`, `getLanguage`, `insertLanguage`, `updateLanguage`, `deleteLanguage`
-- [ ] Create `src/db/repository/settings.ts` — `getSettings`, `getSetting`, `upsertSetting`
+- [x] Create `src/db/repository/pages.ts` — `getPages`, `getPage`, `insertPage`, `updatePage`, `deletePage`
+- [x] Create `src/db/repository/page-translations.ts` — `getTranslationsByPage`, `upsertTranslation`, `deleteTranslation`
+- [x] Create `src/db/repository/navigation-items.ts` — `getNavigationItems`, `getNavigationItem`, `insertNavigationItem`, `updateNavigationItem`, `deleteNavigationItem`, `reorderNavigationItems`
+- [x] Create `src/db/repository/media.ts` — `getMediaFiles`, `getMediaFile`, `insertMedia`, `deleteMedia`
+- [x] Create `src/db/repository/languages.ts` — `getLanguages`, `getLanguage`, `insertLanguage`, `updateLanguage`, `deleteLanguage`
+- [x] Create `src/db/repository/settings.ts` — `getSettings`, `getSetting`, `upsertSetting`
 
 ### 3.4 Migrations
 
@@ -50,11 +50,11 @@
 
 ## 4. Core Infrastructure
 
-- [ ] Create `src/core/Database.ts` — singleton `db` export used by all repositories
+- [x] Create `src/core/Database.ts` — singleton `db` export used by all repositories
 - [x] Create `src/core/Logger.ts` — structured logger (wrapping `console`)
-- [ ] Create `src/core/EventBus.ts` — minimal pub/sub for decoupled modules (if needed by rebuild flow)
+- [x] Create `src/core/EventBus.ts` — minimal pub/sub for decoupled modules (if needed by rebuild flow)
 - [x] Create `src/shared/constants.ts` — shared app-wide constants (allowed MIME types, max upload size, etc.)
-- [ ] Create `src/shared/utils/pagination.ts` — cursor-based pagination helper
+- [x] Create `src/shared/utils/pagination.ts` — cursor-based pagination helper
 
 ## 5. Middleware
 
