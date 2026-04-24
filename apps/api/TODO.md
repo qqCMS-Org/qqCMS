@@ -3,23 +3,23 @@
 ## 1. Project Initialization
 
 - [x] Scaffold Elysia app with `bun create elysia` inside `apps/api`
-- [ ] Configure `tsconfig.json` extending `@repo/typescript-config/base.json`
-- [ ] Add path aliases: `@core`, `@modules`, `@repository`, `@schema`, `@shared`
-- [ ] Configure Biome via shared `@repo/biome-config`
-- [ ] Add `apps/api` to `turbo.json` task graph
+- [x] Configure `tsconfig.json` extending `@repo/typescript-config/base.json`
+- [x] Add path aliases: `@core`, `@modules`, `@repository`, `@schema`, `@shared`
+- [x] Configure Biome via shared `@repo/biome-config`
+- [x] Add `apps/api` to `turbo.json` task graph
 
 ## 2. Environment & Configuration
 
-- [ ] Create `apps/api/.env.example` with all required variables (`ADMIN_LOGIN`, `ADMIN_PASSWORD_HASH`, `JWT_SECRET`, `CORS_ORIGINS`, `DATABASE_URL`, `UPLOAD_DIR`, `PUBLIC_CLIENT_URL`, `PORT`)
-- [ ] Add `apps/api/.env` to `.gitignore`
-- [ ] Implement env validation at startup — throw on missing required variables
-- [ ] Export typed `config` object from `src/shared/config.ts`
+- [x] Create `apps/api/.env.example` with all required variables (`ADMIN_LOGIN`, `ADMIN_PASSWORD_HASH`, `JWT_SECRET`, `CORS_ORIGINS`, `DATABASE_URL`, `UPLOAD_DIR`, `PUBLIC_CLIENT_URL`, `PORT`)
+- [x] Add `apps/api/.env` to `.gitignore`
+- [x] Implement env validation at startup — throw on missing required variables
+- [x] Export typed `config` object from `src/shared/config.ts`
 
 ## 3. Database — Drizzle ORM
 
 ### 3.1 Core DB setup
 
-- [ ] Install `drizzle-orm`, `drizzle-kit`, `better-sqlite3` (SQLite), `postgres` (PostgreSQL)
+- [x] Install `drizzle-orm`, `drizzle-kit`, `better-sqlite3` (SQLite), `postgres` (PostgreSQL)
 - [ ] Create `src/db/index.ts` — export `db` instance with dual-DB strategy (SQLite if no `DATABASE_URL`, PostgreSQL otherwise)
 - [ ] Register `db` to Drizzle relation query builder
 
@@ -46,14 +46,14 @@
 
 - [ ] Configure `drizzle.config.ts` (pointing to `src/db/schema/index.ts`)
 - [ ] Generate initial migration with `bunx drizzle-kit generate`
-- [ ] Add `db:generate` and `db:migrate` scripts to `package.json`
+- [x] Add `db:generate` and `db:migrate` scripts to `package.json`
 
 ## 4. Core Infrastructure
 
 - [ ] Create `src/core/Database.ts` — singleton `db` export used by all repositories
-- [ ] Create `src/core/Logger.ts` — structured logger (wrapping `console`)
+- [x] Create `src/core/Logger.ts` — structured logger (wrapping `console`)
 - [ ] Create `src/core/EventBus.ts` — minimal pub/sub for decoupled modules (if needed by rebuild flow)
-- [ ] Create `src/shared/constants.ts` — shared app-wide constants (allowed MIME types, max upload size, etc.)
+- [x] Create `src/shared/constants.ts` — shared app-wide constants (allowed MIME types, max upload size, etc.)
 - [ ] Create `src/shared/utils/pagination.ts` — cursor-based pagination helper
 
 ## 5. Middleware
