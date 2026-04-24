@@ -1,8 +1,12 @@
 # Contributor License Agreement
 
-By submitting a pull request to this repository, you irrevocably 
-assign all intellectual property rights of your contribution 
-to Artur Panitšev.
+By contributing to qqCMS in any form — including but not limited to 
+pull requests, commits, code reviews, or any other participation — 
+you irrevocably assign all intellectual property rights of your 
+contribution to Artur Panitšev.
+
+This includes contributions merged directly by the maintainer 
+without a pull request.
 
 This allows the project maintainer to offer commercial licenses 
 to third parties while keeping the project open source under AGPL v3.
