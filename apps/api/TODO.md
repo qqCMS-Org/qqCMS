@@ -20,18 +20,18 @@
 ### 3.1 Core DB setup
 
 - [x] Install `drizzle-orm`, `drizzle-kit`, `better-sqlite3` (SQLite), `postgres` (PostgreSQL)
-- [ ] Create `src/db/index.ts` — export `db` instance with dual-DB strategy (SQLite if no `DATABASE_URL`, PostgreSQL otherwise)
-- [ ] Register `db` to Drizzle relation query builder
+- [x] Create `src/db/index.ts` — export `db` instance with dual-DB strategy (SQLite if no `DATABASE_URL`, PostgreSQL otherwise)
+- [x] Register `db` to Drizzle relation query builder
 
 ### 3.2 Schema definitions
 
-- [ ] Create `src/db/schema/pages.ts` — `pages` table (UUID PK, `slug`, `is_homepage`, timestamps)
-- [ ] Create `src/db/schema/page-translations.ts` — `page_translations` table (UUID PK, `page_id` FK cascade, `language_code`, `title`, `content` JSON; unique on `(page_id, language_code)`)
-- [ ] Create `src/db/schema/navigation-items.ts` — `navigation_items` table (UUID PK, `label` JSON, `href`, `order`, `parent_id` self-ref FK nullable)
-- [ ] Create `src/db/schema/media.ts` — `media` table (UUID PK, `filename`, `original_name`, `mime_type`, `size`, `url`, `created_at`)
-- [ ] Create `src/db/schema/languages.ts` — `languages` table (UUID PK, `code` unique, `label`, `is_active`)
-- [ ] Create `src/db/schema/settings.ts` — `settings` table (UUID PK, `key` unique, `value` JSON)
-- [ ] Create `src/db/schema/index.ts` — re-export all schemas (required for drizzle-kit)
+- [x] Create `src/db/schema/pages.ts` — `pages` table (UUID PK, `slug`, `is_homepage`, timestamps)
+- [x] Create `src/db/schema/page-translations.ts` — `page_translations` table (UUID PK, `page_id` FK cascade, `language_code`, `title`, `content` JSON; unique on `(page_id, language_code)`)
+- [x] Create `src/db/schema/navigation-items.ts` — `navigation_items` table (UUID PK, `label` JSON, `href`, `order`, `parent_id` self-ref FK nullable)
+- [x] Create `src/db/schema/media.ts` — `media` table (UUID PK, `filename`, `original_name`, `mime_type`, `size`, `url`, `created_at`)
+- [x] Create `src/db/schema/languages.ts` — `languages` table (UUID PK, `code` unique, `label`, `is_active`)
+- [x] Create `src/db/schema/settings.ts` — `settings` table (UUID PK, `key` unique, `value` JSON)
+- [x] Create `src/db/schema/index.ts` — re-export all schemas (required for drizzle-kit)
 
 ### 3.3 Repositories
 
@@ -44,8 +44,8 @@
 
 ### 3.4 Migrations
 
-- [ ] Configure `drizzle.config.ts` (pointing to `src/db/schema/index.ts`)
-- [ ] Generate initial migration with `bunx drizzle-kit generate`
+- [x] Configure `drizzle.config.ts` (pointing to `src/db/schema/index.ts`)
+- [x] Generate initial migration with `bunx drizzle-kit generate`
 - [x] Add `db:generate` and `db:migrate` scripts to `package.json`
 
 ## 4. Core Infrastructure

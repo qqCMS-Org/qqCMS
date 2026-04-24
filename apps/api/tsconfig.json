@@ -14,16 +14,15 @@
 		"noUnusedParameters": true,
 		"noImplicitReturns": true,
 		"noFallthroughCasesInSwitch": true,
-		"baseUrl": ".",
 		"paths": {
-			"@core/*": ["src/core/*"],
-			"@modules/*": ["src/modules/*"],
-			"@repository/*": ["src/db/repository/*"],
-			"@schema/*": ["src/db/schema/*"],
-			"@shared/*": ["src/shared/*"],
-			"@db/*": ["src/db/*"]
+			"@core/*": ["./src/core/*"],
+			"@modules/*": ["./src/modules/*"],
+			"@repository/*": ["./src/db/repository/*"],
+			"@schema/*": ["./src/db/schema/*"],
+			"@shared/*": ["./src/shared/*"],
+			"@db/*": ["./src/db/*"]
 		}
 	},
-	"include": ["src/**/*"],
+	"include": ["src/**/*", "drizzle.config.ts"],
 	"exclude": ["node_modules"]
 }

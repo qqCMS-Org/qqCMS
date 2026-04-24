@@ -23,6 +23,7 @@
 		"better-sqlite3": "^12.9.0",
 		"drizzle-orm": "latest",
 		"elysia": "latest",
+		"postgres": "^3.4.9",
 		"uuid": "latest",
 		"valibot": "latest"
 	},
