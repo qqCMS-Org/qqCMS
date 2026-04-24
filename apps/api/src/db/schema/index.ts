@@ -1,6 +1,0 @@
-export * from "./pages"
-export * from "./page-translations"
-export * from "./navigation-items"
-export * from "./media"
-export * from "./languages"
-export * from "./settings"

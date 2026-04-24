@@ -3,10 +3,10 @@
 ## 1. Project Initialization
 
 - [x] Scaffold Elysia app with `bun create elysia` inside `apps/api`
-- [x] Configure `tsconfig.json` extending `@repo/typescript-config/base.json`
-- [x] Add path aliases: `@core`, `@modules`, `@repository`, `@schema`, `@shared`
-- [x] Configure Biome via shared `@repo/biome-config`
-- [x] Add `apps/api` to `turbo.json` task graph
+- [ ] Configure `tsconfig.json` extending `@repo/typescript-config/base.json`
+- [ ] Add path aliases: `@core`, `@modules`, `@repository`, `@schema`, `@shared`
+- [ ] Configure Biome via shared `@repo/biome-config`
+- [ ] Add `apps/api` to `turbo.json` task graph
 
 ## 2. Environment & Configuration
 
