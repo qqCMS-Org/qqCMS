@@ -16,3 +16,5 @@ jobs:
         with:
           path-to-signatures: 'signatures/cla.json'
           path-to-document: 'https://github.com/qqCMS-Org/qqCMS/blob/main/CLA.md'
+          remote-organization-name: qqCMS-Org
+          remote-repo-name: cla-signatures
