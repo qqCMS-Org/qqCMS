@@ -16,7 +16,6 @@
 	},
 	"dependencies": {
 		"@electric-sql/pglite": "^0.4.4",
-		"@elysiajs/cookie": "latest",
 		"@elysiajs/cors": "latest",
 		"@elysiajs/jwt": "latest",
 		"@elysiajs/static": "latest",
@@ -24,14 +23,12 @@
 		"drizzle-orm": "latest",
 		"elysia": "latest",
 		"postgres": "^3.4.9",
-		"uuid": "latest",
 		"valibot": "latest"
 	},
 	"devDependencies": {
 		"@repo/biome-config": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
 		"@types/bcryptjs": "^3.0.0",
-		"@types/uuid": "latest",
 		"bun-types": "latest",
 		"drizzle-kit": "^0.31.10"
 	},
