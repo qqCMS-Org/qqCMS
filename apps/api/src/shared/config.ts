@@ -34,8 +34,8 @@ export const config = {
 		.map((o) => o.trim())
 		.filter(Boolean),
 
-	/** PostgreSQL connection URL. If empty, SQLite is used. */
-	databaseUrl: process.env["DATABASE_URL"] ?? null,
+	/** PostgreSQL connection URL. If not set, PGLite is used (local file-based DB). */
+	databaseUrl: optionalEnv("DATABASE_URL", ""),
 
 	/** Directory where uploaded files are stored */
 	uploadDir: optionalEnv("UPLOAD_DIR", "./uploads"),

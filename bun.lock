@@ -29,12 +29,12 @@
       "name": "@repo/server",
       "version": "1.0.0",
       "dependencies": {
+        "@electric-sql/pglite": "^0.4.4",
         "@elysiajs/cookie": "latest",
         "@elysiajs/cors": "latest",
         "@elysiajs/jwt": "latest",
         "@elysiajs/static": "latest",
         "bcryptjs": "^3.0.3",
-        "better-sqlite3": "^12.9.0",
         "drizzle-orm": "latest",
         "elysia": "latest",
         "postgres": "^3.4.9",
@@ -45,7 +45,6 @@
         "@repo/biome-config": "workspace:*",
         "@repo/typescript-config": "workspace:*",
         "@types/bcryptjs": "^3.0.0",
-        "@types/better-sqlite3": "^7.6.13",
         "@types/uuid": "latest",
         "bun-types": "latest",
         "drizzle-kit": "^0.31.10",
@@ -88,9 +87,6 @@
         "typescript": "5.9.2",
       },
     },
-  },
-  "overrides": {
-    "drizzle-orm": "0.45.2",
   },
   "packages": {
     "@astrojs/compiler": ["@astrojs/compiler@3.0.1", "", {}, "sha512-z97oYbdebO5aoWzuJ/8q5hLK232+17KcLZ7cJ8BCWk6+qNzVxn/gftC0KzMBUTD8WAaBkPpNSQK6PXLnNrZ0CA=="],
@@ -140,6 +136,8 @@
     "@clack/prompts": ["@clack/prompts@1.1.0", "", { "dependencies": { "@clack/core": "1.1.0", "sisteransi": "^1.0.5" } }, "sha512-pkqbPGtohJAvm4Dphs2M8xE29ggupihHdy1x84HNojZuMtFsHiUlRvqD24tM2+XmI+61LlfNceM3Wr7U5QES5g=="],
 
     "@drizzle-team/brocli": ["@drizzle-team/brocli@0.10.2", "", {}, "sha512-z33Il7l5dKjUgGULTqBsQBQwckHh5AbIuxhdsIxDDiZAzBOrZO6q9ogcWC65kU382AfynTfgNumVcNIjuIua6w=="],
+
+    "@electric-sql/pglite": ["@electric-sql/pglite@0.4.4", "", {}, "sha512-g/6CWAJ4XOkObWCWAQ2IReZD8VvsDy3poRHSKvpRR2F96F8WJ3HVbjpso3gN7l0q6QPPgvxSSpl/qo5k8a7mkQ=="],
 
     "@elysiajs/cookie": ["@elysiajs/cookie@0.8.0", "", { "dependencies": { "@types/cookie": "^0.5.1", "@types/cookie-signature": "^1.1.0", "cookie": "^0.5.0", "cookie-signature": "^1.2.1" }, "peerDependencies": { "elysia": ">= 0.8.0" } }, "sha512-CUtDwdYEoN0BcQ3SgZrB4x5nrbM4ih0sMhMuKKdMlEvqLtmRQDfq9KBCrMJW6L/Q0tPH0JLRqwjEbVb6rJufCw=="],
 

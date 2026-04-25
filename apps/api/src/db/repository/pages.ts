@@ -22,7 +22,7 @@ export const insertPage = (data: Omit<NewPage, "id" | "createdAt" | "updatedAt">
 export const updatePage = (id: string, data: Partial<Omit<NewPage, "id" | "createdAt" | "updatedAt">>) =>
 	db
 		.update(pages)
-		.set({ ...data, updatedAt: new Date().toISOString() })
+		.set({ ...data, updatedAt: new Date() })
 		.where(eq(pages.id, id))
 		.returning();
 

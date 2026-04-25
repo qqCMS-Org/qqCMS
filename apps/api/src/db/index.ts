@@ -1,9 +1,20 @@
-import Database from "better-sqlite3";
-import { drizzle } from "drizzle-orm/better-sqlite3";
+import { PGlite } from "@electric-sql/pglite";
+import { config } from "@shared/config";
+import { drizzle as drizzlePglite } from "drizzle-orm/pglite";
+import { drizzle as drizzlePostgres } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 import * as schema from "./schema";
 
-// All schemas use sqliteTable. PostgreSQL support requires separate pgTable schemas.
-// See docs/database.md for the migration plan.
-export const db = drizzle(new Database("./data.db"), { schema });
+function createDb() {
+	if (config.databaseUrl) {
+		const client = postgres(config.databaseUrl);
+		return drizzlePostgres(client, { schema });
+	}
+
+	const pglite = new PGlite("./data/qqcms.db");
+	return drizzlePglite(pglite, { schema });
+}
+
+export const db = createDb();
 
 export type Db = typeof db;

@@ -15,12 +15,12 @@
 		"test": "bun test"
 	},
 	"dependencies": {
+		"@electric-sql/pglite": "^0.4.4",
 		"@elysiajs/cookie": "latest",
 		"@elysiajs/cors": "latest",
 		"@elysiajs/jwt": "latest",
 		"@elysiajs/static": "latest",
 		"bcryptjs": "^3.0.3",
-		"better-sqlite3": "^12.9.0",
 		"drizzle-orm": "latest",
 		"elysia": "latest",
 		"postgres": "^3.4.9",
@@ -31,7 +31,6 @@
 		"@repo/biome-config": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
 		"@types/bcryptjs": "^3.0.0",
-		"@types/better-sqlite3": "^7.6.13",
 		"@types/uuid": "latest",
 		"bun-types": "latest",
 		"drizzle-kit": "^0.31.10"
