@@ -2,6 +2,7 @@
 applyTo: "**"
 ---
 
+
 # Security
 
 ## Secrets and environment variables

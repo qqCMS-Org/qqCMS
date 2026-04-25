@@ -2,6 +2,7 @@
 applyTo: "**"
 ---
 
+
 # Scaffolding
 
 Always use official scaffold commands to initialize projects. Never create folder structure, `package.json`, or config files manually.

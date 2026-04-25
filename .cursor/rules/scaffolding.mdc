@@ -1,8 +1,8 @@
 ---
 description: Project initialization — always use official scaffold commands, never create structure manually
 alwaysApply: true
-globs: ["**"]
 ---
+
 
 # Scaffolding
 

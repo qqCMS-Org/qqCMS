@@ -1,7 +1,7 @@
 ---
 id: general-code-style
 category: general
-tags: [typescript, code-style, naming, functions, errors]
+tags: [typescript, code-style, naming, functions, errors, deprecated]
 description: General TypeScript code style rules
 ---
 
@@ -214,4 +214,36 @@ import { useAuth } from "@features/auth"
 // ❌
 import { Button } from "../../shared/ui"
 import { useAuth } from "../features/auth"
+```
+
+---
+
+## No Deprecated APIs
+
+Never use deprecated libraries, packages, functions, components, or APIs — even if they still work.
+
+**Before writing code:**
+- Check the official docs or changelog for the library/framework you are using. If a function, component, or pattern is marked `@deprecated`, find and use the recommended replacement.
+- If a package has an actively maintained successor (e.g. `moment` → `date-fns`/`dayjs`, `request` → `fetch`/`axios`, `enzyme` → `@testing-library/react`), use the successor.
+
+**While writing code:**
+- If your editor or TypeScript shows a strikethrough on an identifier, it is deprecated — do not use it.
+- If you need to import something and the import path contains `/legacy/`, `/compat/`, or similar — stop and find the current path.
+
+**When you encounter deprecated code in existing files:**
+- If you are already editing that file, replace the deprecated usage with the current equivalent as part of your task.
+- If the deprecated usage is in a file you are not otherwise touching, note it in the Post-Task Report under "Problems encountered" but do not refactor it out of scope.
+
+```ts
+// ❌ deprecated React lifecycle
+componentWillMount() { ... }
+
+// ✅ current equivalent
+useEffect(() => { ... }, [])
+
+// ❌ deprecated Node.js API
+fs.exists(path, callback)
+
+// ✅ current equivalent
+fs.access(path, fs.constants.F_OK, callback)
 ```

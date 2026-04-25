@@ -2,6 +2,7 @@
 applyTo: "**"
 ---
 
+
 # Monorepo
 
 Use Turborepo with Bun workspaces for projects that have both frontend and backend.

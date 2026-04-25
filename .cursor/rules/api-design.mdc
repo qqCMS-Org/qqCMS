@@ -1,8 +1,8 @@
 ---
 description: API design conventions — routes, responses, error handling
-alwaysApply: true
 globs: ["apps/api/**"]
 ---
+
 
 # API Design
 

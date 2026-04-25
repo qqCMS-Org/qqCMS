@@ -1,8 +1,8 @@
 ---
 description: Elysia conventions — routing, controllers, validation, plugins
-alwaysApply: true
 globs: ["apps/api/**"]
 ---
+
 
 # Elysia
 

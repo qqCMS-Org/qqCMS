@@ -1,6 +1,7 @@
 ---
-applyTo: "apps/web/**, apps/admin/**, packages/ui/**"
+applyTo: "apps/web/**, apps/admin/**"
 ---
+
 
 # Next.js
 

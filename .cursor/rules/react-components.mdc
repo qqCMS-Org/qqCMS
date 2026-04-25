@@ -1,8 +1,8 @@
 ---
 description: React component structure and architecture patterns
-alwaysApply: true
-globs: ["apps/web/**", "apps/admin/**", "packages/ui/**"]
+globs: ["apps/web/**, apps/admin/**, packages/ui/**"]
 ---
+
 
 # React Components
 

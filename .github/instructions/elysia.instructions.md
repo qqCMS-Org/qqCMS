@@ -2,6 +2,7 @@
 applyTo: "apps/api/**"
 ---
 
+
 # Elysia
 
 ## Setup

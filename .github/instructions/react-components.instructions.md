@@ -2,6 +2,7 @@
 applyTo: "apps/web/**, apps/admin/**, packages/ui/**"
 ---
 
+
 # React Components
 
 ## Component structure

@@ -2,6 +2,7 @@
 applyTo: "apps/web/**, apps/admin/**, packages/ui/**"
 ---
 
+
 # State Management
 
 ## Local state

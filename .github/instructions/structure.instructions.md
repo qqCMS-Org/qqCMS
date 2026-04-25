@@ -2,6 +2,7 @@
 applyTo: "apps/api/**"
 ---
 
+
 # Backend Structure
 
 ## Overview

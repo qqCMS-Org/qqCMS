@@ -1,8 +1,8 @@
 ---
 description: Basic security rules
 alwaysApply: true
-globs: ["**"]
 ---
+
 
 # Security
 

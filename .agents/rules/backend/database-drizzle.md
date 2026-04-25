@@ -129,15 +129,27 @@ This keeps repositories strictly focused on pure querying while allowing service
 
 ## Database connection
 
+The project uses **PGLite by default for local development** and switches to a real PostgreSQL connection in production. This removes the need to run a local Postgres instance.
+
 ```ts
 // core/Database.ts
-import { drizzle } from "drizzle-orm/node-postgres"
+import { drizzle as drizzlePg } from "drizzle-orm/node-postgres"
+import { drizzle as drizzlePglite } from "drizzle-orm/pglite"
 import { Pool } from "pg"
+import { PGlite } from "@electric-sql/pglite"
 import * as schema from "@schema"
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL })
+export const db = process.env.DATABASE_URL
+  ? drizzlePg(new Pool({ connectionString: process.env.DATABASE_URL }), { schema })
+  : drizzlePglite(new PGlite("./local.db"), { schema })
+```
 
-export const db = drizzle(pool, { schema })
+**Rule:** if `DATABASE_URL` is set → PostgreSQL (staging/production); if not set → PGLite (local dev, tests). Never hardcode the mode — always branch on the env var.
+
+Required packages:
+```sh
+bun add drizzle-orm @electric-sql/pglite pg
+bun add -d drizzle-kit @types/pg
 ```
 
 ---
@@ -161,10 +173,13 @@ export default defineConfig({
   schema: "./src/db/schema/index.ts",
   out: "./drizzle",
   dialect: "postgresql",
-  dbCredentials: {
-    url: process.env.DATABASE_URL!,
-  },
+  // pglite is wire-compatible — same migration files work for both drivers
+  dbCredentials: process.env.DATABASE_URL
+    ? { url: process.env.DATABASE_URL }
+    : { url: "file:./local.db" },
 })
 ```
 
 Never modify migration files manually after they have been applied.
+
+Add `local.db` to `.gitignore`.

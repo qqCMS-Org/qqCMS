@@ -1,8 +1,8 @@
 ---
 description: Tooling rules — package manager, formatter, linter
 alwaysApply: true
-globs: ["**"]
 ---
+
 
 # Tooling
 

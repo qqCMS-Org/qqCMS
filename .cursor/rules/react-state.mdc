@@ -1,8 +1,8 @@
 ---
 description: State management patterns — local state, server state, global state
-alwaysApply: true
-globs: ["apps/web/**", "apps/admin/**", "packages/ui/**"]
+globs: ["apps/web/**, apps/admin/**, packages/ui/**"]
 ---
+
 
 # State Management
 

@@ -9,6 +9,8 @@
 @.agents/rules/general/scaffolding.md
 @.agents/rules/general/workflow.md
 @.agents/rules/general/monorepo.md
+@.agents/rules/general/git-autocommit.md
+@.agents/rules/frontend/nextjs.md
 @.agents/rules/frontend/react-components.md
 @.agents/rules/frontend/react-state.md
 @.agents/rules/backend/elysia.md

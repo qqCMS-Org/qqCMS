@@ -1,8 +1,8 @@
 ---
 description: Backend project structure — modular architecture
-alwaysApply: true
 globs: ["apps/api/**"]
 ---
+
 
 # Backend Structure
 

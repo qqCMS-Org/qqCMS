@@ -1,8 +1,8 @@
 ---
 description: Monorepo structure with Turborepo and Bun workspaces
 alwaysApply: true
-globs: ["**"]
 ---
+
 
 # Monorepo
 

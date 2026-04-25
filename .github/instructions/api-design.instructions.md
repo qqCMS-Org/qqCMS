@@ -2,6 +2,7 @@
 applyTo: "apps/api/**"
 ---
 
+
 # API Design
 
 ## URL structure

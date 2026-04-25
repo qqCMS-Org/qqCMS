@@ -1,8 +1,8 @@
 ---
 description: Testing rules and patterns
 alwaysApply: true
-globs: ["**"]
 ---
+
 
 # Testing
 
