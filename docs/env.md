@@ -18,18 +18,18 @@ These must be set before the API server starts. The server validates their prese
 | Variable | Description | Default |
 |---|---|---|
 | `DEBUG` | Enable debug logging output | `false` |
-| `DATABASE_URL` | DB connection string. If not set → SQLite | — (SQLite) |
+| `DATABASE_URL` | DB connection string. If not set → PGLite (local file) | — (PGLite) |
 | `UPLOAD_DIR` | Path to file upload directory | `./uploads` |
 | `PUBLIC_CLIENT_URL` | URL of the public Astro client (for rebuild webhook) | — |
 | `PORT` | Port the API server listens on | `3000` |
 
-## SQLite vs PostgreSQL
+## PGLite vs PostgreSQL
 
 ```sh
-# SQLite (default — no variable needed)
-# DATABASE_URL not set
+# PGLite (default — no variable needed)
+# DATABASE_URL not set → uses ./data/qqcms.db via PGLite
 
-# PostgreSQL
+# PostgreSQL (production)
 DATABASE_URL=postgresql://user:password@localhost:5432/qqcms
 ```
 
@@ -62,7 +62,7 @@ JWT_SECRET=your-super-secret-jwt-key
 # CORS
 CORS_ORIGINS=http://localhost:3001,http://localhost:3000
 
-# Database (leave empty to use SQLite)
+# Database (leave empty to use PGLite — local file-based PostgreSQL)
 DATABASE_URL=
 
 # File uploads

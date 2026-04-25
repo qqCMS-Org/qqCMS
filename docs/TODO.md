@@ -21,7 +21,8 @@
 
 ## Phase 3: Backend Initialization
 - [x] Initialize Elysia server in `apps/api`
-- [x] Set up Drizzle with dual-DB support (SQLite & PostgreSQL)
+- [x] Set up Drizzle with PGLite (schemas, migrations, repositories)
+- [x] Add core infrastructure (`Database`, `Logger`, `EventBus`, pagination utils)
 
 ## Phase 4: CI/CD & Tooling
 - [x] Configure Biome for unified formatting across monorepo

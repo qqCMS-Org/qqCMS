@@ -8,7 +8,7 @@
 - **Runtime**: Bun
 - **Port**: `3000` (default)
 - **Auth**: JWT in httpOnly cookie — see [auth.md](./auth.md)
-- **Database**: Drizzle ORM (SQLite / PostgreSQL) — see [database.md](./database.md)
+- **Database**: Drizzle ORM (PGLite by default / PostgreSQL in production) — see [database.md](./database.md)
 
 ## Module Structure
 

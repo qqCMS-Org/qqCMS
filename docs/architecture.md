@@ -22,7 +22,7 @@ The frontend applications (apps/admin, apps/web) and the shared UI package follo
 
 ## Backend: Elysia + Drizzle
 
-The backend uses Elysia for high-performance API routing and Drizzle ORM for database access, supporting both SQLite (development/lightweight) and PostgreSQL (production/heavyweight).
+The backend uses Elysia for high-performance API routing and Drizzle ORM for database access. By default it uses **PGLite** (PostgreSQL compiled to WASM, runs in-process with a local file). In production, set `DATABASE_URL` to switch to a real PostgreSQL server — no code changes required.
 
 > **Status: NOT IMPLEMENTED** — `apps/api` is empty.
 
