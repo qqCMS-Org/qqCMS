@@ -1,9 +1,9 @@
-import { sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { jsonb, pgTable, text } from "drizzle-orm/pg-core";
 
-export const settings = sqliteTable("settings", {
+export const settings = pgTable("settings", {
 	id: text("id").primaryKey(),
 	key: text("key").notNull().unique(),
-	value: text("value", { mode: "json" }).notNull().default("null"),
+	value: jsonb("value").notNull().default(null),
 });
 
 export type Setting = typeof settings.$inferSelect;

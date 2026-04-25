@@ -1,10 +1,10 @@
-import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { boolean, pgTable, text } from "drizzle-orm/pg-core";
 
-export const languages = sqliteTable("languages", {
+export const languages = pgTable("languages", {
 	id: text("id").primaryKey(),
 	code: text("code").notNull().unique(),
 	label: text("label").notNull(),
-	isActive: integer("is_active", { mode: "boolean" }).notNull().default(true),
+	isActive: boolean("is_active").notNull().default(true),
 });
 
 export type Language = typeof languages.$inferSelect;

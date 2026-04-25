@@ -1,11 +1,11 @@
-import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { boolean, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 
-export const pages = sqliteTable("pages", {
+export const pages = pgTable("pages", {
 	id: text("id").primaryKey(),
 	slug: text("slug").notNull().unique(),
-	isHomepage: integer("is_homepage", { mode: "boolean" }).notNull().default(false),
-	createdAt: text("created_at").notNull().default("CURRENT_TIMESTAMP"),
-	updatedAt: text("updated_at").notNull().default("CURRENT_TIMESTAMP"),
+	isHomepage: boolean("is_homepage").notNull().default(false),
+	createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+	updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
 export type Page = typeof pages.$inferSelect;

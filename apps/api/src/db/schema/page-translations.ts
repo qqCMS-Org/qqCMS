@@ -1,7 +1,7 @@
-import { sqliteTable, text, unique } from "drizzle-orm/sqlite-core";
+import { jsonb, pgTable, text, unique } from "drizzle-orm/pg-core";
 import { pages } from "./pages";
 
-export const pageTranslations = sqliteTable(
+export const pageTranslations = pgTable(
 	"page_translations",
 	{
 		id: text("id").primaryKey(),
@@ -10,7 +10,7 @@ export const pageTranslations = sqliteTable(
 			.references(() => pages.id, { onDelete: "cascade" }),
 		languageCode: text("language_code").notNull(),
 		title: text("title").notNull(),
-		content: text("content", { mode: "json" }).notNull().default("{}"),
+		content: jsonb("content").notNull().default({}),
 	},
 	(table) => [unique("page_translations_page_lang_unique").on(table.pageId, table.languageCode)],
 );

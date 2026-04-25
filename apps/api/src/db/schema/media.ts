@@ -1,13 +1,13 @@
-import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 
-export const media = sqliteTable("media", {
+export const media = pgTable("media", {
 	id: text("id").primaryKey(),
 	filename: text("filename").notNull(),
 	originalName: text("original_name").notNull(),
 	mimeType: text("mime_type").notNull(),
 	size: integer("size").notNull(),
 	url: text("url").notNull(),
-	createdAt: text("created_at").notNull().default("CURRENT_TIMESTAMP"),
+	createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
 export type Media = typeof media.$inferSelect;
