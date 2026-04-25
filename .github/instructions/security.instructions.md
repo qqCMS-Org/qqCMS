@@ -41,19 +41,25 @@ export const config = {
 
 ## Input validation
 
-Always validate data at the boundary — user input, external APIs, database results. Use [Valibot](https://valibot.dev/):
+Always validate data at the boundary — user input, external APIs, database results. Use TypeBox via `@sinclair/typebox` (included transitively by Elysia):
 
 ```ts
-import * as v from "valibot"
+import { Type, type Static } from "@sinclair/typebox"
+import { Value } from "@sinclair/typebox/value"
 
-const CreateUserSchema = v.object({
-  email: v.pipe(v.string(), v.email()),
-  password: v.pipe(v.string(), v.minLength(8)),
-  name: v.pipe(v.string(), v.minLength(1), v.maxLength(100)),
+const CreateUserSchema = Type.Object({
+  email: Type.String({ format: "email" }),
+  password: Type.String({ minLength: 8 }),
+  name: Type.String({ minLength: 1, maxLength: 100 }),
 })
 
+type CreateUserInput = Static<typeof CreateUserSchema>
+
 export const createUser = async (input: unknown) => {
-  const data = v.parse(CreateUserSchema, input)
+  if (!Value.Check(CreateUserSchema, input)) {
+    throw new Error("Invalid input")
+  }
+  const data = input as CreateUserInput
   // data is now typed and validated
 }
 ```

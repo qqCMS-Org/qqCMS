@@ -70,7 +70,7 @@
 - [ ] Create `src/modules/auth/auth.controller.ts`:
   - `POST /auth/login` — call `login`, set httpOnly cookie, return `{ ok: true }` (401 on invalid credentials)
   - `POST /auth/logout` — call `logout`, clear cookie, return `{ ok: true }`
-- [ ] Create `src/modules/auth/auth.types.ts` — Valibot schema `LoginSchema` (`login`, `password`)
+- [ ] Create `src/modules/auth/auth.types.ts` — TypeBox schema `LoginSchema` (`login`, `password`)
 - [ ] Create `src/modules/auth/index.ts` — barrel export
 
 ## 7. Pages Module (`/pages`)
@@ -89,7 +89,7 @@
   - `PATCH /pages/:id` — protected
   - `DELETE /pages/:id` — protected (204)
   - `PUT /pages/:id/translations/:lang` — protected
-- [ ] Create `src/modules/pages/pages.types.ts` — Valibot schemas: `CreatePageSchema`, `UpdatePageSchema`, `UpsertTranslationSchema`
+- [ ] Create `src/modules/pages/pages.types.ts` — TypeBox schemas: `CreatePageSchema`, `UpdatePageSchema`, `UpsertTranslationSchema`
 - [ ] Create `src/modules/pages/index.ts` — barrel export
 
 ## 8. Navigation Module (`/navigation`)
@@ -159,7 +159,7 @@
 ## 13. Error Handling
 
 - [ ] Implement global error handler in Elysia — map thrown errors to `{ error, code }` JSON responses with correct HTTP status codes
-- [ ] Return `{ error, code, details[] }` shape for Valibot validation errors
+- [ ] Return `{ error, code, details[] }` shape for TypeBox validation errors
 
 ## 14. Rebuild Webhook
 

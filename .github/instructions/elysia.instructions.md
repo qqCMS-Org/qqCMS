@@ -88,21 +88,21 @@ export const updateUser = async (id: number, data: UpdateUserInput) => {
 
 ## Validation
 
-Always use Valibot for schema validation via `@elysiajs/valibot`. Do not use Elysia's built-in TypeBox (`t.Object`):
+Always use Elysia's built-in TypeBox (`t` from `elysia`) for schema validation. Do not install external validation plugins:
 
 ```ts
-import { Elysia } from "elysia"
-import { t } from "@elysiajs/valibot"
-import * as v from "valibot"
+import { Elysia, t, type Static } from "elysia"
 
-const UserSchema = v.object({
-  email: v.pipe(v.string(), v.email()),
-  name: v.pipe(v.string(), v.minLength(1)),
+export const UserSchema = t.Object({
+  email: t.String({ format: "email" }),
+  name: t.String({ minLength: 1 }),
 })
+
+export type UserInput = Static<typeof UserSchema>
 
 export const userController = new Elysia()
   .post("/users", ({ body }) => createUser(body), {
-    body: t(UserSchema),
+    body: UserSchema,
   })
 ```
 

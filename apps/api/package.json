@@ -22,8 +22,7 @@
 		"bcryptjs": "^3.0.3",
 		"drizzle-orm": "latest",
 		"elysia": "latest",
-		"postgres": "^3.4.9",
-		"valibot": "latest"
+		"postgres": "^3.4.9"
 	},
 	"devDependencies": {
 		"@repo/biome-config": "workspace:*",

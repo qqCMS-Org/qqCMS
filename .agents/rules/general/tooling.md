@@ -19,7 +19,7 @@ bun add hono
 bun add -d @types/bun
 
 # ✅ install multiple
-bun add valibot @tanstack/react-query zustand
+bun add @tanstack/react-query zustand
 
 # ❌ do not manually edit package.json to add packages
 ```
