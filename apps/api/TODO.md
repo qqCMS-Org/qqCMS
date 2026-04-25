@@ -125,14 +125,14 @@
 ## 14. Rebuild Webhook
 
 - [x] Create `src/modules/rebuild/rebuild.service.ts` — POST to `PUBLIC_CLIENT_URL/api/revalidate` with a shared secret
-- [ ] Trigger rebuild after any write operation on pages, navigation, languages, or settings
+- [x] Trigger rebuild after any write operation on pages, navigation, languages, or settings
 - [x] Create `src/modules/rebuild/index.ts` — barrel export
 
 ## 15. Tests
 
-- [ ] Write unit tests for `auth.service.ts` (login happy path, wrong password, wrong login)
-- [ ] Write unit tests for `pages.service.ts` (create, homepage uniqueness, 404 behavior)
-- [ ] Write unit tests for `navigation.service.ts` (reorder logic)
-- [ ] Write unit tests for `media.service.ts` (MIME validation, size validation)
-- [ ] Write unit tests for `languages.service.ts` (duplicate code conflict)
-- [ ] Write unit tests for `settings.service.ts` (upsert behavior)
+- [x] Write unit tests for `auth.service.ts` (login happy path, wrong password, wrong login)
+- [x] Write unit tests for `pages.service.ts` (create, homepage uniqueness, 404 behavior)
+- [x] Write unit tests for `navigation.service.ts` (reorder logic)
+- [x] Write unit tests for `media.service.ts` (MIME validation, size validation)
+- [x] Write unit tests for `languages.service.ts` (duplicate code conflict)
+- [x] Write unit tests for `settings.service.ts` (upsert behavior)

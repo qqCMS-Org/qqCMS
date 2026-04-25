@@ -1,3 +1,4 @@
+import { triggerRebuild } from "@modules/rebuild";
 import { getTranslationsByPage, upsertTranslation as upsertTranslationInDb } from "@repository/page-translations";
 import {
 	clearHomepageFlag,
@@ -26,6 +27,7 @@ export const createPage = async (data: CreatePageInput) => {
 	}
 
 	const [newPage] = await insertPage(data);
+	void triggerRebuild();
 	return newPage;
 };
 
@@ -38,6 +40,7 @@ export const updatePage = async (id: string, data: UpdatePageInput) => {
 	}
 
 	const [updated] = await updatePageInDb(id, data);
+	void triggerRebuild();
 	return updated;
 };
 
@@ -46,6 +49,7 @@ export const deletePage = async (id: string) => {
 	if (!existing) throw new NotFoundError("Page not found");
 
 	await deletePageInDb(id);
+	void triggerRebuild();
 };
 
 export const upsertTranslation = async (pageId: string, languageCode: string, data: UpsertTranslationInput) => {
@@ -53,5 +57,6 @@ export const upsertTranslation = async (pageId: string, languageCode: string, da
 	if (!page) throw new NotFoundError("Page not found");
 
 	const [translation] = await upsertTranslationInDb({ pageId, languageCode, ...data });
+	void triggerRebuild();
 	return translation;
 };

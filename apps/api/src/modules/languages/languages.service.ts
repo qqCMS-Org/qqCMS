@@ -1,3 +1,4 @@
+import { triggerRebuild } from "@modules/rebuild";
 import {
 	deleteLanguage as deleteLanguageInDb,
 	getLanguageByCode,
@@ -16,6 +17,7 @@ export const createLanguage = async (data: CreateLanguageInput) => {
 	if (existing) throw new ConflictError(`Language with code "${data.code}" already exists`);
 
 	const [language] = await insertLanguage(data);
+	void triggerRebuild();
 	return language;
 };
 
@@ -24,6 +26,7 @@ export const updateLanguage = async (id: string, data: UpdateLanguageInput) => {
 	if (!existing) throw new NotFoundError("Language not found");
 
 	const [updated] = await updateLanguageInDb(id, data);
+	void triggerRebuild();
 	return updated;
 };
 
@@ -32,4 +35,5 @@ export const deleteLanguage = async (id: string) => {
 	if (!existing) throw new NotFoundError("Language not found");
 
 	await deleteLanguageInDb(id);
+	void triggerRebuild();
 };

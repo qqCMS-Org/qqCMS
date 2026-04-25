@@ -1,3 +1,4 @@
+import { triggerRebuild } from "@modules/rebuild";
 import {
 	deleteNavigationItem as deleteNavigationItemInDb,
 	getNavigationItem as getNavigationItemById,
@@ -13,6 +14,7 @@ export const listNavigationItems = () => getNavigationItems();
 
 export const createNavigationItem = async (data: CreateNavigationItemInput) => {
 	const [item] = await insertNavigationItem(data);
+	void triggerRebuild();
 	return item;
 };
 
@@ -21,6 +23,7 @@ export const updateNavigationItem = async (id: string, data: UpdateNavigationIte
 	if (!existing) throw new NotFoundError("Navigation item not found");
 
 	const [updated] = await updateNavigationItemInDb(id, data);
+	void triggerRebuild();
 	return updated;
 };
 
@@ -29,8 +32,11 @@ export const deleteNavigationItem = async (id: string) => {
 	if (!existing) throw new NotFoundError("Navigation item not found");
 
 	await deleteNavigationItemInDb(id);
+	void triggerRebuild();
 };
 
 export const reorderItems = async (data: ReorderInput) => {
-	return reorderNavigationItems(data.orderedIds);
+	const result = await reorderNavigationItems(data.orderedIds);
+	void triggerRebuild();
+	return result;
 };
