@@ -75,3 +75,18 @@ bunx biome check --write .  # lint + format fix
 ```
 
 Add to CI and pre-commit — do not commit code that fails Biome checks.
+
+---
+
+## UUID generation
+
+Prefer the built-in `crypto.randomUUID()` over the `uuid` package. It is available natively in Bun, Node.js ≥ 19, and all modern browsers — no extra dependency needed:
+
+```ts
+// ❌ external package — unnecessary
+import { v4 as uuidv4 } from "uuid"
+const id = uuidv4()
+
+// ✅ built-in Web Crypto API
+const id = crypto.randomUUID()
+```

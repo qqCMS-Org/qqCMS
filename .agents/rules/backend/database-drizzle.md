@@ -31,6 +31,34 @@ export * from "./user"
 export * from "./post"
 ```
 
+### Schema constraints
+
+Never combine `.notNull()` with `.default(null)` — it is a contradiction that compiles but fails at runtime:
+
+```ts
+// ❌
+value: jsonb("value").notNull().default(null)
+
+// ✅ required field with no default
+value: jsonb("value").notNull()
+
+// ✅ optional nullable field
+value: jsonb("value").default(null)
+```
+
+### Self-referential foreign keys
+
+When a column references the same table (tree/hierarchy), annotate the callback return type as `AnyPgColumn` — otherwise TypeScript cannot resolve the circular reference:
+
+```ts
+import { type AnyPgColumn, pgTable, text } from "drizzle-orm/pg-core"
+
+export const categories = pgTable("categories", {
+  id: text("id").primaryKey(),
+  parentId: text("parent_id").references((): AnyPgColumn => categories.id, { onDelete: "set null" }),
+})
+```
+
 ---
 
 ## Repository

@@ -12,18 +12,28 @@ description: Elysia conventions — routing, controllers, validation, plugins
 ```ts
 // src/index.ts
 import { Elysia } from "elysia"
+import { Logger } from "@core/Logger"
+import { config } from "@shared/config"
 import { authModule } from "@modules/auth"
 import { userModule } from "@modules/user"
 
 const app = new Elysia()
   .use(authModule)
   .use(userModule)
-  .listen(3000)
+  .listen(config.port)
+
+Logger.info(`Server running at ${app.server?.hostname}:${app.server?.port}`)
 
 export type App = typeof app
 ```
 
 Always export `App` type from the entry point — required for Eden Treaty on the frontend.
+
+### Entry point rules
+
+- Read port from `config.port` — never hardcode a port number
+- Use the project `Logger` instead of `console.log` / `console.error`
+- Remove placeholder routes (e.g. `.get("/", () => "Hello")`) — the entry point registers modules only
 
 ---
 
@@ -141,4 +151,20 @@ Group related routes under a shared prefix via the plugin:
 
 ```ts
 export const userModule = new Elysia({ prefix: "/api" }).use(userController)
+```
+
+---
+
+## Built-in cookie support
+
+Since Elysia 1.x, cookie handling is built into the core — do **not** install `@elysiajs/cookie`:
+
+```sh
+# ❌ deprecated plugin — not needed
+bun add @elysiajs/cookie
+
+# ✅ use cookie context directly
+app.get("/", ({ cookie }) => {
+  cookie.session.set({ value: "abc", httpOnly: true })
+})
 ```
