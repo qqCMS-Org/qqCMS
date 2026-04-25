@@ -1,7 +1,7 @@
 import { db } from "@core/Database";
 import type { NewPage } from "@schema/pages";
 import { pages } from "@schema/pages";
-import { eq } from "drizzle-orm";
+import { and, eq, ne } from "drizzle-orm";
 
 export const getPages = () => db.select().from(pages);
 
@@ -24,3 +24,11 @@ export const updatePage = (id: string, data: Partial<Omit<NewPage, "id" | "creat
 		.returning();
 
 export const deletePage = (id: string) => db.delete(pages).where(eq(pages.id, id));
+
+export const clearHomepageFlag = (excludeId?: string) =>
+	excludeId
+		? db
+				.update(pages)
+				.set({ isHomepage: false })
+				.where(and(eq(pages.isHomepage, true), ne(pages.id, excludeId)))
+		: db.update(pages).set({ isHomepage: false }).where(eq(pages.isHomepage, true));

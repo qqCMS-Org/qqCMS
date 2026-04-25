@@ -10,6 +10,11 @@ export const getLanguage = (id: string) =>
 		where: eq(languages.id, id),
 	});
 
+export const getLanguageByCode = (code: string) =>
+	db.query.languages.findFirst({
+		where: eq(languages.code, code),
+	});
+
 export const insertLanguage = (data: Omit<NewLanguage, "id">) =>
 	db
 		.insert(languages)

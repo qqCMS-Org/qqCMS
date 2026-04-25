@@ -58,114 +58,75 @@
 
 ## 5. Middleware
 
-- [ ] Create `src/shared/middleware/cors.middleware.ts` — allow origins from `CORS_ORIGINS` env var
-- [ ] Create `src/shared/middleware/auth.middleware.ts` — verify JWT from httpOnly cookie; reject with `401` if invalid or missing
-- [ ] Create `src/shared/middleware/rateLimit.middleware.ts` — rate limit all endpoints
+- [x] Create `src/shared/middleware/cors.middleware.ts` — allow origins from `CORS_ORIGINS` env var
+- [x] Create `src/shared/middleware/auth.middleware.ts` — verify JWT from httpOnly cookie; reject with `401` if invalid or missing; exposes `authPlugin` with `requireAuth` macro
+- [x] Create `src/shared/middleware/rateLimit.middleware.ts` — rate limit all endpoints (100 req/min per IP)
+- [x] Create `src/shared/errors.ts` — `NotFoundError`, `ConflictError`, `UnauthorizedError` custom error classes
+
+- [x] Create `src/shared/middleware/cors.middleware.ts` — allow origins from `CORS_ORIGINS` env var
+- [x] Create `src/shared/middleware/auth.middleware.ts` — verify JWT from httpOnly cookie; reject with `401` if invalid or missing
+- [x] Create `src/shared/middleware/rateLimit.middleware.ts` — rate limit all endpoints
 
 ## 6. Auth Module (`/auth`)
 
-- [ ] Create `src/modules/auth/auth.service.ts`:
-  - `login(login, password)` — compare against `ADMIN_LOGIN` + bcrypt verify against `ADMIN_PASSWORD_HASH`; sign JWT; return signed token
-  - `logout()` — return cookie-clearing instructions
-- [ ] Create `src/modules/auth/auth.controller.ts`:
-  - `POST /auth/login` — call `login`, set httpOnly cookie, return `{ ok: true }` (401 on invalid credentials)
-  - `POST /auth/logout` — call `logout`, clear cookie, return `{ ok: true }`
-- [ ] Create `src/modules/auth/auth.types.ts` — TypeBox schema `LoginSchema` (`login`, `password`)
-- [ ] Create `src/modules/auth/index.ts` — barrel export
+- [x] Create `src/modules/auth/auth.service.ts`
+- [x] Create `src/modules/auth/auth.controller.ts`
+- [x] Create `src/modules/auth/auth.types.ts` — TypeBox schema `LoginSchema`
+- [x] Create `src/modules/auth/index.ts` — barrel export
 
 ## 7. Pages Module (`/pages`)
 
-- [ ] Create `src/modules/pages/pages.service.ts`:
-  - `listPages()` — get all pages
-  - `getPage(id)` — get one page with all its translations; 404 if not found
-  - `createPage(data)` — insert; enforce single `is_homepage` (unset previous if needed, use transaction)
-  - `updatePage(id, data)` — patch slug / `is_homepage`; enforce homepage uniqueness
-  - `deletePage(id)` — delete page (translations cascade)
-  - `upsertTranslation(pageId, langCode, data)` — upsert translation for a language
-- [ ] Create `src/modules/pages/pages.controller.ts`:
-  - `GET /pages` — public
-  - `GET /pages/:id` — public
-  - `POST /pages` — protected
-  - `PATCH /pages/:id` — protected
-  - `DELETE /pages/:id` — protected (204)
-  - `PUT /pages/:id/translations/:lang` — protected
-- [ ] Create `src/modules/pages/pages.types.ts` — TypeBox schemas: `CreatePageSchema`, `UpdatePageSchema`, `UpsertTranslationSchema`
-- [ ] Create `src/modules/pages/index.ts` — barrel export
+- [x] Create `src/modules/pages/pages.service.ts`
+- [x] Create `src/modules/pages/pages.controller.ts`
+- [x] Create `src/modules/pages/pages.types.ts`
+- [x] Create `src/modules/pages/index.ts` — barrel export
 
 ## 8. Navigation Module (`/navigation`)
 
-- [ ] Create `src/modules/navigation/navigation.service.ts`:
-  - `listNavigationItems()` — ordered by `order`
-  - `createNavigationItem(data)` — insert
-  - `updateNavigationItem(id, data)` — patch
-  - `deleteNavigationItem(id)` — delete
-  - `reorderNavigationItems(orderedIds)` — batch update `order` field in a transaction
-- [ ] Create `src/modules/navigation/navigation.controller.ts`:
-  - `GET /navigation` — public
-  - `POST /navigation` — protected
-  - `PATCH /navigation/:id` — protected
-  - `DELETE /navigation/:id` — protected (204)
-  - `PATCH /navigation/reorder` — protected
-- [ ] Create `src/modules/navigation/navigation.types.ts` — `CreateNavigationItemSchema`, `UpdateNavigationItemSchema`, `ReorderSchema`
-- [ ] Create `src/modules/navigation/index.ts` — barrel export
+- [x] Create `src/modules/navigation/navigation.service.ts`
+- [x] Create `src/modules/navigation/navigation.controller.ts`
+- [x] Create `src/modules/navigation/navigation.types.ts`
+- [x] Create `src/modules/navigation/index.ts` — barrel export
 
 ## 9. Media Module (`/media`)
 
-- [ ] Create `src/modules/media/media.service.ts`:
-  - `listMedia()` — get all media records
-  - `uploadMedia(file)` — validate MIME type (allow list) + size (≤ 10 MB); generate UUID filename; save to `UPLOAD_DIR`; insert DB record; return full record
-  - `deleteMedia(id)` — delete file from disk + delete DB record; 404 if not found
-- [ ] Create `src/modules/media/media.controller.ts`:
-  - `GET /media` — protected
-  - `POST /media` — protected, multipart/form-data
-  - `DELETE /media/:id` — protected (204)
-- [ ] Register static file serving for `UPLOAD_DIR` at `/uploads` path
-- [ ] Ensure `UPLOAD_DIR` is created on server startup if it does not exist
-- [ ] Create `src/modules/media/media.types.ts` — `MediaRecord` interface, allowed MIME list constant
-- [ ] Create `src/modules/media/index.ts` — barrel export
+- [x] Create `src/modules/media/media.service.ts`
+- [x] Create `src/modules/media/media.controller.ts`
+- [x] Register static file serving for `UPLOAD_DIR` at `/uploads` path
+- [x] Ensure `UPLOAD_DIR` is created on server startup if it does not exist
+- [x] Create `src/modules/media/media.types.ts`
+- [x] Create `src/modules/media/index.ts` — barrel export
 
 ## 10. Languages Module (`/languages`)
 
-- [ ] Create `src/modules/languages/languages.service.ts`:
-  - `listLanguages()` — get all languages
-  - `createLanguage(data)` — insert; 409 if code already exists
-  - `updateLanguage(id, data)` — patch label / `is_active`; 404 if not found
-  - `deleteLanguage(id)` — delete; 404 if not found
-- [ ] Create `src/modules/languages/languages.controller.ts`:
-  - `GET /languages` — public
-  - `POST /languages` — protected
-  - `PATCH /languages/:id` — protected
-  - `DELETE /languages/:id` — protected (204)
-- [ ] Create `src/modules/languages/languages.types.ts` — `CreateLanguageSchema`, `UpdateLanguageSchema`
-- [ ] Create `src/modules/languages/index.ts` — barrel export
+- [x] Create `src/modules/languages/languages.service.ts`
+- [x] Create `src/modules/languages/languages.controller.ts`
+- [x] Create `src/modules/languages/languages.types.ts`
+- [x] Create `src/modules/languages/index.ts` — barrel export
 
 ## 11. Settings Module (`/settings`)
 
-- [ ] Create `src/modules/settings/settings.service.ts`:
-  - `listSettings()` — get all key-value pairs
-  - `setSetting(key, value)` — upsert setting by key
-- [ ] Create `src/modules/settings/settings.controller.ts`:
-  - `GET /settings` — public
-  - `PUT /settings/:key` — protected
-- [ ] Create `src/modules/settings/settings.types.ts` — `SetSettingSchema`
-- [ ] Create `src/modules/settings/index.ts` — barrel export
+- [x] Create `src/modules/settings/settings.service.ts`
+- [x] Create `src/modules/settings/settings.controller.ts`
+- [x] Create `src/modules/settings/settings.types.ts`
+- [x] Create `src/modules/settings/index.ts` — barrel export
 
 ## 12. Entry Point
 
-- [ ] Create `src/index.ts` — register all modules + middleware; `listen` on `PORT`; export `App` type
-- [ ] Add `apps/api` `package.json` with `name: "@repo/server"` and `exports: { ".": "./src/index.ts" }` for Eden Treaty consumption
-- [ ] Add `dev`, `start`, `build` scripts to `apps/api/package.json`
+- [x] Update `src/index.ts` — register all modules + middleware; `listen` on `PORT`; export `App` type
+- [x] Add `apps/api` `package.json` with `name: "@repo/server"` and `exports: { ".": "./src/index.ts" }` for Eden Treaty consumption
+- [x] Add `dev`, `start`, `build` scripts to `apps/api/package.json`
 
 ## 13. Error Handling
 
-- [ ] Implement global error handler in Elysia — map thrown errors to `{ error, code }` JSON responses with correct HTTP status codes
-- [ ] Return `{ error, code, details[] }` shape for TypeBox validation errors
+- [x] Implement global error handler in Elysia — map thrown errors to `{ error, code }` JSON responses with correct HTTP status codes
+- [x] Return `{ error, code, details }` shape for TypeBox validation errors
 
 ## 14. Rebuild Webhook
 
-- [ ] Create `src/modules/rebuild/rebuild.service.ts` — POST to `PUBLIC_CLIENT_URL/api/revalidate` with a shared secret
+- [x] Create `src/modules/rebuild/rebuild.service.ts` — POST to `PUBLIC_CLIENT_URL/api/revalidate` with a shared secret
 - [ ] Trigger rebuild after any write operation on pages, navigation, languages, or settings
-- [ ] Create `src/modules/rebuild/index.ts` — barrel export
+- [x] Create `src/modules/rebuild/index.ts` — barrel export
 
 ## 15. Tests
 
