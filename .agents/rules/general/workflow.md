@@ -33,11 +33,23 @@ The AI agent must keep documentation alive and truthful.
 - If the relevant `docs/` file does not exist yet but the change is significant enough to warrant it, create it.
 - For completely new architectural decisions, briefly summarize them in `docs/adr/` (Architecture Decision Records) so future agents understand the "why" and do not repeat mistakes.
 
-## 4. Commits
+## 4. Rules Synchronization
+
+The codebase maintains agent rules in **three locations** that must stay in sync:
+
+| Location | Used by |
+|---|---|
+| `.agents/rules/` | Claude / AI agents |
+| `.cursor/rules/` | Cursor IDE |
+| `.github/instructions/` | GitHub Copilot |
+
+**Rule:** Whenever you modify a rule in any one of these locations, you MUST apply the same change to the corresponding files in the other two locations. Never update just one copy.
+
+## 5. Commits
 
 - Commit frequently. Tie each commit to a completed step from `docs/TODO.md`.
 
-## 5. Post-Task Report
+## 6. Post-Task Report
 
 After completing every task, provide a concise report in the following format:
 
@@ -59,7 +71,7 @@ After completing every task, provide a concise report in the following format:
 
 Do not skip this report even for small tasks. If there were no notable decisions or problems, write "none" in those sections rather than omitting them.
 
-## 6. Abstract Task Pre-Announcement
+## 7. Abstract Task Pre-Announcement
 
 When the user gives a **high-level, abstract task** — one that does not specify exactly which files to touch or which code to write (e.g. "replace SQLite with PGLite", "add dark mode", "migrate to a monorepo") — the agent MUST post a short plan in chat **before** executing anything.
 
@@ -81,7 +93,7 @@ Only after posting the plan should the agent begin execution. Do NOT ask the use
 
 This rule does NOT apply when the user gives a concrete instruction ("in `db.ts` line 42, change X to Y") — proceed directly in that case.
 
-## 7. Answering "Why" and "How" Questions
+## 8. Answering "Why" and "How" Questions
 
 When the user asks an exploratory question — "why was this done this way?", "what is this for?", "how does X work?", "could we do this differently?" — do NOT immediately start editing or rewriting code.
 

@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, mock } from "bun:test";
 import type { Media } from "@schema/media";
-import { ALLOWED_MIME_TYPES, MAX_UPLOAD_SIZE } from "@shared/constants";
+import { MAX_UPLOAD_SIZE } from "@shared/constants";
 import { NotFoundError } from "@shared/errors";
 
 const mockGetMediaFiles = mock((): Promise<Media[]> => Promise.resolve([]));
@@ -82,7 +82,7 @@ describe("uploadMedia", () => {
 	});
 
 	it("uploads a valid file and returns media record", async () => {
-		const file = makeFile("photo.jpg", ALLOWED_MIME_TYPES[0], 1024);
+		const file = makeFile("photo.jpg", "image/jpeg", 1024);
 
 		const result = await uploadMedia(file);
 

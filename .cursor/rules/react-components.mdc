@@ -1,6 +1,6 @@
 ---
 description: React component structure and architecture patterns
-globs: ["apps/web/**, apps/admin/**, packages/ui/**"]
+globs: ["apps/web/**", "apps/admin/**", "packages/ui/**"]
 ---
 
 

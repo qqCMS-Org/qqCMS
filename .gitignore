@@ -21,6 +21,11 @@ coverage
 # Vercel
 .vercel
 
+# PGLite local database
+/data/
+*.db
+local.db
+
 # Build Outputs
 .next/
 out/
