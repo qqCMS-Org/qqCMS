@@ -1,8 +1,8 @@
 ---
 description: Agent auto-commit behavior — when and how the agent commits changes
 alwaysApply: true
-globs: ["**"]
 ---
+
 
 # Agent Auto-Commit
 

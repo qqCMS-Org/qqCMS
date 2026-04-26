@@ -2,6 +2,7 @@
 applyTo: "**"
 ---
 
+
 # Agent Auto-Commit
 
 When this rule is active, the agent **must** commit changes after each completed step instead of leaving all changes uncommitted.

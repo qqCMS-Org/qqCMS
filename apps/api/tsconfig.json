@@ -1,0 +1,28 @@
+{
+	"compilerOptions": {
+		"target": "ES2022",
+		"module": "ES2022",
+		"moduleResolution": "bundler",
+		"lib": ["ES2022"],
+		"types": ["bun-types"],
+		"strict": true,
+		"skipLibCheck": true,
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"resolveJsonModule": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true,
+		"paths": {
+			"@core/*": ["./src/core/*"],
+			"@modules/*": ["./src/modules/*"],
+			"@repository/*": ["./src/db/repository/*"],
+			"@schema/*": ["./src/db/schema/*"],
+			"@shared/*": ["./src/shared/*"],
+			"@db/*": ["./src/db/*"]
+		}
+	},
+	"include": ["src/**/*", "drizzle.config.ts"],
+	"exclude": ["node_modules"]
+}

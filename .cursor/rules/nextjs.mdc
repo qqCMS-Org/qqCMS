@@ -1,8 +1,8 @@
 ---
 description: Next.js specific rules — Server Components, rendering strategies (SSG, ISR)
-alwaysApply: true
-globs: ["apps/web/**", "apps/admin/**", "packages/ui/**"]
+globs: ["apps/web/**, apps/admin/**"]
 ---
+
 
 # Next.js
 

@@ -1,8 +1,8 @@
 ---
 description: Git workflow — commits, branches, PRs
 alwaysApply: true
-globs: ["**"]
 ---
+
 
 # Git
 

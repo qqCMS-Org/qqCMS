@@ -2,6 +2,7 @@
 applyTo: "apps/api/**"
 ---
 
+
 # Elysia
 
 ## Setup
@@ -9,18 +10,28 @@ applyTo: "apps/api/**"
 ```ts
 // src/index.ts
 import { Elysia } from "elysia"
+import { Logger } from "@core/Logger"
+import { config } from "@shared/config"
 import { authModule } from "@modules/auth"
 import { userModule } from "@modules/user"
 
 const app = new Elysia()
   .use(authModule)
   .use(userModule)
-  .listen(3000)
+  .listen(config.port)
+
+Logger.info(`Server running at ${app.server?.hostname}:${app.server?.port}`)
 
 export type App = typeof app
 ```
 
 Always export `App` type from the entry point — required for Eden Treaty on the frontend.
+
+### Entry point rules
+
+- Read port from `config.port` — never hardcode a port number
+- Use the project `Logger` instead of `console.log` / `console.error`
+- Remove placeholder routes (e.g. `.get("/", () => "Hello")`) — the entry point registers modules only
 
 ---
 
@@ -77,21 +88,21 @@ export const updateUser = async (id: number, data: UpdateUserInput) => {
 
 ## Validation
 
-Always use Valibot for schema validation via `@elysiajs/valibot`. Do not use Elysia's built-in TypeBox (`t.Object`):
+Always use Elysia's built-in TypeBox (`t` from `elysia`) for schema validation. Do not install external validation plugins:
 
 ```ts
-import { Elysia } from "elysia"
-import { t } from "@elysiajs/valibot"
-import * as v from "valibot"
+import { Elysia, t, type Static } from "elysia"
 
-const UserSchema = v.object({
-  email: v.pipe(v.string(), v.email()),
-  name: v.pipe(v.string(), v.minLength(1)),
+export const UserSchema = t.Object({
+  email: t.String({ format: "email" }),
+  name: t.String({ minLength: 1 }),
 })
+
+export type UserInput = Static<typeof UserSchema>
 
 export const userController = new Elysia()
   .post("/users", ({ body }) => createUser(body), {
-    body: t(UserSchema),
+    body: UserSchema,
   })
 ```
 
@@ -138,4 +149,20 @@ Group related routes under a shared prefix via the plugin:
 
 ```ts
 export const userModule = new Elysia({ prefix: "/api" }).use(userController)
+```
+
+---
+
+## Built-in cookie support
+
+Since Elysia 1.x, cookie handling is built into the core — do **not** install `@elysiajs/cookie`:
+
+```sh
+# ❌ deprecated plugin — not needed
+bun add @elysiajs/cookie
+
+# ✅ use cookie context directly
+app.get("/", ({ cookie }) => {
+  cookie.session.set({ value: "abc", httpOnly: true })
+})
 ```

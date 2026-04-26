@@ -1,0 +1,2 @@
+bun run typecheck --ui=stream
+bunx lint-staged

@@ -1,3 +1,4 @@
+
 # Project: qqCMS
 
 ## Description
@@ -10,7 +11,7 @@ A headless CMS designed for quick and flexible content management.
 - **Frontend:** Astro (apps/admin, apps/web) with React components.
 - **UI Library:** React components in packages/ui.
 - **Backend:** Elysia (apps/api).
-- **Database:** Drizzle ORM with support for both SQLite and PostgreSQL.
+- **Database:** Drizzle ORM with PGLite (default, no server required) and PostgreSQL (production).
 - **Tooling:** Biome (linting/formatting), TypeScript.
 
 ## Architecture
