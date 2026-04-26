@@ -19,7 +19,7 @@
 
 ### 3.1 Core DB setup
 
-- [x] Install `drizzle-orm`, `drizzle-kit`, `better-sqlite3` (SQLite), `postgres` (PostgreSQL)
+- [x] Install `drizzle-orm`, `drizzle-kit`, `@electric-sql/pglite` (PGLite, локально), `postgres` (PostgreSQL)
 - [x] Create `src/db/index.ts` — export `db` instance with dual-DB strategy (SQLite if no `DATABASE_URL`, PostgreSQL otherwise)
 - [x] Register `db` to Drizzle relation query builder
 

@@ -1,6 +1,6 @@
 ---
 description: State management patterns — local state, server state, global state
-globs: ["apps/web/**, apps/admin/**, packages/ui/**"]
+globs: ["apps/web/**", "apps/admin/**", "packages/ui/**"]
 ---
 
 

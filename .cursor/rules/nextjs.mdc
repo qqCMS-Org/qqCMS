@@ -1,6 +1,6 @@
 ---
 description: Next.js specific rules — Server Components, rendering strategies (SSG, ISR)
-globs: ["apps/web/**, apps/admin/**"]
+globs: ["apps/web/**", "apps/admin/**"]
 ---
 
 

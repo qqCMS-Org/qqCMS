@@ -31,6 +31,11 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 
+# PGLite local database
+/data/
+*.db
+local.db
+
 # uploads directory
 /uploads/
 
