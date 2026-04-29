@@ -7,7 +7,7 @@
 	},
 	"scripts": {
 		"lint": "biome check --write",
-		"generate:component": "turbo gen react-component",
+		"generate:component": "turbo gen preact-component",
 		"check-types": "tsc --noEmit"
 	},
 	"devDependencies": {

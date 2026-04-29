@@ -10,19 +10,26 @@ Design references and rules:
 - [`_designContext/qqcms-design-rules.md`](../_designContext/qqcms-design-rules.md) — design system rules, colors, spacing, typography
 - [`_designContext/qqcms-design-progress.md`](../_designContext/qqcms-design-progress.md) — current design progress per screen
 
-## Component Methodology
+## Component Structure
 
-The admin panel UI is built using **Atomic Design**:
+Both `apps/admin` and `apps/web` follow **Feature-Sliced Design (FSD)**:
 
 ```
-apps/admin/src/components/
-├── atoms/        # Button, Input, Label, Badge, Spinner
-├── molecules/    # FormField, LanguageTabs, NavMenuItem
-├── organisms/    # PageEditor, NavigationEditor, MediaUploader, LoginForm
-└── templates/    # AdminLayout
+src/
+├── app/          # Astro layouts, global styles, middleware
+├── pages/        # Astro .astro page files (file-based routing)
+├── widgets/      # Self-contained UI blocks: Sidebar, Header, PageEditorWidget
+├── features/     # User actions: auth, create-page, upload-media, change-language
+├── entities/     # Domain objects: page, language, media, navigation-item
+└── shared/
+    ├── ui/       # Re-exports from @repo/ui
+    ├── api/      # Eden Treaty client
+    └── config/   # Constants, env
 ```
 
-> **Not implemented** — `apps/admin/src/` currently contains only a placeholder `Welcome.astro`. FSD/Atomic Design structure is planned in Phase 2 of TODO.md.
+`packages/ui` contains **primitive Preact components** (Button, Input, Badge, etc.) shared across both apps. Complex, domain-aware components live in the respective app's FSD layers.
+
+> **Not implemented** — `apps/admin/src/` currently contains only a placeholder `Welcome.astro`. FSD structure is planned in the admin panel implementation phase.
 
 ## UI Library
 

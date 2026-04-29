@@ -14,7 +14,6 @@
 
 ```
 apps/admin/src/stores/
-├── auth.store.ts      # isAuthenticated signal
 ├── pages.store.ts     # pages list, selected page
 ├── editor.store.ts    # TipTap editor content per language
 └── languages.store.ts # active languages list
