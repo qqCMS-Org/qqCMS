@@ -59,17 +59,16 @@ HeroUI (into existing project):
 bun add @heroui/react framer-motion
 ```
 
-shadcn/ui (into existing Next.js project):
+DaisyUI (into existing Tailwind project):
 
 ```sh
-bunx shadcn@latest init
+bun add daisyui
 ```
 
-Add individual shadcn components:
+Then add to `tailwind.config`:
 
-```sh
-bunx shadcn@latest add button
-bunx shadcn@latest add input dialog
+```ts
+plugins: [require("daisyui")]
 ```
 
 ---

@@ -26,16 +26,17 @@ apps/admin/src/components/
 
 ## UI Library
 
-Admin panel uses **Shadcn/ui** components (React-compatible, adapted for Preact via `@preact/compat`).
+Both `apps/admin` and `apps/web` share UI components from **`packages/ui`** (`@repo/ui`). Components in `packages/ui` are **Preact** components (Astro uses Preact for all interactive islands in both apps).
 
-Public client (`apps/web`) uses **Tailwind CSS** with minimal custom components.
-
-Shared components across both apps live in **`packages/ui`** — currently contains placeholder `button.tsx`, `card.tsx`, `code.tsx`.
+- Primitive components (Button, Input, Badge, etc.) live in `packages/ui/src/`
+- Both apps import them via the `@repo/ui` alias: `import { Button } from "@repo/ui/button"`
+- Admin-specific complex components (PageEditor, NavigationEditor) live in `apps/admin/src/` and are not shared
+- Components in `packages/ui` use **DaisyUI** CSS classes for styling — no JS dependency, works natively with Preact
 
 ## Styling
 
-- **Tailwind CSS** for all styling
-- Design tokens (colors, spacing) defined in `_designContext/qqcms-design-rules.md` should be reflected in `tailwind.config` of each app
+- **Tailwind CSS** + **DaisyUI** for all styling
+- Design tokens (colors, spacing) defined in `_designContext/qqcms-design-rules.md` are mapped to a custom DaisyUI theme in `tailwind.config` of each app
 
 ## Screens to Design / Implement
 

@@ -50,7 +50,7 @@ export const UserCard = ({ user, onSelect }: UserCardProps) => {
 
 ## UI libraries
 
-If the project includes a UI library (HeroUI, shadcn/ui, etc.) — always use its components first before writing custom ones:
+If the project includes a UI library (HeroUI, DaisyUI, etc.) — always use its components first before writing custom ones:
 
 ```tsx
 // ✅ use library component
@@ -77,7 +77,7 @@ Choose one of the two patterns per project. Do not mix.
 ```
 src/
 ├── components/
-│   ├── ui/        # components from UI libraries (HeroUI, shadcn/ui)
+│   ├── ui/        # components from UI libraries (HeroUI, DaisyUI)
 │   ├── atoms/     # basic building blocks: Button, Input, Badge
 │   ├── molecules/ # combinations of atoms: SearchField, UserAvatar
 │   ├── organisms/ # complex sections: Header, UserTable, AuthForm
@@ -86,7 +86,7 @@ src/
 └── app/           # routing
 ```
 
-Components from UI libraries (HeroUI, shadcn/ui) go into `components/ui/`, not into `atoms/`:
+Components from UI libraries (HeroUI, DaisyUI) go into `components/ui/`, not into `atoms/`:
 
 ```tsx
 // ✅ src/components/ui/button.tsx  — re-export or wrap library component

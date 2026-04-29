@@ -214,7 +214,7 @@ src/
 |---|---|
 | Фреймворк | Astro (Islands Architecture) |
 | UI-компоненты | Preact (с поддержкой React-библиотек через `@preact/compat`) |
-| UI-библиотека | Shadcn/ui (React-версия, адаптированная под Preact) |
+| UI-библиотека | DaisyUI (Tailwind CSS плагин, нативная совместимость с Preact) |
 | Стейт | Preact Signals (собственные сторы) |
 | Стилизация | Tailwind CSS |
 | Редактор контента | TipTap |
@@ -436,7 +436,7 @@ src/
 |---|---|---|
 | Runtime | Bun | 1.3.10+ |
 | Публичный клиент | Astro + Preact + Tailwind CSS | Актуальная |
-| Административная панель | Astro + Preact + Shadcn/ui + TipTap | Актуальная |
+| Административная панель | Astro + Preact + DaisyUI + TipTap | Актуальная |
 | Серверная часть | Elysia + Drizzle ORM | Актуальная |
 | База данных (default) | PGLite (PostgreSQL/WASM) | — |
 | База данных (alt) | PostgreSQL | 15+ |

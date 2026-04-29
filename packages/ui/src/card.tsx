@@ -1,27 +1,20 @@
-import { type JSX } from "react";
+import type { ComponentProps } from "preact";
 
-export function Card({
+type CardProps = ComponentProps<"a"> & {
+	title: string;
+};
+
+export const Card = ({
 	className,
 	title,
 	children,
 	href,
-}: {
-	className?: string;
-	title: string;
-	children: React.ReactNode;
-	href: string;
-}): JSX.Element {
+	...props
+}: CardProps) => {
 	return (
-		<a
-			className={className}
-			href={`${href}?utm_source=create-turbo&utm_medium=basic&utm_campaign=create-turbo"`}
-			rel="noopener noreferrer"
-			target="_blank"
-		>
-			<h2>
-				{title} <span>-&gt;</span>
-			</h2>
+		<a className={className} href={href} {...props}>
+			<h2>{title}</h2>
 			<p>{children}</p>
 		</a>
 	);
-}
+};

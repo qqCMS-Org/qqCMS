@@ -2,10 +2,10 @@
 
 ## Monorepo Structure
 
-- **apps/admin**: Astro + React - Admin management interface.
-- **apps/web**: Astro + React - Public-facing website.
-- **apps/api**: Elysia - Backend server.
-- **packages/ui**: Shared React components.
+- **apps/admin**: Astro SSR + Preact Islands — Admin panel, MPA with file-based routing and View Transitions.
+- **apps/web**: Astro SSG + Preact Islands — Public-facing website.
+- **apps/api**: Elysia — Backend server.
+- **packages/ui**: Shared Preact components used by both `apps/admin` and `apps/web`.
 - **packages/biome-config**: Unified linting and formatting.
 - **packages/typescript-config**: Shared TS compiler options.
 
