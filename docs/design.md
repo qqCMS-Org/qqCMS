@@ -20,8 +20,9 @@ Both `apps/admin` and `apps/web` follow **Feature-Sliced Design (FSD)**:
 
 ```
 src/
-├── app/          # Astro layouts, global styles, middleware
+├── layouts/      # Astro layout components (Layout.astro, AdminLayout.astro)
 ├── pages/        # Astro .astro page files (file-based routing)
+├── app/          # Global styles, middleware, app-level config
 ├── widgets/      # Self-contained UI blocks: Sidebar, Header, PageEditorWidget
 ├── features/     # User actions: auth, create-page, upload-media, change-language
 ├── entities/     # Domain objects: page, language, media, navigation-item
@@ -30,6 +31,7 @@ src/
     ├── api/      # Eden Treaty client
     └── config/   # Constants, env
 ```
+
 
 `packages/ui` contains **primitive Preact components** (Button, Input, Badge, etc.) shared across both apps. Complex, domain-aware components live in the respective app's FSD layers.
 
