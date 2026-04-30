@@ -26,11 +26,11 @@
 		"astro": "^6.0.5",
 		"daisyui": "^5.5.19",
 		"preact": "^10.29.1",
-		"tailwindcss": "^4.2.4",
-		"typescript": "^6.0.3"
+		"tailwindcss": "^4.2.4"
 	},
 	"devDependencies": {
 		"@repo/biome-config": "^",
-		"@repo/typescript-config": "*"
+		"@repo/typescript-config": "*",
+		"typescript": "^6.0.3"
 	}
 }

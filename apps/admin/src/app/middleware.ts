@@ -6,7 +6,7 @@ export const onRequest = defineMiddleware((context, next) => {
 	const token = cookies.get("qq_auth");
 	const isLoginPage = url.pathname === "/login";
 
-	if (!token && !isLoginPage) {
+	if (!token?.value && !isLoginPage) {
 		return redirect("/login");
 	}
 

@@ -16,7 +16,7 @@ export function Button({
 	disabled,
 	...props
 }: ButtonProps) {
-	const baseClass = "btn flex items-center justify-center gap-2 transition-colors border-none";
+	const baseClass = "btn flex items-center justify-center gap-2 transition-colors";
 
 	const variants = {
 		primary: "bg-accent text-white hover:bg-accent-hover",

@@ -29,8 +29,17 @@ export function LoginForm() {
 			});
 
 			if (apiError) {
-				// The API returns { error: string, code: string } for errors
-				error.value = (apiError.value as { error?: string })?.error || "Invalid credentials";
+				const errValue = apiError.value;
+				let message = "Invalid credentials";
+				if (
+					typeof errValue === "object" &&
+					errValue !== null &&
+					"error" in errValue &&
+					typeof errValue.error === "string"
+				) {
+					message = errValue.error;
+				}
+				error.value = message;
 			} else if (data?.ok) {
 				window.location.href = "/";
 			}
@@ -55,7 +64,7 @@ export function LoginForm() {
 						label="Email"
 						value={login.value}
 						onInput={(e) => {
-							login.value = (e.target as HTMLInputElement).value;
+							login.value = e.currentTarget.value;
 						}}
 						placeholder="admin@example.com"
 						autoComplete="email"
@@ -67,7 +76,7 @@ export function LoginForm() {
 						label="Password"
 						value={password.value}
 						onInput={(e) => {
-							password.value = (e.target as HTMLInputElement).value;
+							password.value = e.currentTarget.value;
 						}}
 						placeholder="••••••••"
 						autoComplete="current-password"
@@ -78,9 +87,10 @@ export function LoginForm() {
 								onClick={() => {
 									showPass.value = !showPass.value;
 								}}
+								aria-label={showPass.value ? "Hide password" : "Show password"}
 								class="bg-transparent border-none text-text2 cursor-pointer text-xs p-0.5"
 							>
-								{showPass.value ? "○" : "●"}
+								<span aria-hidden="true">{showPass.value ? "○" : "●"}</span>
 							</button>
 						}
 					/>
@@ -96,14 +106,16 @@ export function LoginForm() {
 					</Button>
 				</form>
 
-				<div class="mt-5 p-3 bg-bg3 border border-ui-border rounded-md">
-					<div class="text-[10px] text-text2 mb-1">Demo credentials</div>
-					<div class="text-[10px] text-text1 font-mono leading-[1.7]">
-						admin@example.com
-						<br />
-						admin
+				{import.meta.env.DEV && (
+					<div class="mt-5 p-3 bg-bg3 border border-ui-border rounded-md">
+						<div class="text-[10px] text-text2 mb-1">Demo credentials</div>
+						<div class="text-[10px] text-text1 font-mono leading-[1.7]">
+							admin@example.com
+							<br />
+							admin
+						</div>
 					</div>
-				</div>
+				)}
 			</Card>
 
 			<div class="mt-6 text-[10px] text-text2">qqCMS v0.1.0</div>
