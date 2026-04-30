@@ -20,8 +20,12 @@ Both `apps/admin` and `apps/web` follow **Feature-Sliced Design (FSD)**:
 
 ```
 src/
-├── app/          # Astro layouts, global styles, middleware
+├── layouts/      # Astro layout components + index.ts barrel
+│   ├── Layout.astro
+│   ├── AdminLayout.astro
+│   └── index.ts  # barrel: export { Layout, AdminLayout }
 ├── pages/        # Astro .astro page files (file-based routing)
+├── app/          # Global styles, middleware, app-level config
 ├── widgets/      # Self-contained UI blocks: Sidebar, Header, PageEditorWidget
 ├── features/     # User actions: auth, create-page, upload-media, change-language
 ├── entities/     # Domain objects: page, language, media, navigation-item
@@ -33,7 +37,30 @@ src/
 
 `packages/ui` contains **primitive Preact components** (Button, Input, Badge, etc.) shared across both apps. Complex, domain-aware components live in the respective app's FSD layers.
 
-> **Not implemented** — `apps/admin/src/` currently contains only a placeholder `Welcome.astro`. FSD structure is planned in the admin panel implementation phase.
+## Path Aliases (`apps/admin`)
+
+All cross-layer imports **must** use path aliases — never use `../..` relative paths between layers.
+
+| Alias | Resolves to |
+|---|---|
+| `@layouts` | `src/layouts/index.ts` (barrel) |
+| `@app/*` | `src/app/*` |
+| `@widgets/*` | `src/widgets/*` |
+| `@features/*` | `src/features/*` |
+| `@entities/*` | `src/entities/*` |
+| `@shared/*` | `src/shared/*` |
+
+Each layer that has more than one export should expose a barrel `index.ts`. Example:
+
+```ts
+// src/layouts/index.ts
+export { default as Layout } from './Layout.astro';
+export { default as AdminLayout } from './AdminLayout.astro';
+
+// Usage in a page:
+import { Layout } from '@layouts';
+import { AdminLayout } from '@layouts';
+```
 
 ## UI Library
 
@@ -43,6 +70,17 @@ Both `apps/admin` and `apps/web` share UI components from **`packages/ui`** (`@r
 - Both apps import them via the `@repo/ui` alias: `import { Button } from "@repo/ui/button"`
 - Admin-specific complex components (PageEditor, NavigationEditor) live in `apps/admin/src/` and are not shared
 - Components in `packages/ui` use **DaisyUI** CSS classes for styling — no JS dependency, works natively with Preact
+- **Typing convention:** Primitive components should define props using explicit Preact HTML attributes interfaces (e.g., `ButtonHTMLAttributes<HTMLButtonElement>`, `InputHTMLAttributes<HTMLInputElement>`) instead of intersection types with `JSX.IntrinsicElements`.
+
+Example:
+```tsx
+import type { ButtonHTMLAttributes, ComponentChildren } from "preact";
+
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+	children: ComponentChildren;
+	variant?: "primary" | "default" | "danger";
+}
+```
 
 ## Styling
 
@@ -53,7 +91,7 @@ Both `apps/admin` and `apps/web` share UI components from **`packages/ui`** (`@r
 
 | Screen | Design Status | Implementation |
 |---|---|---|
-| Login | — | Not implemented |
+| Login | ✅ | ✅ Implemented |
 | Pages list | — | Not implemented |
 | Page editor | — | Not implemented |
 | Navigation editor | — | Not implemented |

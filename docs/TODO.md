@@ -28,10 +28,10 @@
 > ⛔ Stop here. Ask user to review layout shell and project structure before continuing.
 
 ### Step 2 — Login page (`/login`)
-- [ ] Create `apps/admin/src/pages/login.astro` — redirect to `/` if already authenticated (check cookie via Astro middleware)
-- [ ] Create `apps/admin/src/features/auth/LoginForm.tsx` — Preact island with email + password fields, Signals for loading/error state
-- [ ] Create `apps/admin/src/app/middleware.ts` — protect all routes except `/login`, redirect to `/login` if no valid JWT cookie
-- [ ] Wire `LoginForm` to `POST /auth/login` via Eden Treaty client
+- [x] Create `apps/admin/src/pages/login.astro` — redirect to `/` if already authenticated (check cookie via Astro middleware)
+- [x] Create `apps/admin/src/features/auth/LoginForm.tsx` — Preact island with email + password fields, Signals for loading/error state
+- [x] Create `apps/admin/src/app/middleware.ts` — protect all routes except `/login`, redirect to `/login` if no valid JWT cookie
+- [x] Wire `LoginForm` to `POST /auth/login` via Eden Treaty client
 
 > ⛔ Stop here. Ask user to test login flow (valid credentials, invalid credentials, redirect after login).
 

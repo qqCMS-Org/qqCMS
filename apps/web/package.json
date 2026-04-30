@@ -12,12 +12,13 @@
 		"preview": "astro preview",
 		"astro": "astro",
 		"lint": "biome check --write",
-		"check-types": "astro check && tsc --noEmit"
+		"typecheck": "astro check && tsc --noEmit"
 	},
 	"dependencies": {
 		"@astrojs/preact": "^5.1.2",
 		"@repo/ui": "*",
-		"astro": "^6.0.8"
+		"astro": "^6.0.8",
+		"preact": "^10.29.1"
 	},
 	"devDependencies": {
 		"@repo/biome-config": "^",
