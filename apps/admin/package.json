@@ -24,6 +24,7 @@
 		"@tailwindcss/vite": "^4.2.4",
 		"astro": "^6.0.5",
 		"daisyui": "^5.5.19",
+		"preact": "^10.29.1",
 		"tailwindcss": "^4.2.4"
 	},
 	"devDependencies": {

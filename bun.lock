@@ -26,6 +26,7 @@
         "@tailwindcss/vite": "^4.2.4",
         "astro": "^6.0.5",
         "daisyui": "^5.5.19",
+        "preact": "^10.29.1",
         "tailwindcss": "^4.2.4",
       },
       "devDependencies": {
@@ -61,6 +62,7 @@
         "@astrojs/preact": "^5.1.2",
         "@repo/ui": "*",
         "astro": "^6.0.8",
+        "preact": "^10.29.1",
       },
       "devDependencies": {
         "@repo/biome-config": "^",
