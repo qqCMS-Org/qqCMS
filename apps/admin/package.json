@@ -12,9 +12,10 @@
 		"preview": "astro preview",
 		"astro": "astro",
 		"lint": "biome check --write",
-		"check-types": "astro check && tsc --noEmit"
+		"typecheck": "astro check && tsc --noEmit"
 	},
 	"dependencies": {
+		"@astrojs/check": "^0.9.9",
 		"@astrojs/node": "^10.0.6",
 		"@astrojs/preact": "^5.1.2",
 		"@elysiajs/eden": "^1.4.9",
@@ -25,7 +26,8 @@
 		"astro": "^6.0.5",
 		"daisyui": "^5.5.19",
 		"preact": "^10.29.1",
-		"tailwindcss": "^4.2.4"
+		"tailwindcss": "^4.2.4",
+		"typescript": "^6.0.3"
 	},
 	"devDependencies": {
 		"@repo/biome-config": "^",

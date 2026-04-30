@@ -43,6 +43,17 @@ Both `apps/admin` and `apps/web` share UI components from **`packages/ui`** (`@r
 - Both apps import them via the `@repo/ui` alias: `import { Button } from "@repo/ui/button"`
 - Admin-specific complex components (PageEditor, NavigationEditor) live in `apps/admin/src/` and are not shared
 - Components in `packages/ui` use **DaisyUI** CSS classes for styling — no JS dependency, works natively with Preact
+- **Typing convention:** Primitive components should define props using explicit Preact HTML attributes interfaces (e.g., `ButtonHTMLAttributes<HTMLButtonElement>`, `InputHTMLAttributes<HTMLInputElement>`) instead of intersection types with `JSX.IntrinsicElements`.
+
+Example:
+```tsx
+import type { ButtonHTMLAttributes, ComponentChildren } from "preact";
+
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+	children: ComponentChildren;
+	variant?: "primary" | "default" | "danger";
+}
+```
 
 ## Styling
 
