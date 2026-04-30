@@ -17,8 +17,14 @@
 	"dependencies": {
 		"@astrojs/node": "^10.0.6",
 		"@astrojs/preact": "^5.1.2",
+		"@elysiajs/eden": "^1.4.9",
+		"@preact/signals": "^2.9.0",
+		"@repo/server": "*",
 		"@repo/ui": "*",
-		"astro": "^6.0.5"
+		"@tailwindcss/vite": "^4.2.4",
+		"astro": "^6.0.5",
+		"daisyui": "^5.5.19",
+		"tailwindcss": "^4.2.4"
 	},
 	"devDependencies": {
 		"@repo/biome-config": "^",

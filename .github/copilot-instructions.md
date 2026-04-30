@@ -21,7 +21,7 @@ A headless CMS designed for quick and flexible content management.
 
 ## Custom conventions
 
-- Design is managed via `qqCMS.pen` and documented in `_designContext/`.
+- Design is implemented as HTML/JSX files in `../qqCMS-design/` (sister directory). Reference `index.html`, `shared.jsx`, `pages.jsx`, `App.jsx` for tokens, components and layout.
 - No auto-commit.
 - Architecture should strictly follow FSD principles in both apps and shared UI components where applicable.
 

@@ -4,7 +4,7 @@
 - [x] Initialize `docs/architecture.md` (high-level structure)
 - [x] Initialize `docs/state.md` (frontend state management strategy)
 - [x] Initialize `docs/api.md` (backend API overview)
-- [x] Set up `docs/design.md` to link with `qqCMS.pen` and `_designContext/`
+- [x] Set up `docs/design.md` to link with `../qqCMS-design/` (HTML/JSX design source)
 - [x] Add `docs/database.md` (schema, tables, dual-DB strategy)
 - [x] Add `docs/auth.md` (JWT flow, credentials, protected routes)
 - [x] Add `docs/env.md` (environment variables reference)
@@ -19,11 +19,11 @@
 > **Agent rule**: complete one step, then **stop and ask the user to review** before proceeding to the next.
 
 ### Step 1 — Foundation
-- [ ] Install DaisyUI and `@preact/signals` in `apps/admin` and `packages/ui`
-- [ ] Create custom DaisyUI theme in `apps/admin/tailwind.config.mjs` from `_designContext/qqcms-design-rules.md` tokens
-- [ ] Create FSD folder structure in `apps/admin/src/` (`app/`, `widgets/`, `features/`, `entities/`, `shared/`)
-- [ ] Create `apps/admin/src/app/layouts/AdminLayout.astro` — shell with sidebar + topbar slots
-- [ ] Create `apps/admin/src/shared/api/client.ts` — Eden Treaty client pointing to API
+- [x] Install DaisyUI and `@preact/signals` in `apps/admin`
+- [x] Create custom DaisyUI theme in `apps/admin/tailwind.config.mjs` from design tokens in `../qqCMS-design/index.html` CSS variables
+- [x] Create FSD folder structure in `apps/admin/src/` (`app/`, `widgets/`, `features/`, `entities/`, `shared/`)
+- [x] Create `apps/admin/src/app/layouts/AdminLayout.astro` — shell with sidebar + topbar slots
+- [x] Create `apps/admin/src/shared/api/client.ts` — Eden Treaty client pointing to API
 
 > ⛔ Stop here. Ask user to review layout shell and project structure before continuing.
 

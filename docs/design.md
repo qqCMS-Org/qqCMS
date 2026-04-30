@@ -1,14 +1,16 @@
 # Design
 
-> **Status: IN PROGRESS** — Design is maintained in `qqCMS.pen` (Pencil tool). Design context is documented in `_designContext/`.
+> **Status: IN PROGRESS** — Design is implemented as HTML/JSX files in the `qqCMS-design/` sister directory.
 
 ## Source of Truth
 
-The visual design is defined in [`qqCMS.pen`](../qqCMS.pen).
+The visual design lives in [`../qqCMS-design/`](../../qqCMS-design/) — plain HTML + React (no build step).
 
-Design references and rules:
-- [`_designContext/qqcms-design-rules.md`](../_designContext/qqcms-design-rules.md) — design system rules, colors, spacing, typography
-- [`_designContext/qqcms-design-progress.md`](../_designContext/qqcms-design-progress.md) — current design progress per screen
+Key files:
+- [`index.html`](../../qqCMS-design/index.html) — CSS variables / design tokens (dark + light theme)
+- [`shared.jsx`](../../qqCMS-design/shared.jsx) — design tokens object `T`, primitive components (Badge, Toggle, Button, Input, Sidebar, Topbar, etc.)
+- [`pages.jsx`](../../qqCMS-design/pages.jsx) — Pages and Collections screens
+- [`App.jsx`](../../qqCMS-design/App.jsx) — Dashboard, Media Library, Settings, API Keys screens
 
 ## Component Structure
 
@@ -43,7 +45,7 @@ Both `apps/admin` and `apps/web` share UI components from **`packages/ui`** (`@r
 ## Styling
 
 - **Tailwind CSS** + **DaisyUI** for all styling
-- Design tokens (colors, spacing) defined in `_designContext/qqcms-design-rules.md` are mapped to a custom DaisyUI theme in `tailwind.config` of each app
+- Design tokens (CSS variables) defined in `../qqCMS-design/index.html` are mapped to a custom CSS theme in each app's global stylesheet
 
 ## Screens to Design / Implement
 
