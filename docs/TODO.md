@@ -20,7 +20,7 @@
 
 ### Step 1 — Foundation
 - [x] Install DaisyUI and `@preact/signals` in `apps/admin`
-- [x] Create custom DaisyUI theme in `apps/admin/tailwind.config.mjs` from design tokens in `../qqCMS-design/index.html` CSS variables
+- [ ] Create custom DaisyUI theme in `apps/admin/tailwind.config.mjs` from design tokens in `prototype/index.html` CSS variables
 - [x] Create FSD folder structure in `apps/admin/src/` (`app/`, `widgets/`, `features/`, `entities/`, `shared/`)
 - [x] Create `apps/admin/src/app/layouts/AdminLayout.astro` — shell with sidebar + topbar slots
 - [x] Create `apps/admin/src/shared/api/client.ts` — Eden Treaty client pointing to API

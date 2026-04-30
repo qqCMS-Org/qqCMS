@@ -1,16 +1,18 @@
 # Design
 
-> **Status: IN PROGRESS** — Design is implemented as HTML/JSX files in the `qqCMS-design/` sister directory.
+> **Status: IN PROGRESS** — Design is implemented as HTML/JSX files in `prototype/` inside this repo.
 
 ## Source of Truth
 
-The visual design lives in [`../qqCMS-design/`](../../qqCMS-design/) — plain HTML + React (no build step).
+The visual design lives in [`prototype/`](../prototype/) — plain HTML + React (no build step, Babel transpiles JSX in the browser).
 
-Key files:
-- [`index.html`](../../qqCMS-design/index.html) — CSS variables / design tokens (dark + light theme)
-- [`shared.jsx`](../../qqCMS-design/shared.jsx) — design tokens object `T`, primitive components (Badge, Toggle, Button, Input, Sidebar, Topbar, etc.)
-- [`pages.jsx`](../../qqCMS-design/pages.jsx) — Pages and Collections screens
-- [`App.jsx`](../../qqCMS-design/App.jsx) — Dashboard, Media Library, Settings, API Keys screens
+Key files to read when implementing UI:
+- [`prototype/index.html`](../prototype/index.html) — CSS variables / design tokens (dark + light theme), fonts, scrollbar styles
+- [`prototype/shared.jsx`](../prototype/shared.jsx) — tokens object `T`, primitive components (Badge, Toggle, Sidebar, Topbar, icons, etc.)
+- [`prototype/pages.jsx`](../prototype/pages.jsx) — Pages and Collections screens
+- [`prototype/App.jsx`](../prototype/App.jsx) — Dashboard, Media Library, Settings, API Keys screens
+
+> Screenshots and crops in `prototype/screenshots/` and `prototype/crops/` are for human reference only — read the JSX/HTML files instead.
 
 ## Component Structure
 
@@ -45,7 +47,7 @@ Both `apps/admin` and `apps/web` share UI components from **`packages/ui`** (`@r
 ## Styling
 
 - **Tailwind CSS** + **DaisyUI** for all styling
-- Design tokens (CSS variables) defined in `../qqCMS-design/index.html` are mapped to a custom CSS theme in each app's global stylesheet
+- Design tokens (CSS variables) defined in `prototype/index.html` are used as-is in each app's global stylesheet
 
 ## Screens to Design / Implement
 
