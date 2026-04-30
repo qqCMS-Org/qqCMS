@@ -19,6 +19,7 @@ export default defineConfig({
 		resolve: {
 			alias: {
 				'@app': src('app'),
+				'@layouts': src('layouts/index.ts'),
 				'@widgets': src('widgets'),
 				'@features': src('features'),
 				'@entities': src('entities'),

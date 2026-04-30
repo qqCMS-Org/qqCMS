@@ -20,7 +20,10 @@ Both `apps/admin` and `apps/web` follow **Feature-Sliced Design (FSD)**:
 
 ```
 src/
-├── layouts/      # Astro layout components (Layout.astro, AdminLayout.astro)
+├── layouts/      # Astro layout components + index.ts barrel
+│   ├── Layout.astro
+│   ├── AdminLayout.astro
+│   └── index.ts  # barrel: export { Layout, AdminLayout }
 ├── pages/        # Astro .astro page files (file-based routing)
 ├── app/          # Global styles, middleware, app-level config
 ├── widgets/      # Self-contained UI blocks: Sidebar, Header, PageEditorWidget
@@ -32,10 +35,32 @@ src/
     └── config/   # Constants, env
 ```
 
-
 `packages/ui` contains **primitive Preact components** (Button, Input, Badge, etc.) shared across both apps. Complex, domain-aware components live in the respective app's FSD layers.
 
-> **Not implemented** — `apps/admin/src/` currently contains only a placeholder `Welcome.astro`. FSD structure is planned in the admin panel implementation phase.
+## Path Aliases (`apps/admin`)
+
+All cross-layer imports **must** use path aliases — never use `../..` relative paths between layers.
+
+| Alias | Resolves to |
+|---|---|
+| `@layouts` | `src/layouts/index.ts` (barrel) |
+| `@app/*` | `src/app/*` |
+| `@widgets/*` | `src/widgets/*` |
+| `@features/*` | `src/features/*` |
+| `@entities/*` | `src/entities/*` |
+| `@shared/*` | `src/shared/*` |
+
+Each layer that has more than one export should expose a barrel `index.ts`. Example:
+
+```ts
+// src/layouts/index.ts
+export { default as Layout } from './Layout.astro';
+export { default as AdminLayout } from './AdminLayout.astro';
+
+// Usage in a page:
+import { Layout } from '@layouts';
+import { AdminLayout } from '@layouts';
+```
 
 ## UI Library
 
@@ -66,7 +91,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 | Screen | Design Status | Implementation |
 |---|---|---|
-| Login | — | Not implemented |
+| Login | ✅ | ✅ Implemented |
 | Pages list | — | Not implemented |
 | Page editor | — | Not implemented |
 | Navigation editor | — | Not implemented |
