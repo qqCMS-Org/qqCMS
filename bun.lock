@@ -43,6 +43,7 @@
       "dependencies": {
         "@electric-sql/pglite": "^0.4.4",
         "@elysiajs/cors": "latest",
+        "@elysiajs/eden": "^1.4.9",
         "@elysiajs/jwt": "latest",
         "@elysiajs/static": "latest",
         "bcryptjs": "^3.0.3",

@@ -10,13 +10,14 @@
 			"@entities/*": ["./src/entities/*"],
 			"@shared/*": ["./src/shared/*", "../../apps/api/src/shared/*"],
 			"@repo/server": ["../../apps/api/src/index.ts"],
+			"@repo/server/client": ["../../apps/api/src/client.ts"],
 			"@core/*": ["../../apps/api/src/core/*"],
 			"@modules/*": ["../../apps/api/src/modules/*"],
 			"@repository/*": ["../../apps/api/src/db/repository/*"],
 			"@schema/*": ["../../apps/api/src/db/schema/*"],
 			"@db/*": ["../../apps/api/src/db/*"],
-			"elysia": ["../../node_modules/.bun/elysia@1.4.28+ef7d789712816592/node_modules/elysia"],
-			"elysia/*": ["../../node_modules/.bun/elysia@1.4.28+ef7d789712816592/node_modules/elysia/*"]
+			"elysia": ["../../apps/api/node_modules/elysia"],
+			"elysia/*": ["../../apps/api/node_modules/elysia/*"]
 		}
 	},
 	"include": [".astro/types.d.ts", "**/*"],
