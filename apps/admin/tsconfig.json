@@ -8,8 +8,15 @@
 			"@widgets/*": ["./src/widgets/*"],
 			"@features/*": ["./src/features/*"],
 			"@entities/*": ["./src/entities/*"],
-			"@shared/*": ["./src/shared/*"],
-			"@repo/server": ["../../apps/api/src/index.ts"]
+			"@shared/*": ["./src/shared/*", "../../apps/api/src/shared/*"],
+			"@repo/server": ["../../apps/api/src/index.ts"],
+			"@core/*": ["../../apps/api/src/core/*"],
+			"@modules/*": ["../../apps/api/src/modules/*"],
+			"@repository/*": ["../../apps/api/src/db/repository/*"],
+			"@schema/*": ["../../apps/api/src/db/schema/*"],
+			"@db/*": ["../../apps/api/src/db/*"],
+			"elysia": ["../../node_modules/.bun/elysia@1.4.28+ef7d789712816592/node_modules/elysia"],
+			"elysia/*": ["../../node_modules/.bun/elysia@1.4.28+ef7d789712816592/node_modules/elysia/*"]
 		}
 	},
 	"include": [".astro/types.d.ts", "**/*"],

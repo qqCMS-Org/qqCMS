@@ -16,12 +16,14 @@ export function Button({
 	disabled,
 	...props
 }: ButtonProps) {
-	const baseClass = "btn flex items-center justify-center gap-2 transition-colors";
+	const baseClass =
+		"btn flex items-center justify-center gap-2 transition-colors";
 
 	const variants = {
-		primary: "bg-accent text-white hover:bg-accent-hover",
-		default: "bg-bg3 text-text0 border border-ui-border hover:border-ui-border-hover",
-		danger: "bg-coral text-white hover:bg-coral/90",
+		primary: "bg-accent text-white border-none hover:bg-accent-hover",
+		default:
+			"bg-bg3 text-text0 border border-ui-border hover:border-ui-border-hover",
+		danger: "bg-coral text-white border-none hover:bg-coral/90",
 	};
 
 	const sizes = {

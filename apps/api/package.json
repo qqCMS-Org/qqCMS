@@ -21,7 +21,7 @@
 		"@elysiajs/static": "latest",
 		"bcryptjs": "^3.0.3",
 		"drizzle-orm": "latest",
-		"elysia": "latest",
+		"elysia": "1.4.28",
 		"postgres": "^3.4.9"
 	},
 	"devDependencies": {

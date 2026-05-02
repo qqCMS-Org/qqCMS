@@ -1,4 +1,3 @@
-// @ts-check
 import node from '@astrojs/node';
 import preact from '@astrojs/preact';
 import tailwindcss from '@tailwindcss/vite';
