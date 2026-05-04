@@ -68,7 +68,7 @@ import { AdminLayout } from "@layouts";
 Both `apps/admin` and `apps/web` share UI components from **`packages/ui`** (`@repo/ui`). Components in `packages/ui` are **Preact** components (Astro uses Preact for all interactive islands in both apps).
 
 - Primitive components (Button, Input, Badge, etc.) live in `packages/ui/src/`
-- Both apps import them via the `@repo/ui` alias: `import { Button } from "@repo/ui/button"`
+- Both apps import them via the `@repo/ui` alias using the real, case-sensitive component path: `import { Button } from "@repo/ui/Button"`
 - Admin-specific complex components (PageEditor, NavigationEditor) live in `apps/admin/src/` and are not shared
 - Components in `packages/ui` use **DaisyUI** CSS classes for styling — no JS dependency, works natively with Preact
 - **Typing convention:** Primitive components should define props using explicit Preact HTML attributes interfaces (e.g., `ButtonHTMLAttributes<HTMLButtonElement>`, `InputHTMLAttributes<HTMLInputElement>`) instead of intersection types with `JSX.IntrinsicElements`.
