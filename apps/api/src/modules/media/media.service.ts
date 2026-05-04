@@ -1,15 +1,15 @@
 import { mkdir, unlink } from "node:fs/promises";
 import { join } from "node:path";
+import { config } from "@api/config";
+import type { AllowedMimeType } from "@api/constants";
+import { ALLOWED_MIME_TYPES, MAX_UPLOAD_SIZE } from "@api/constants";
+import { NotFoundError } from "@api/errors";
 import {
 	deleteMedia as deleteMediaInDb,
 	getMediaFile as getMediaFileById,
 	getMediaFiles,
 	insertMedia,
 } from "@repository/media";
-import { config } from "@shared/config";
-import type { AllowedMimeType } from "@shared/constants";
-import { ALLOWED_MIME_TYPES, MAX_UPLOAD_SIZE } from "@shared/constants";
-import { NotFoundError } from "@shared/errors";
 
 export const ensureUploadDir = async () => {
 	await mkdir(config.uploadDir, { recursive: true });

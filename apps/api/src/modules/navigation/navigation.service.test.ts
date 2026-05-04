@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, mock } from "bun:test";
+import { NotFoundError } from "@api/errors";
 import type { NavigationItem } from "@schema/navigation-items";
-import { NotFoundError } from "@shared/errors";
 
 const mockGetNavigationItems = mock((): Promise<NavigationItem[]> => Promise.resolve([]));
 const mockGetNavigationItem = mock((): Promise<NavigationItem | undefined> => Promise.resolve(undefined));

@@ -1,5 +1,5 @@
+import { config } from "@api/config";
 import { PGlite } from "@electric-sql/pglite";
-import { config } from "@shared/config";
 import { drizzle as drizzlePglite } from "drizzle-orm/pglite";
 import { drizzle as drizzlePostgres } from "drizzle-orm/postgres-js";
 import postgres from "postgres";

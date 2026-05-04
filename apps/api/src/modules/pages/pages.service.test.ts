@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, mock } from "bun:test";
+import { NotFoundError } from "@api/errors";
 import type { PageTranslation } from "@schema/page-translations";
 import type { Page } from "@schema/pages";
-import { NotFoundError } from "@shared/errors";
 
 const mockGetPages = mock((): Promise<Page[]> => Promise.resolve([]));
 const mockGetPage = mock((): Promise<Page | undefined> => Promise.resolve(undefined));

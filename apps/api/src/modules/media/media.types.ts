@@ -1,4 +1,4 @@
-import { ALLOWED_MIME_TYPES } from "@shared/constants";
+import { ALLOWED_MIME_TYPES } from "@api/constants";
 import { type Static, t } from "elysia";
 
 export const AllowedMimeSchema = t.Union(

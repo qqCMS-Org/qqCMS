@@ -1,3 +1,4 @@
+import { NotFoundError } from "@api/errors";
 import { triggerRebuild } from "@modules/rebuild";
 import { getTranslationsByPage, upsertTranslation as upsertTranslationInDb } from "@repository/page-translations";
 import {
@@ -8,7 +9,6 @@ import {
 	insertPage,
 	updatePage as updatePageInDb,
 } from "@repository/pages";
-import { NotFoundError } from "@shared/errors";
 import type { CreatePageInput, UpdatePageInput, UpsertTranslationInput } from "./pages.types";
 
 export const listPages = () => getPages();

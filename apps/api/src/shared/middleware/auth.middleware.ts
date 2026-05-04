@@ -1,6 +1,6 @@
+import { config } from "@api/config";
+import { AUTH_COOKIE_NAME } from "@api/constants";
 import { jwt } from "@elysiajs/jwt";
-import { config } from "@shared/config";
-import { AUTH_COOKIE_NAME } from "@shared/constants";
 import { Elysia } from "elysia";
 
 export const jwtPlugin = new Elysia({ name: "jwt-plugin" }).use(

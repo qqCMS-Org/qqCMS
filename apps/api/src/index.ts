@@ -1,3 +1,7 @@
+import { config } from "@api/config";
+import { ConflictError, NotFoundError, UnauthorizedError } from "@api/errors";
+import { corsMiddleware } from "@api/middleware/cors.middleware";
+import { rateLimitMiddleware } from "@api/middleware/rateLimit.middleware";
 import { Logger } from "@core/Logger";
 import staticPlugin from "@elysiajs/static";
 import { authModule } from "@modules/auth";
@@ -7,10 +11,6 @@ import { ensureUploadDir } from "@modules/media/media.service";
 import { navigationModule } from "@modules/navigation";
 import { pagesModule } from "@modules/pages";
 import { settingsModule } from "@modules/settings";
-import { config } from "@shared/config";
-import { ConflictError, NotFoundError, UnauthorizedError } from "@shared/errors";
-import { corsMiddleware } from "@shared/middleware/cors.middleware";
-import { rateLimitMiddleware } from "@shared/middleware/rateLimit.middleware";
 import { Elysia } from "elysia";
 
 await ensureUploadDir();
