@@ -9,6 +9,7 @@
 			"@features/*": ["./src/features/*"],
 			"@entities/*": ["./src/entities/*"],
 			"@shared/*": ["./src/shared/*", "../../apps/api/src/shared/*"],
+			"@api-shared/*": ["../../apps/api/src/shared/*"],
 			"@repo/server": ["../../apps/api/src/index.ts"],
 			"@repo/server/client": ["../../apps/api/src/client.ts"],
 			"@core/*": ["../../apps/api/src/core/*"],

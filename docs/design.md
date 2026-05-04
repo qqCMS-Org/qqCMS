@@ -49,17 +49,18 @@ All cross-layer imports **must** use path aliases — never use `../..` relative
 | `@features/*` | `src/features/*` |
 | `@entities/*` | `src/entities/*` |
 | `@shared/*` | `src/shared/*` |
+| `@api-shared/*` | `apps/api/src/shared/*` (server-side shared — use only for API type imports) |
 
 Each layer that has more than one export should expose a barrel `index.ts`. Example:
 
 ```ts
 // src/layouts/index.ts
-export { default as Layout } from './Layout.astro';
-export { default as AdminLayout } from './AdminLayout.astro';
+export { default as Layout } from "./Layout.astro";
+export { default as AdminLayout } from "./AdminLayout.astro";
 
 // Usage in a page:
-import { Layout } from '@layouts';
-import { AdminLayout } from '@layouts';
+import { Layout } from "@layouts";
+import { AdminLayout } from "@layouts";
 ```
 
 ## UI Library
