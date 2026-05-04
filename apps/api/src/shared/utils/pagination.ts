@@ -1,15 +1,9 @@
+import type { PaginatedResult, PaginationParams } from "@repo/types";
+
+export type { PaginatedResult, PaginationParams };
+
 const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 100;
-
-export interface PaginationParams {
-	cursor?: string;
-	limit?: number;
-}
-
-export interface PaginatedResult<TItem> {
-	items: TItem[];
-	nextCursor: string | null;
-}
 
 export function parsePaginationParams(params: PaginationParams): { cursor: string | null; limit: number } {
 	const limit = Math.min(Math.max(1, params.limit ?? DEFAULT_PAGE_SIZE), MAX_PAGE_SIZE);
