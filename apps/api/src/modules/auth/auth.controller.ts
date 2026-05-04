@@ -6,6 +6,7 @@ import { LoginSchema } from "./auth.types";
 
 export const authController = new Elysia({ prefix: "/auth" })
 	.use(authPlugin)
+	.get("/me", () => ({ ok: true }), { requireAuth: true })
 	.post(
 		"/login",
 		async ({ body, jwt, cookie, set }) => {

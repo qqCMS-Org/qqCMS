@@ -1,11 +1,6 @@
 ---
 import { Layout } from '@layouts';
 import { LoginForm } from '@features/auth/LoginForm';
-
-// Redirect to dashboard if already authenticated
-if (Astro.cookies.get("qq_auth")?.value) {
-  return Astro.redirect("/");
-}
 ---
 
 <Layout title="Login">
