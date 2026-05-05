@@ -1,66 +1,4 @@
-import type { JSX } from "preact";
-import { useEffect, useState } from "preact/hooks";
-
-const useIsMobile = (): boolean => {
-	const [isMobile, setIsMobile] = useState(() => (typeof window !== "undefined" ? window.innerWidth <= 640 : false));
-	useEffect(() => {
-		const handleResize = (): void => setIsMobile(window.innerWidth <= 640);
-		window.addEventListener("resize", handleResize);
-		return () => window.removeEventListener("resize", handleResize);
-	}, []);
-	return isMobile;
-};
-
-// ── Icons ─────────────────────────────────────────────
-
-const IcoPage = (): JSX.Element => (
-	<svg
-		width={16}
-		height={16}
-		viewBox="0 0 16 16"
-		fill="none"
-		stroke="currentColor"
-		strokeWidth="1.2"
-		aria-hidden="true"
-	>
-		<path d="M3 1h7l3 3v11H3V1z" />
-		<path d="M10 1v3h3" />
-		<line x1="5" y1="7" x2="11" y2="7" />
-		<line x1="5" y1="10" x2="9" y2="10" />
-	</svg>
-);
-
-const IcoLanguage = (): JSX.Element => (
-	<svg
-		width={16}
-		height={16}
-		viewBox="0 0 16 16"
-		fill="none"
-		stroke="currentColor"
-		strokeWidth="1.2"
-		aria-hidden="true"
-	>
-		<circle cx="8" cy="8" r="6" />
-		<path d="M2 8h12" />
-		<path d="M8 2c-2 2-3 4-3 6s1 4 3 6M8 2c2 2 3 4 3 6s-1 4-3 6" />
-	</svg>
-);
-
-const IcoMedia = (): JSX.Element => (
-	<svg
-		width={16}
-		height={16}
-		viewBox="0 0 16 16"
-		fill="none"
-		stroke="currentColor"
-		strokeWidth="1.2"
-		aria-hidden="true"
-	>
-		<rect x="1" y="2" width="14" height="12" rx="1" />
-		<path d="M1 10l4-4 3 3 2-2 5 5" />
-		<circle cx="11" cy="5" r="1.5" fill="currentColor" stroke="none" />
-	</svg>
-);
+import { FileText, Globe, Image, type LucideIcon } from "lucide-preact";
 
 // ── Types ─────────────────────────────────────────────
 
@@ -69,7 +7,7 @@ interface StatCardProps {
 	value: number;
 	href: string;
 	color: string;
-	Icon: () => JSX.Element;
+	Icon: LucideIcon;
 }
 
 export interface StatsBarProps {
@@ -78,60 +16,39 @@ export interface StatsBarProps {
 	mediaCount: number;
 }
 
+// ── Config ────────────────────────────────────────────
+
+type StatCardConfig = Omit<StatCardProps, "value">;
+
+const STAT_CARDS: StatCardConfig[] = [
+	{ label: "Total Pages", href: "/pages", color: "var(--accent)", Icon: FileText },
+	{ label: "Languages", href: "/languages", color: "var(--green)", Icon: Globe },
+	{ label: "Media Items", href: "/media", color: "var(--amber)", Icon: Image },
+];
+
 // ── StatCard ──────────────────────────────────────────
 
-const StatCard = ({ label, value, href, color, Icon }: StatCardProps): JSX.Element => (
-	<a
-		href={href}
-		style={{
-			background: "var(--bg2)",
-			border: "1px solid var(--border)",
-			borderRadius: 8,
-			padding: "20px 18px",
-			textDecoration: "none",
-			display: "block",
-			cursor: "pointer",
-		}}
-	>
-		<div style={{ color, marginBottom: 8, opacity: 0.7 }}>
-			<Icon />
+const StatCard = ({ label, value, href, color, Icon }: StatCardProps) => (
+	<a href={href} class="block bg-bg2 border border-ui-border rounded-lg p-[20px_18px] no-underline cursor-pointer">
+		<div class="mb-2 opacity-70" style={{ color }}>
+			<Icon size={16} />
 		</div>
-		<div
-			style={{
-				fontFamily: "Instrument Serif, serif",
-				fontStyle: "italic",
-				fontSize: 34,
-				color,
-				lineHeight: 1,
-				marginBottom: 4,
-			}}
-		>
+		<div class="font-serif italic text-[34px] leading-none mb-1" style={{ color }}>
 			{value}
 		</div>
-		<div style={{ fontSize: 11, color: "var(--text1)", lineHeight: 1.3 }}>{label}</div>
+		<div class="text-[11px] text-text1 leading-snug">{label}</div>
 	</a>
 );
 
 // ── StatsBar ──────────────────────────────────────────
 
-export const StatsBar = ({ pagesCount, languagesCount, mediaCount }: StatsBarProps): JSX.Element => {
-	const isMobile = useIsMobile();
-	const cards: StatCardProps[] = [
-		{ label: "Total Pages", value: pagesCount, href: "/pages", color: "var(--accent)", Icon: IcoPage },
-		{ label: "Languages", value: languagesCount, href: "/languages", color: "var(--green)", Icon: IcoLanguage },
-		{ label: "Media Items", value: mediaCount, href: "/media", color: "var(--amber)", Icon: IcoMedia },
-	];
+export const StatsBar = ({ pagesCount, languagesCount, mediaCount }: StatsBarProps) => {
+	const counts = [pagesCount, languagesCount, mediaCount];
 
 	return (
-		<div
-			style={{
-				display: "grid",
-				gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)",
-				gap: isMobile ? 8 : 12,
-			}}
-		>
-			{cards.map((card) => (
-				<StatCard key={card.label} {...card} />
+		<div class="grid grid-cols-3 gap-3 max-sm:grid-cols-1 max-sm:gap-2">
+			{STAT_CARDS.map((config, index) => (
+				<StatCard key={config.label} {...config} value={counts[index]} />
 			))}
 		</div>
 	);

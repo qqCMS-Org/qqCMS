@@ -1,5 +1,5 @@
+import type { ComponentChildren, InputHTMLAttributes } from "preact";
 import { useId } from "preact/hooks";
-import type { InputHTMLAttributes, ComponentChildren } from "preact";
 
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 	label?: string;
@@ -7,7 +7,14 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 	rightElement?: ComponentChildren;
 }
 
-export function Input({ label, error, rightElement, class: className = "", id, ...props }: InputProps) {
+export function Input({
+	label,
+	error,
+	rightElement,
+	class: className = "",
+	id,
+	...props
+}: InputProps) {
 	const generatedId = useId();
 	const inputId = id ?? generatedId;
 
@@ -25,7 +32,7 @@ export function Input({ label, error, rightElement, class: className = "", id, .
 			<div class="relative flex items-center w-full">
 				<input
 					id={inputId}
-					class={`input w-full min-h-0 h-[34px] px-[11px] py-2 text-xs bg-bg1 text-text0 border outline-none transition-colors rounded-[5px] ${borderClass} ${rightElement ? "pr-9" : ""} ${className}`}
+					class={`input w-full min-h-0 h-8.5 px-2.75 py-2 text-xs bg-bg1 text-text0 border outline-none transition-colors rounded-[5px] ${borderClass} ${rightElement ? "pr-9" : ""} ${className}`}
 					{...props}
 				/>
 				{rightElement && (

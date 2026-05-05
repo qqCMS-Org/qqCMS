@@ -1,11 +1,12 @@
 ---
 import { AdminLayout } from '@layouts';
-import { StatsBar } from '@widgets/dashboard/StatsBar';
-import { LogoutButton } from '@features/auth/LogoutButton';
+import { StatsBar } from '@widgets/dashboard';
+import { LogoutButton } from '@features/auth';
+import { COOKIE_NAME, DEFAULT_API_URL } from '@shared/constants';
 
-const API_URL = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:3000';
-const token = Astro.cookies.get('qq_auth')?.value;
-const authHeaders: Record<string, string> = token ? { Cookie: `qq_auth=${token}` } : {};
+const API_URL = import.meta.env.PUBLIC_API_URL ?? DEFAULT_API_URL;
+const token = Astro.cookies.get(COOKIE_NAME)?.value;
+const authHeaders: Record<string, string> = token ? { Cookie: `${COOKIE_NAME}=${token}` } : {};
 
 const fetchCount = async (path: string): Promise<number> => {
   const response = await fetch(`${API_URL}${path}`, { headers: authHeaders }).catch(() => null);
