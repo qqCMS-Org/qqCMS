@@ -1,4 +1,15 @@
 import type { JSX } from "preact";
+import { useEffect, useState } from "preact/hooks";
+
+const useIsMobile = (): boolean => {
+	const [isMobile, setIsMobile] = useState(() => (typeof window !== "undefined" ? window.innerWidth <= 640 : false));
+	useEffect(() => {
+		const handleResize = (): void => setIsMobile(window.innerWidth <= 640);
+		window.addEventListener("resize", handleResize);
+		return () => window.removeEventListener("resize", handleResize);
+	}, []);
+	return isMobile;
+};
 
 // ── Icons ─────────────────────────────────────────────
 
@@ -104,6 +115,7 @@ const StatCard = ({ label, value, href, color, Icon }: StatCardProps): JSX.Eleme
 // ── StatsBar ──────────────────────────────────────────
 
 export const StatsBar = ({ pagesCount, languagesCount, mediaCount }: StatsBarProps): JSX.Element => {
+	const isMobile = useIsMobile();
 	const cards: StatCardProps[] = [
 		{ label: "Total Pages", value: pagesCount, href: "/pages", color: "var(--accent)", Icon: IcoPage },
 		{ label: "Languages", value: languagesCount, href: "/languages", color: "var(--green)", Icon: IcoLanguage },
@@ -111,7 +123,13 @@ export const StatsBar = ({ pagesCount, languagesCount, mediaCount }: StatsBarPro
 	];
 
 	return (
-		<div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
+		<div
+			style={{
+				display: "grid",
+				gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)",
+				gap: isMobile ? 8 : 12,
+			}}
+		>
 			{cards.map((card) => (
 				<StatCard key={card.label} {...card} />
 			))}

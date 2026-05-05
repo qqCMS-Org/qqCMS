@@ -1,5 +1,15 @@
 import type { JSX } from "preact";
-import { useState } from "preact/hooks";
+import { useEffect, useState } from "preact/hooks";
+
+const useIsMobile = (): boolean => {
+	const [isMobile, setIsMobile] = useState(() => (typeof window !== "undefined" ? window.innerWidth <= 640 : false));
+	useEffect(() => {
+		const handleResize = (): void => setIsMobile(window.innerWidth <= 640);
+		window.addEventListener("resize", handleResize);
+		return () => window.removeEventListener("resize", handleResize);
+	}, []);
+	return isMobile;
+};
 
 // ── Icons ─────────────────────────────────────────────
 
@@ -134,6 +144,7 @@ interface SidebarNavProps {
 
 export const SidebarNav = ({ activePage, apiUrl }: SidebarNavProps): JSX.Element => {
 	const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+	const isMobile = useIsMobile();
 
 	const handleLogout = async (): Promise<void> => {
 		await fetch(`${apiUrl}/auth/logout`, {
@@ -143,6 +154,74 @@ export const SidebarNav = ({ activePage, apiUrl }: SidebarNavProps): JSX.Element
 		window.location.href = "/login";
 	};
 
+	// ── Mobile: bottom tab bar ────────────────────────
+	if (isMobile) {
+		const ALL_ITEMS = [...NAV_ITEMS, { id: "settings" as const, label: "Settings", href: "/settings", Icon: IcoGear }];
+		return (
+			<nav
+				style={{
+					position: "fixed",
+					bottom: 0,
+					left: 0,
+					right: 0,
+					height: 56,
+					background: "var(--bg0)",
+					borderTop: "1px solid var(--border)",
+					display: "flex",
+					zIndex: 200,
+				}}
+			>
+				{ALL_ITEMS.map(({ id, label, href, Icon }) => {
+					const isActive = activePage === id;
+					return (
+						<a
+							key={id}
+							href={href}
+							style={{
+								flex: 1,
+								display: "flex",
+								flexDirection: "column",
+								alignItems: "center",
+								justifyContent: "center",
+								gap: 3,
+								color: isActive ? "var(--accent)" : "var(--text2)",
+								textDecoration: "none",
+								fontSize: 9,
+								borderTop: `2px solid ${isActive ? "var(--accent)" : "transparent"}`,
+								transition: "color 0.13s",
+							}}
+						>
+							<Icon />
+							<span style={{ lineHeight: 1 }}>{label.split(" ")[0]}</span>
+						</a>
+					);
+				})}
+				<button
+					type="button"
+					onClick={handleLogout}
+					style={{
+						flex: 1,
+						display: "flex",
+						flexDirection: "column",
+						alignItems: "center",
+						justifyContent: "center",
+						gap: 3,
+						background: "none",
+						border: "none",
+						borderTop: "2px solid transparent",
+						color: "var(--text2)",
+						cursor: "pointer",
+						fontSize: 9,
+					}}
+				>
+					<IcoLogout />
+					<span style={{ lineHeight: 1 }}>Exit</span>
+				</button>
+			</nav>
+		);
+	}
+
+	// ── Desktop: left sidebar ─────────────────────────
 	return (
 		<aside
 			style={{
