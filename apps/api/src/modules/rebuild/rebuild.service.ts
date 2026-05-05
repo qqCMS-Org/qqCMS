@@ -1,5 +1,5 @@
+import { config } from "@api/config";
 import { Logger } from "@core/Logger";
-import { config } from "@shared/config";
 
 const REBUILD_SECRET_HEADER = "x-revalidate-secret";
 

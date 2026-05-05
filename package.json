@@ -24,5 +24,8 @@
 	"workspaces": [
 		"apps/*",
 		"packages/*"
-	]
+	],
+	"overrides": {
+		"elysia": "1.4.28"
+	}
 }

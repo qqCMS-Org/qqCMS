@@ -1,4 +1,4 @@
-import { config } from "@shared/config";
+import { config } from "@api/config";
 import { compare } from "bcryptjs";
 
 export const login = async (loginInput: string, password: string) => {

@@ -1,4 +1,3 @@
-// @ts-check
 import node from '@astrojs/node';
 import preact from '@astrojs/preact';
 import tailwindcss from '@tailwindcss/vite';
@@ -19,6 +18,7 @@ export default defineConfig({
 		resolve: {
 			alias: {
 				'@app': src('app'),
+				'@layouts': src('layouts/index.ts'),
 				'@widgets': src('widgets'),
 				'@features': src('features'),
 				'@entities': src('entities'),

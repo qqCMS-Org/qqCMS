@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, mock } from "bun:test";
+import { ConflictError, NotFoundError } from "@api/errors";
 import type { Language } from "@schema/languages";
-import { ConflictError, NotFoundError } from "@shared/errors";
 
 const mockGetLanguages = mock((): Promise<Language[]> => Promise.resolve([]));
 const mockGetLanguage = mock((): Promise<Language | undefined> => Promise.resolve(undefined));

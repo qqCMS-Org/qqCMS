@@ -1,3 +1,4 @@
+import { ConflictError, NotFoundError } from "@api/errors";
 import { triggerRebuild } from "@modules/rebuild";
 import {
 	deleteLanguage as deleteLanguageInDb,
@@ -7,7 +8,6 @@ import {
 	insertLanguage,
 	updateLanguage as updateLanguageInDb,
 } from "@repository/languages";
-import { ConflictError, NotFoundError } from "@shared/errors";
 import type { CreateLanguageInput, UpdateLanguageInput } from "./languages.types";
 
 export const listLanguages = () => getLanguages();

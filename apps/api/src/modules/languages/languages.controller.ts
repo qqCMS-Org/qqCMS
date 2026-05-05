@@ -1,4 +1,4 @@
-import { authPlugin } from "@shared/middleware/auth.middleware";
+import { authPlugin } from "@api/middleware/auth.middleware";
 import { Elysia } from "elysia";
 import { createLanguage, deleteLanguage, listLanguages, updateLanguage } from "./languages.service";
 import { CreateLanguageSchema, UpdateLanguageSchema } from "./languages.types";

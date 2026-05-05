@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, mock } from "bun:test";
+import { MAX_UPLOAD_SIZE } from "@api/constants";
+import { NotFoundError } from "@api/errors";
 import type { Media } from "@schema/media";
-import { MAX_UPLOAD_SIZE } from "@shared/constants";
-import { NotFoundError } from "@shared/errors";
 
 const mockGetMediaFiles = mock((): Promise<Media[]> => Promise.resolve([]));
 const mockGetMediaFile = mock((): Promise<Media | undefined> => Promise.resolve(undefined));

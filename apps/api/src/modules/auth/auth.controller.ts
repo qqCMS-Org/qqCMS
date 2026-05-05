@@ -1,11 +1,12 @@
-import { AUTH_COOKIE_NAME, JWT_EXPIRES_IN } from "@shared/constants";
-import { authPlugin } from "@shared/middleware/auth.middleware";
+import { AUTH_COOKIE_NAME, JWT_EXPIRES_IN } from "@api/constants";
+import { authPlugin } from "@api/middleware/auth.middleware";
 import { Elysia } from "elysia";
 import { login as loginService } from "./auth.service";
 import { LoginSchema } from "./auth.types";
 
 export const authController = new Elysia({ prefix: "/auth" })
 	.use(authPlugin)
+	.get("/me", () => ({ ok: true }), { requireAuth: true })
 	.post(
 		"/login",
 		async ({ body, jwt, cookie, set }) => {
