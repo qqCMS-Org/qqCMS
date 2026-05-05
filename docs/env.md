@@ -8,7 +8,7 @@ These must be set before the API server starts. The server validates their prese
 
 | Variable | Description | Example |
 |---|---|---|
-| `ADMIN_LOGIN` | Administrator login | `admin` |
+| `ADMIN_LOGIN` | Administrator login | `admin@example.com` |
 | `ADMIN_PASSWORD_HASH` | bcrypt hash of admin password | `$2b$10$...` |
 | `JWT_SECRET` | Secret for signing JWT tokens (min 32 chars) | `supersecretkey...` |
 | `CORS_ORIGINS` | Comma-separated list of allowed origins | `http://localhost:4321,https://mysite.com` |
@@ -46,18 +46,28 @@ bun -e "import bcrypt from 'bcryptjs'; console.log(await bcrypt.hash('YOUR_PASSW
 
 ```sh
 # Admin credentials
-# login: admin / password: admin
+# login: admin@example.com / password: admin
 # Bcrypt embeds the salt inside the hash — no separate SALT variable needed.
 # To generate a new hash run:
 #   bun -e "import bcrypt from 'bcryptjs'; console.log(await bcrypt.hash('YOUR_PASSWORD', 10));"
-ADMIN_LOGIN=admin
-ADMIN_PASSWORD_HASH=$2b$10$9DKY3FWLDwBeJ7D7aR9u3eIcsDuOQx6yCmMZ.YDr/fxgalr6W8aBm
+# Note: Bun expands $ in .env — prefix each $ with \ to prevent it
+ADMIN_LOGIN=admin@example.com
+ADMIN_PASSWORD_HASH=\$2b\$10\$ETeFKRO0Bjf/sjtc2kpdQuGQL69BdpjbVcPn8t9iDjqkF5TKJk/rW
 
 # Debug logging (set to "true" to enable Logger.debug() output)
 DEBUG=false
 
 # JWT
 JWT_SECRET=your-super-secret-jwt-key
+
+# CORS
+CORS_ORIGINS=http://localhost:4321,https://mysite.com
+
+# Database — if not set, PGLite is used (local, no server required)
+DATABASE_URL=
+
+# Public client URL (for rebuild webhook)
+PUBLIC_CLIENT_URL=http://localhost:4322
 
 # CORS
 CORS_ORIGINS=http://localhost:3001,http://localhost:3000

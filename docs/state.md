@@ -1,6 +1,6 @@
 # State Management
 
-> **Status: NOT IMPLEMENTED** — Admin panel interactive islands are not yet built.
+> **Status: PARTIALLY IMPLEMENTED** — `LoginForm` and `SidebarNav` are live Preact islands using Signals. Feature islands (pages editor, language manager, etc.) are not yet built.
 
 ## Frontend Strategy
 

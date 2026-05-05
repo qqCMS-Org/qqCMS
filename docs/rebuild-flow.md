@@ -1,6 +1,6 @@
 # Rebuild Flow
 
-> **Status: PARTIALLY IMPLEMENTED** — `apps/web/src/pages/api/revalidate.ts` exists but is not wired to a real rebuild trigger. The server-side webhook call is not yet implemented.
+> **Status: IMPLEMENTED** — `triggerRebuild` is called after every write in `apps/api`. `apps/web/src/pages/api/revalidate.ts` exists (webhook receiver logic not yet implemented).
 
 ## Overview
 
@@ -48,16 +48,18 @@ This endpoint should:
 The server calls the webhook **after every successful write** to pages, navigation, or settings.
 
 ```ts
-// apps/api/src/lib/rebuild.ts (planned)
+// apps/api/src/modules/rebuild/rebuild.service.ts
 export const triggerRebuild = async () => {
-  const clientUrl = process.env.PUBLIC_CLIENT_URL
-  if (!clientUrl) return
+  if (!config.publicClientUrl) return;
 
-  await fetch(`${clientUrl}/api/revalidate`, {
+  await fetch(`${config.publicClientUrl}/api/revalidate`, {
     method: "POST",
-    headers: { Authorization: `Bearer ${process.env.REBUILD_SECRET}` },
-  }).catch(() => null)
-}
+    headers: {
+      "Content-Type": "application/json",
+      "x-revalidate-secret": config.jwtSecret,
+    },
+  }).catch(() => null);
+};
 ```
 
 ## On Render.com
