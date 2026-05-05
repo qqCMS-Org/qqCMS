@@ -1,7 +1,29 @@
 ---
 import { AdminLayout } from '@layouts';
+import { StatsBar } from '@widgets/dashboard/StatsBar';
+import { LogoutButton } from '@features/auth/LogoutButton';
+
+const API_URL = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:3000';
+const token = Astro.cookies.get('qq_auth')?.value;
+const authHeaders: Record<string, string> = token ? { Cookie: `qq_auth=${token}` } : {};
+
+const fetchCount = async (path: string): Promise<number> => {
+  const response = await fetch(`${API_URL}${path}`, { headers: authHeaders }).catch(() => null);
+  if (!response?.ok) return 0;
+  const data: unknown = await response.json().catch(() => null);
+  return Array.isArray(data) ? data.length : 0;
+};
+
+const [pagesCount, languagesCount, mediaCount] = await Promise.all([
+  fetchCount('/pages'),
+  fetchCount('/languages'),
+  fetchCount('/media'),
+]);
 ---
 
 <AdminLayout title="Dashboard" activePage="dashboard">
-  <p style="color: var(--text1); font-size: 11px;">Dashboard — coming soon</p>
+  <Fragment slot="topbar-actions">
+    <LogoutButton apiUrl={API_URL} client:load />
+  </Fragment>
+  <StatsBar pagesCount={pagesCount} languagesCount={languagesCount} mediaCount={mediaCount} />
 </AdminLayout>
