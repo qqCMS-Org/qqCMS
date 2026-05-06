@@ -20,7 +20,7 @@
 
 ### Step 1 — Foundation
 - [x] Install DaisyUI and `@preact/signals` in `apps/admin`
-- [ ] Create custom DaisyUI theme in `apps/admin/tailwind.config.mjs` from design tokens in `prototype/index.html` CSS variables
+- [x] Create custom DaisyUI theme in `apps/admin/tailwind.config.mjs` from design tokens in `prototype/index.html` CSS variables
 - [x] Create FSD folder structure in `apps/admin/src/` (`app/`, `widgets/`, `features/`, `entities/`, `shared/`)
 - [x] Create `apps/admin/src/app/layouts/AdminLayout.astro` — shell with sidebar + topbar slots
 - [x] Create `apps/admin/src/shared/api/client.ts` — Eden Treaty client pointing to API
@@ -36,9 +36,10 @@
 > ⛔ Stop here. Ask user to test login flow (valid credentials, invalid credentials, redirect after login).
 
 ### Step 3 — Dashboard (`/`)
-- [ ] Create `apps/admin/src/pages/index.astro` — fetch basic stats server-side (page count, language count, media count) and pass as props
-- [ ] Create `apps/admin/src/widgets/dashboard/StatsBar.tsx` — simple cards showing counts
-- [ ] Add logout button in topbar wired to `POST /auth/logout`
+- [x] Create `apps/admin/src/pages/index.astro` — fetch basic stats server-side (page count, language count, media count) and pass as props
+- [x] Create `apps/admin/src/widgets/dashboard/StatsBar.tsx` — simple cards showing counts
+- [x] Add logout button in topbar wired to `POST /auth/logout`
+- [x] Create `apps/admin/src/widgets/sidebar/SidebarNav.tsx` — responsive sidebar (desktop) + bottom tab bar (mobile)
 
 > ⛔ Stop here. Ask user to verify dashboard loads, stats display, and logout works.
 
