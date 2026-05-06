@@ -30,11 +30,10 @@ const allLanguages: PageLanguage[] = langsRes?.ok ? await langsRes.json().catch(
 const languages = allLanguages.filter((lang) => lang.isActive);
 ---
 
-<AdminLayout title={`Edit — ${page.slug}`} activePage="pages" noPadding>
+<AdminLayout title={`Edit — ${page.slug}`} activePage="pages" noPadding noTopbar>
   <PageEditor
     pageId={page.id}
     initialSlug={page.slug}
-    initialIsHomepage={page.isHomepage}
     initialTranslations={page.translations}
     languages={languages}
     apiUrl={API_URL}

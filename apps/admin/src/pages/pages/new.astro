@@ -13,6 +13,6 @@ const allLanguages: PageLanguage[] = langsRes?.ok ? await langsRes.json().catch(
 const languages = allLanguages.filter((lang) => lang.isActive);
 ---
 
-<AdminLayout title="New page" activePage="pages" noPadding>
+<AdminLayout title="New page" activePage="pages" noPadding noTopbar>
   <PageEditor languages={languages} apiUrl={API_URL} client:only="preact" />
 </AdminLayout>

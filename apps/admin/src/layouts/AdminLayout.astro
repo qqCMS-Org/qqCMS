@@ -8,9 +8,10 @@ interface Props {
   title: string;
   activePage: NavItemId;
   noPadding?: boolean;
+  noTopbar?: boolean;
 }
 
-const { title, activePage, noPadding = false } = Astro.props;
+const { title, activePage, noPadding = false, noTopbar = false } = Astro.props;
 const apiUrl = import.meta.env.PUBLIC_API_URL ?? DEFAULT_API_URL;
 ---
 
@@ -18,14 +19,16 @@ const apiUrl = import.meta.env.PUBLIC_API_URL ?? DEFAULT_API_URL;
   <div class="admin-shell">
     <SidebarNav activePage={activePage} apiUrl={apiUrl} client:load />
     <div class="admin-main">
-      <header class="admin-topbar">
-        <slot name="topbar">
-          <span class="topbar-title">{title}</span>
-        </slot>
-        <div class="topbar-actions">
-          <slot name="topbar-actions" />
-        </div>
-      </header>
+      {!noTopbar && (
+        <header class="admin-topbar">
+          <slot name="topbar">
+            <span class="topbar-title">{title}</span>
+          </slot>
+          <div class="topbar-actions">
+            <slot name="topbar-actions" />
+          </div>
+        </header>
+      )}
       <main class={`admin-content${noPadding ? ' no-padding' : ''}`}>
         <slot />
       </main>
