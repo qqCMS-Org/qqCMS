@@ -44,9 +44,9 @@
 > ⛔ Stop here. Ask user to verify dashboard loads, stats display, and logout works.
 
 ### Step 4 — Pages list (`/pages`)
-- [ ] Create `apps/admin/src/pages/pages/index.astro` — fetch pages list server-side
-- [ ] Create `apps/admin/src/widgets/pages-list/PagesTable.tsx` — Preact island, table with slug, title, language columns, delete button
-- [ ] Create `apps/admin/src/features/pages/DeletePageButton.tsx` — calls `DELETE /pages/:id`, invalidates table
+- [x] Create `apps/admin/src/pages/pages/index.astro` — fetch pages list server-side
+- [x] Create `apps/admin/src/widgets/pages-list/PagesTable.tsx` — Preact island, table with slug, title, language columns, delete button
+- [x] Create `apps/admin/src/features/pages/DeletePageButton.tsx` — calls `DELETE /pages/:id`, invalidates table
 
 > ⛔ Stop here. Ask user to verify the pages list renders and delete works.
 
