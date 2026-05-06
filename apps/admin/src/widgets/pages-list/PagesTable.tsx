@@ -28,16 +28,9 @@ export function PagesTable({ initialPages, apiUrl }: PagesTableProps): JSX.Eleme
 
 	if (pages.value.length === 0) {
 		return (
-			<div
-				style={{
-					padding: "60px 24px",
-					textAlign: "center",
-					color: "var(--text2)",
-					fontSize: 13,
-				}}
-			>
+			<div class="py-16 px-6 text-center text-text2 text-sm">
 				No pages yet.{" "}
-				<a href="/pages/new" style={{ color: "var(--accent)", textDecoration: "none" }}>
+				<a href="/pages/new" class="text-accent no-underline hover:underline">
 					Create the first one
 				</a>
 				.
@@ -46,23 +39,11 @@ export function PagesTable({ initialPages, apiUrl }: PagesTableProps): JSX.Eleme
 	}
 
 	return (
-		<div style={{ padding: "20px 24px" }}>
-			<div
-				style={{
-					border: "1px solid var(--border)",
-					borderRadius: 8,
-					overflow: "hidden",
-				}}
-			>
-				<table
-					style={{
-						width: "100%",
-						borderCollapse: "collapse",
-						fontSize: 12,
-					}}
-				>
+		<div class="p-5 px-6">
+			<div class="border border-ui-border rounded-lg overflow-hidden">
+				<table class="w-full border-collapse text-xs">
 					<thead>
-						<tr style={{ background: "var(--bg1, var(--bg2))", borderBottom: "1px solid var(--border)" }}>
+						<tr class="bg-bg1 border-b border-ui-border">
 							<Th>Slug</Th>
 							<Th>Status</Th>
 							<Th>Created</Th>
@@ -70,45 +51,22 @@ export function PagesTable({ initialPages, apiUrl }: PagesTableProps): JSX.Eleme
 						</tr>
 					</thead>
 					<tbody>
-						{pages.value.map((page, index) => (
-							<tr
-								key={page.id}
-								style={{
-									borderBottom: index < pages.value.length - 1 ? "1px solid var(--border)" : "none",
-									background: "transparent",
-								}}
-							>
-								<td style={{ padding: "10px 14px", color: "var(--text0)", fontWeight: 500 }}>/{page.slug}</td>
-								<td style={{ padding: "10px 14px" }}>
+						{pages.value.map((page) => (
+							<tr key={page.id} class="border-b border-ui-border last:border-0">
+								<td class="py-2.5 px-3.5 text-text0 font-medium">/{page.slug}</td>
+								<td class="py-2.5 px-3.5">
 									{page.isHomepage && (
-										<span
-											style={{
-												background: "var(--accent)",
-												color: "#fff",
-												borderRadius: 3,
-												padding: "2px 6px",
-												fontSize: 10,
-												fontWeight: 600,
-												letterSpacing: "0.04em",
-											}}
-										>
+										<span class="bg-accent text-white rounded text-[10px] font-semibold px-1.5 py-0.5 tracking-[0.04em]">
 											HOME
 										</span>
 									)}
 								</td>
-								<td style={{ padding: "10px 14px", color: "var(--text2)" }}>{formatDate(page.createdAt)}</td>
-								<td style={{ padding: "10px 14px", textAlign: "right" }}>
-									<div style={{ display: "flex", gap: 6, justifyContent: "flex-end" }}>
+								<td class="py-2.5 px-3.5 text-text2">{formatDate(page.createdAt)}</td>
+								<td class="py-2.5 px-3.5 text-right">
+									<div class="flex gap-1.5 justify-end">
 										<a
 											href={`/pages/${page.id}/edit`}
-											style={{
-												border: "1px solid var(--border)",
-												borderRadius: 4,
-												padding: "3px 8px",
-												color: "var(--text1)",
-												fontSize: 11,
-												textDecoration: "none",
-											}}
+											class="border border-ui-border rounded text-text1 text-[11px] px-2 py-1 no-underline hover:border-ui-border-hover"
 										>
 											Edit
 										</a>
@@ -133,15 +91,7 @@ interface ThProps {
 
 const Th = ({ children, align = "left" }: ThProps): JSX.Element => (
 	<th
-		style={{
-			padding: "8px 14px",
-			textAlign: align,
-			color: "var(--text2)",
-			fontWeight: 500,
-			fontSize: 11,
-			letterSpacing: "0.03em",
-			textTransform: "uppercase",
-		}}
+		class={`py-2 px-3.5 text-text2 font-medium text-[11px] uppercase tracking-[0.03em] ${align === "right" ? "text-right" : "text-left"}`}
 	>
 		{children}
 	</th>

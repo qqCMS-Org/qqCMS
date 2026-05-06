@@ -16,16 +16,7 @@ const pages: PageRow[] = response?.ok ? await response.json().catch(() => []) : 
   <Fragment slot="topbar-actions">
     <a
       href="/pages/new"
-      style={{
-        background: 'var(--accent)',
-        color: '#fff',
-        border: 'none',
-        borderRadius: '5px',
-        padding: '4px 12px',
-        fontSize: '11px',
-        cursor: 'pointer',
-        textDecoration: 'none',
-      }}
+      class="bg-accent text-white rounded text-[11px] px-3 py-1 no-underline hover:bg-accent-hover"
     >
       New page
     </a>

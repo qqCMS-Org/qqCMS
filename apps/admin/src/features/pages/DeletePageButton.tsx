@@ -1,4 +1,5 @@
 import { useSignal } from "@preact/signals";
+import { Button } from "@repo/ui/Button";
 import type { JSX } from "preact";
 
 export interface DeletePageButtonProps {
@@ -36,25 +37,14 @@ export function DeletePageButton({ pageId, apiUrl, onDeleted }: DeletePageButton
 	};
 
 	return (
-		<button
-			type="button"
+		<Button
+			variant={confirming.value ? "danger" : "default"}
+			size="sm"
+			loading={loading.value}
 			onClick={handleClick}
 			onBlur={handleBlur}
-			disabled={loading.value}
-			style={{
-				background: confirming.value ? "var(--coral, #e05a5a)" : "transparent",
-				border: `1px solid ${confirming.value ? "var(--coral, #e05a5a)" : "var(--border)"}`,
-				borderRadius: 4,
-				padding: "3px 8px",
-				color: confirming.value ? "#fff" : "var(--text2)",
-				fontSize: 11,
-				cursor: loading.value ? "not-allowed" : "pointer",
-				opacity: loading.value ? 0.5 : 1,
-				transition: "all 0.15s",
-				whiteSpace: "nowrap",
-			}}
 		>
-			{loading.value ? "..." : confirming.value ? "Confirm?" : "Delete"}
-		</button>
+			{confirming.value ? "Confirm?" : "Delete"}
+		</Button>
 	);
 }
