@@ -51,11 +51,11 @@
 > ⛔ Stop here. Ask user to verify the pages list renders and delete works.
 
 ### Step 5 — Page editor (`/pages/new` and `/pages/:id/edit`)
-- [ ] Create `apps/admin/src/pages/pages/new.astro`
-- [ ] Create `apps/admin/src/pages/pages/[id]/edit.astro` — fetch page + translations server-side
-- [ ] Create `apps/admin/src/widgets/page-editor/PageEditor.tsx` — Preact island with language tabs, slug field, TipTap editor per language
-- [ ] Install TipTap (`@tiptap/core`, `@tiptap/starter-kit`, `@tiptap/react`)
-- [ ] Wire save to `PUT /pages/:id/translations/:lang`
+- [x] Create `apps/admin/src/pages/pages/new.astro`
+- [x] Create `apps/admin/src/pages/pages/[id]/edit.astro` — fetch page + translations server-side
+- [x] Create `apps/admin/src/widgets/page-editor/PageEditor.tsx` — Preact island with language tabs, slug field, TipTap editor per language
+- [x] Install TipTap (`@tiptap/core`, `@tiptap/starter-kit`, `@tiptap/react`)
+- [x] Wire save to `PUT /pages/:id/translations/:lang`
 
 > ⛔ Stop here. Ask user to test creating a page, editing translations, and saving.
 
