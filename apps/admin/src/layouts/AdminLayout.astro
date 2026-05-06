@@ -1,7 +1,8 @@
 ---
 import { Layout } from '@layouts';
-import { SidebarNav } from '@widgets/sidebar/SidebarNav';
-import type { NavItemId } from '@widgets/sidebar/SidebarNav';
+import { SidebarNav } from '@widgets/sidebar';
+import type { NavItemId } from '@widgets/sidebar';
+import { DEFAULT_API_URL } from '@shared/constants';
 
 interface Props {
   title: string;
@@ -9,7 +10,7 @@ interface Props {
 }
 
 const { title, activePage } = Astro.props;
-const apiUrl = import.meta.env.API_URL ?? 'http://localhost:3000';
+const apiUrl = import.meta.env.PUBLIC_API_URL ?? DEFAULT_API_URL;
 ---
 
 <Layout title={`${title} — qqCMS`}>
@@ -77,5 +78,41 @@ const apiUrl = import.meta.env.API_URL ?? 'http://localhost:3000';
     overflow-y: auto;
     background: var(--bg1);
     padding: 24px;
+  }
+
+  /* Sidebar responsive: CSS controls which layout is visible — no JS needed */
+  :global(.sidebar-desktop) {
+    width: 180px;
+    min-height: 100vh;
+    background: var(--bg0);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+  }
+
+  :global(.sidebar-mobile) {
+    display: none;
+  }
+
+  @media (max-width: 640px) {
+    :global(.sidebar-desktop) {
+      display: none;
+    }
+
+    :global(.sidebar-mobile) {
+      display: block;
+    }
+
+    .admin-shell {
+      padding-bottom: 56px;
+    }
+    .admin-content {
+      padding: 14px 12px;
+    }
+    .admin-topbar {
+      padding: 0 12px;
+      gap: 6px;
+    }
   }
 </style>
