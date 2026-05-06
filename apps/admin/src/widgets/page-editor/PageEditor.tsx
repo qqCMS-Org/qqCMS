@@ -26,6 +26,7 @@ interface TranslationEntry {
 interface PageEditorProps {
 	pageId?: string;
 	initialSlug?: string;
+	initialIsHomepage?: boolean;
 	initialTranslations?: PageTranslationData[];
 	languages: PageLanguage[];
 	apiUrl: string;
@@ -34,12 +35,14 @@ interface PageEditorProps {
 export function PageEditor({
 	pageId,
 	initialSlug = "",
+	initialIsHomepage = false,
 	initialTranslations = [],
 	languages,
 	apiUrl,
 }: PageEditorProps): JSX.Element {
 	const activeLang = useSignal(languages[0]?.code ?? "");
 	const slug = useSignal(initialSlug);
+	const isHomepage = useSignal(initialIsHomepage);
 	const seoTitle = useSignal("");
 	const saving = useSignal(false);
 	const errorMsg = useSignal<string | null>(null);
@@ -91,7 +94,7 @@ export function PageEditor({
 	};
 
 	const handleSave = async (): Promise<void> => {
-		const trimmedSlug = slug.value.trim();
+		const trimmedSlug = slug.value.trim() || (isHomepage.value ? "/" : "");
 		if (!trimmedSlug) {
 			errorMsg.value = "Slug is required";
 			return;
@@ -115,7 +118,7 @@ export function PageEditor({
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				credentials: "include",
-				body: JSON.stringify({ slug: trimmedSlug }),
+				body: JSON.stringify({ slug: trimmedSlug, isHomepage: isHomepage.value }),
 			}).catch(() => null);
 
 			if (!createRes?.ok) {
@@ -132,7 +135,7 @@ export function PageEditor({
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },
 				credentials: "include",
-				body: JSON.stringify({ slug: trimmedSlug }),
+				body: JSON.stringify({ slug: trimmedSlug, isHomepage: isHomepage.value }),
 			}).catch(() => null);
 
 			if (!updateRes?.ok) {
@@ -321,15 +324,29 @@ export function PageEditor({
 					{/* Page meta card */}
 					<div class="bg-bg2 border border-ui-border rounded-md p-3">
 						<div class="text-[11px] text-text0 mb-2.5">Page meta</div>
-						<div class="text-[10px] text-text2 mb-1">Slug</div>
+						<div class="flex items-center justify-between mb-1">
+							<div class="text-[10px] text-text2">Slug</div>
+							<label class="flex items-center gap-1 cursor-pointer">
+								<input
+									type="checkbox"
+									checked={isHomepage.value}
+									onChange={(event) => {
+										isHomepage.value = (event.target as HTMLInputElement).checked;
+									}}
+									class="w-2.5 h-2.5 accent-accent"
+								/>
+								<span class="text-[10px] text-text2">Homepage</span>
+							</label>
+						</div>
 						<input
 							type="text"
 							value={slug.value}
 							onInput={(event) => {
 								slug.value = (event.target as HTMLInputElement).value;
 							}}
-							placeholder="/about"
-							class="w-full bg-bg1 border border-ui-border rounded text-[11px] text-text0 px-2 py-1.5 outline-none focus:border-ui-border-hover transition-colors mb-2.5"
+							placeholder={isHomepage.value && !slug.value ? "/ (auto)" : "/about"}
+							disabled={isHomepage.value && !slug.value}
+							class={`w-full bg-bg1 border border-ui-border rounded text-[11px] text-text0 px-2 py-1.5 outline-none focus:border-ui-border-hover transition-colors mb-2.5 ${isHomepage.value && !slug.value ? "opacity-40 cursor-not-allowed" : ""}`}
 						/>
 						<div class="text-[10px] text-text2 mb-1">SEO title</div>
 						<input

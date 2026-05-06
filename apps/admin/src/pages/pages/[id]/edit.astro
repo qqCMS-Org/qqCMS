@@ -34,9 +34,11 @@ const languages = allLanguages.filter((lang) => lang.isActive);
   <PageEditor
     pageId={page.id}
     initialSlug={page.slug}
+    initialIsHomepage={page.isHomepage}
     initialTranslations={page.translations}
     languages={languages}
     apiUrl={API_URL}
     client:only="preact"
+  />
   />
 </AdminLayout>
