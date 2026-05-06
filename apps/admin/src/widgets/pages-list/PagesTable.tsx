@@ -53,7 +53,9 @@ export function PagesTable({ initialPages }: PagesTableProps): JSX.Element {
 						href={`/pages/${page.id}/edit`}
 						class="bg-bg2 border border-ui-border rounded-lg p-4 no-underline block hover:border-ui-border-hover transition-colors"
 					>
-						<div class="text-[10px] text-green font-mono mb-2.5">/{page.slug}</div>
+						<div class="text-[10px] text-green font-mono mb-2.5">
+							{page.slug.startsWith("/") ? page.slug : `/${page.slug}`}
+						</div>
 						<div class="font-serif italic text-text0 mb-3.5" style="font-size: 22px; line-height: 1.2">
 							{page.title ?? <span class="text-text2">Untitled</span>}
 						</div>
