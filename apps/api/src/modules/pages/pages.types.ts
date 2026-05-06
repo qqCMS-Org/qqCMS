@@ -2,11 +2,13 @@ import { type Static, t } from "elysia";
 
 export const CreatePageSchema = t.Object({
 	slug: t.String({ minLength: 1 }),
+	status: t.Optional(t.Union([t.Literal("draft"), t.Literal("published")])),
 	isHomepage: t.Optional(t.Boolean()),
 });
 
 export const UpdatePageSchema = t.Object({
 	slug: t.Optional(t.String({ minLength: 1 })),
+	status: t.Optional(t.Union([t.Literal("draft"), t.Literal("published")])),
 	isHomepage: t.Optional(t.Boolean()),
 });
 

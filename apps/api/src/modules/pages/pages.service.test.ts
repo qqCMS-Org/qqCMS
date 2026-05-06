@@ -7,12 +7,21 @@ const mockGetPages = mock((): Promise<Page[]> => Promise.resolve([]));
 const mockGetPage = mock((): Promise<Page | undefined> => Promise.resolve(undefined));
 const mockInsertPage = mock(
 	(): Promise<Page[]> =>
-		Promise.resolve([{ id: "page-1", slug: "home", isHomepage: true, createdAt: new Date(), updatedAt: new Date() }]),
+		Promise.resolve([
+			{ id: "page-1", slug: "home", status: "draft", isHomepage: true, createdAt: new Date(), updatedAt: new Date() },
+		]),
 );
 const mockUpdatePage = mock(
 	(): Promise<Page[]> =>
 		Promise.resolve([
-			{ id: "page-1", slug: "updated", isHomepage: false, createdAt: new Date(), updatedAt: new Date() },
+			{
+				id: "page-1",
+				slug: "updated",
+				status: "draft",
+				isHomepage: false,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			},
 		]),
 );
 const mockDeletePage = mock(() => Promise.resolve());
@@ -48,7 +57,7 @@ describe("createPage", () => {
 		mockClearHomepageFlag.mockReset();
 		mockInsertPage.mockReset();
 		mockInsertPage.mockResolvedValue([
-			{ id: "page-1", slug: "home", isHomepage: true, createdAt: new Date(), updatedAt: new Date() },
+			{ id: "page-1", slug: "home", status: "draft", isHomepage: true, createdAt: new Date(), updatedAt: new Date() },
 		] as Page[]);
 	});
 
@@ -89,6 +98,7 @@ describe("getPage", () => {
 		const pageData: Page = {
 			id: "page-1",
 			slug: "home",
+			status: "draft",
 			isHomepage: true,
 			createdAt: new Date(),
 			updatedAt: new Date(),
@@ -122,12 +132,13 @@ describe("updatePage", () => {
 		mockGetPage.mockResolvedValueOnce({
 			id: "page-1",
 			slug: "about",
+			status: "draft",
 			isHomepage: false,
 			createdAt: new Date(),
 			updatedAt: new Date(),
 		});
 		mockUpdatePage.mockResolvedValueOnce([
-			{ id: "page-1", slug: "about", isHomepage: true, createdAt: new Date(), updatedAt: new Date() },
+			{ id: "page-1", slug: "about", status: "draft", isHomepage: true, createdAt: new Date(), updatedAt: new Date() },
 		]);
 
 		await updatePage("page-1", { isHomepage: true });
@@ -139,12 +150,20 @@ describe("updatePage", () => {
 		mockGetPage.mockResolvedValueOnce({
 			id: "page-1",
 			slug: "about",
+			status: "draft",
 			isHomepage: false,
 			createdAt: new Date(),
 			updatedAt: new Date(),
 		});
 		mockUpdatePage.mockResolvedValueOnce([
-			{ id: "page-1", slug: "new-slug", isHomepage: false, createdAt: new Date(), updatedAt: new Date() },
+			{
+				id: "page-1",
+				slug: "new-slug",
+				status: "draft",
+				isHomepage: false,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			},
 		]);
 
 		await updatePage("page-1", { slug: "new-slug" });
@@ -169,6 +188,7 @@ describe("deletePage", () => {
 		mockGetPage.mockResolvedValueOnce({
 			id: "page-1",
 			slug: "home",
+			status: "draft",
 			isHomepage: false,
 			createdAt: new Date(),
 			updatedAt: new Date(),
@@ -197,6 +217,7 @@ describe("upsertTranslation", () => {
 		mockGetPage.mockResolvedValueOnce({
 			id: "page-1",
 			slug: "home",
+			status: "draft",
 			isHomepage: true,
 			createdAt: new Date(),
 			updatedAt: new Date(),

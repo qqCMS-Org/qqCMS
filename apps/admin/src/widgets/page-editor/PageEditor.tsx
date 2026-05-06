@@ -27,6 +27,7 @@ interface PageEditorProps {
 	pageId?: string;
 	initialSlug?: string;
 	initialIsHomepage?: boolean;
+	initialStatus?: "draft" | "published";
 	initialTranslations?: PageTranslationData[];
 	languages: PageLanguage[];
 	apiUrl: string;
@@ -36,6 +37,7 @@ export function PageEditor({
 	pageId,
 	initialSlug = "",
 	initialIsHomepage = false,
+	initialStatus = "draft",
 	initialTranslations = [],
 	languages,
 	apiUrl,
@@ -43,6 +45,7 @@ export function PageEditor({
 	const activeLang = useSignal(languages[0]?.code ?? "");
 	const slug = useSignal(initialSlug);
 	const isHomepage = useSignal(initialIsHomepage);
+	const status = useSignal<"draft" | "published">(initialStatus);
 	const seoTitle = useSignal("");
 	const saving = useSignal(false);
 	const errorMsg = useSignal<string | null>(null);
@@ -98,7 +101,7 @@ export function PageEditor({
 		editor?.commands.setContent(savedTranslations.value[code]?.content ?? "");
 	};
 
-	const handleSave = async (): Promise<void> => {
+	const handleSave = async (targetStatus: "draft" | "published"): Promise<void> => {
 		const trimmedSlug = slug.value.trim() || (isHomepage.value ? "/" : "");
 		if (!trimmedSlug) {
 			errorMsg.value = "Slug is required";
@@ -123,7 +126,7 @@ export function PageEditor({
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				credentials: "include",
-				body: JSON.stringify({ slug: trimmedSlug, isHomepage: isHomepage.value }),
+				body: JSON.stringify({ slug: trimmedSlug, status: targetStatus, isHomepage: isHomepage.value }),
 			}).catch(() => null);
 
 			if (!createRes?.ok) {
@@ -140,7 +143,7 @@ export function PageEditor({
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },
 				credentials: "include",
-				body: JSON.stringify({ slug: trimmedSlug, isHomepage: isHomepage.value }),
+				body: JSON.stringify({ slug: trimmedSlug, status: targetStatus, isHomepage: isHomepage.value }),
 			}).catch(() => null);
 
 			if (!updateRes?.ok) {
@@ -169,6 +172,7 @@ export function PageEditor({
 			}
 		}
 
+		status.value = targetStatus;
 		window.location.href = "/pages";
 	};
 
@@ -200,10 +204,17 @@ export function PageEditor({
 				<span class="text-[11px] text-text2">/</span>
 				<span class="text-[11px] text-text0 font-mono">{slug.value || "new"}</span>
 				<div class="flex-1" />
-				<span class="inline-flex items-center gap-1.5 text-[11px] text-amber bg-amber-faint px-2.5 py-1 rounded">
-					<span class="w-1.5 h-1.5 rounded-full bg-amber shrink-0" />
-					Draft
-				</span>
+				{status.value === "published" ? (
+					<span class="inline-flex items-center gap-1.5 text-[11px] text-green bg-green-faint px-2.5 py-1 rounded">
+						<span class="w-1.5 h-1.5 rounded-full bg-green shrink-0" />
+						Published
+					</span>
+				) : (
+					<span class="inline-flex items-center gap-1.5 text-[11px] text-amber bg-amber-faint px-2.5 py-1 rounded">
+						<span class="w-1.5 h-1.5 rounded-full bg-amber shrink-0" />
+						Draft
+					</span>
+				)}
 			</div>
 
 			{/* ── Body ──────────────────────────────────────── */}
@@ -320,7 +331,7 @@ export function PageEditor({
 						<div class="flex gap-1.5">
 							<button
 								type="button"
-								onClick={handleSave}
+								onClick={() => handleSave("draft")}
 								disabled={saving.value}
 								class="flex-1 text-center text-[11px] bg-bg3 border border-ui-border text-text0 rounded py-1.5 cursor-pointer hover:border-ui-border-hover transition-colors disabled:opacity-40"
 							>
@@ -328,7 +339,7 @@ export function PageEditor({
 							</button>
 							<button
 								type="button"
-								onClick={handleSave}
+								onClick={() => handleSave("published")}
 								disabled={saving.value}
 								class="flex-1 text-center text-[11px] bg-accent text-white border-none rounded py-1.5 cursor-pointer hover:bg-accent-hover transition-colors disabled:opacity-40"
 							>

@@ -4,6 +4,7 @@ import type { JSX } from "preact";
 export interface PageRow {
 	id: string;
 	slug: string;
+	status: "draft" | "published";
 	isHomepage: boolean;
 	title: string | null;
 	createdAt: string;
@@ -45,6 +46,10 @@ export function PagesTable({ initialPages }: PagesTableProps): JSX.Element {
 		<div class="flex-1 overflow-y-auto bg-bg1 p-5">
 			<div class="flex gap-2 text-[11px] text-text2 mb-4">
 				<span>{pages.value.length} pages</span>
+				<span>·</span>
+				<span class="text-green">{pages.value.filter((page) => page.status === "published").length} published</span>
+				<span>·</span>
+				<span class="text-amber">{pages.value.filter((page) => page.status === "draft").length} draft</span>
 			</div>
 			<div class="grid gap-3" style="grid-template-columns: repeat(auto-fill, minmax(220px, 1fr))">
 				{pages.value.map((page) => (
@@ -60,7 +65,7 @@ export function PagesTable({ initialPages }: PagesTableProps): JSX.Element {
 							{page.title ?? <span class="text-text2">Untitled</span>}
 						</div>
 						<div class="flex justify-between items-center">
-							{page.isHomepage ? <HomeBadge /> : <span />}
+							<StatusBadge status={page.status} />
 							<span class="text-[10px] text-text2">Updated {timeAgo(page.updatedAt)}</span>
 						</div>
 					</a>
@@ -72,8 +77,15 @@ export function PagesTable({ initialPages }: PagesTableProps): JSX.Element {
 
 // ── Internal helpers ──────────────────────────────────
 
-const HomeBadge = (): JSX.Element => (
-	<span class="inline-flex items-center bg-bg3 text-text1 text-[10px] px-1.5 py-0.5 rounded font-mono whitespace-nowrap">
-		HOME
-	</span>
-);
+const StatusBadge = ({ status }: { status: "draft" | "published" }): JSX.Element =>
+	status === "published" ? (
+		<span class="inline-flex items-center gap-1 bg-green-faint text-green text-[10px] px-1.5 py-0.5 rounded font-mono whitespace-nowrap">
+			<span class="w-1 h-1 rounded-full bg-green shrink-0" />
+			PUBLISHED
+		</span>
+	) : (
+		<span class="inline-flex items-center gap-1 bg-amber-faint text-amber text-[10px] px-1.5 py-0.5 rounded font-mono whitespace-nowrap">
+			<span class="w-1 h-1 rounded-full bg-amber shrink-0" />
+			DRAFT
+		</span>
+	);

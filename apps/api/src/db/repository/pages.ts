@@ -9,6 +9,7 @@ export const getPages = () =>
 		.selectDistinctOn([pages.id], {
 			id: pages.id,
 			slug: pages.slug,
+			status: pages.status,
 			isHomepage: pages.isHomepage,
 			createdAt: pages.createdAt,
 			updatedAt: pages.updatedAt,

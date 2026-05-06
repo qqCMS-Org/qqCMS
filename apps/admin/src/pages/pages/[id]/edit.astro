@@ -7,6 +7,7 @@ import { COOKIE_NAME, DEFAULT_API_URL } from '@shared/constants';
 interface PageWithTranslations {
   id: string;
   slug: string;
+  status: 'draft' | 'published';
   isHomepage: boolean;
   translations: PageTranslationData[];
 }
@@ -35,6 +36,7 @@ const languages = allLanguages.filter((lang) => lang.isActive);
     pageId={page.id}
     initialSlug={page.slug}
     initialIsHomepage={page.isHomepage}
+    initialStatus={page.status}
     initialTranslations={page.translations}
     languages={languages}
     apiUrl={API_URL}
