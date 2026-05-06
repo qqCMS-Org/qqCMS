@@ -21,5 +21,5 @@ const pages: PageRow[] = response?.ok ? await response.json().catch(() => []) : 
       New page
     </a>
   </Fragment>
-  <PagesTable initialPages={pages} apiUrl={API_URL} client:load />
+  <PagesTable initialPages={pages} client:load />
 </AdminLayout>

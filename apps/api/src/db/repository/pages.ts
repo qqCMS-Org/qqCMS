@@ -1,9 +1,19 @@
 import { db } from "@core/Database";
 import type { NewPage } from "@schema/pages";
 import { pages } from "@schema/pages";
-import { and, eq, ne } from "drizzle-orm";
+import { and, eq, ne, sql } from "drizzle-orm";
 
-export const getPages = () => db.select().from(pages);
+export const getPages = () =>
+	db
+		.select({
+			id: pages.id,
+			slug: pages.slug,
+			isHomepage: pages.isHomepage,
+			createdAt: pages.createdAt,
+			updatedAt: pages.updatedAt,
+			title: sql<string | null>`(SELECT title FROM page_translations WHERE page_id = ${pages.id} LIMIT 1)`,
+		})
+		.from(pages);
 
 export const getPage = (id: string) =>
 	db.query.pages.findFirst({
