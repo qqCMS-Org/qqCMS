@@ -1,6 +1,7 @@
 {
 	"extends": "@repo/typescript-config/preact-library.json",
 	"compilerOptions": {
+		"rootDir": "src",
 		"outDir": "dist",
 		"strictNullChecks": true
 	},
