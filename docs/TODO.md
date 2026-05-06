@@ -60,9 +60,9 @@
 > ⛔ Stop here. Ask user to test creating a page, editing translations, and saving.
 
 ### Step 6 — Languages (`/languages`)
-- [ ] Create `apps/admin/src/pages/languages/index.astro` — fetch languages server-side
-- [ ] Create `apps/admin/src/widgets/languages/LanguagesTable.tsx` — Preact island, toggle active, add language, delete
-- [ ] Wire to `GET /languages`, `POST /languages`, `PATCH /languages/:id`, `DELETE /languages/:id`
+- [x] Create `apps/admin/src/pages/languages/index.astro` — fetch languages server-side
+- [x] Create `apps/admin/src/widgets/languages/LanguagesTable.tsx` — Preact island, toggle active, add language, delete
+- [x] Wire to `GET /languages`, `POST /languages`, `PATCH /languages/:id`, `DELETE /languages/:id`
 
 > ⛔ Stop here. Ask user to verify language management works end-to-end.
 
