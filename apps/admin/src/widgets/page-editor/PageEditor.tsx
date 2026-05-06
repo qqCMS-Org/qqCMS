@@ -58,11 +58,13 @@ export function PageEditor({
 	);
 
 	const activeTitle = useSignal(savedTranslations.value[activeLang.value]?.title ?? "");
+	const editorTick = useSignal(0);
 
 	const editor = useEditor({
 		extensions: [StarterKit],
 		content: savedTranslations.value[activeLang.value]?.content ?? "",
 		onUpdate({ editor: e }) {
+			editorTick.value += 1;
 			if (skipNextUpdate.current) {
 				skipNextUpdate.current = false;
 				return;
@@ -74,6 +76,9 @@ export function PageEditor({
 					content: e.getJSON(),
 				},
 			};
+		},
+		onSelectionUpdate() {
+			editorTick.value += 1;
 		},
 	});
 
@@ -207,51 +212,62 @@ export function PageEditor({
 				<div class="flex-1 flex flex-col overflow-hidden border-r border-ui-border">
 					{/* Toolbar */}
 					<div class="flex items-center gap-0.5 px-2.5 py-1.5 border-b border-ui-border bg-bg0 shrink-0 overflow-x-auto">
-						<ToolbarBtn onClick={() => editor?.chain().focus().toggleBold().run()} active={!!editor?.isActive("bold")}>
-							B
-						</ToolbarBtn>
-						<ToolbarBtn
-							onClick={() => editor?.chain().focus().toggleItalic().run()}
-							active={!!editor?.isActive("italic")}
-							italic
-						>
-							I
-						</ToolbarBtn>
-						<ToolbarBtn
-							onClick={() => editor?.chain().focus().toggleStrike().run()}
-							active={!!editor?.isActive("strike")}
-						>
-							S
-						</ToolbarBtn>
-						<ToolbarBtn onClick={() => editor?.chain().focus().toggleCode().run()} active={!!editor?.isActive("code")}>
-							{"<>"}
-						</ToolbarBtn>
-						<div class="w-px h-4 bg-ui-border mx-1 shrink-0" />
-						<ToolbarBtn
-							onClick={() => editor?.chain().focus().toggleHeading({ level: 1 }).run()}
-							active={!!editor?.isActive("heading", { level: 1 })}
-						>
-							H1
-						</ToolbarBtn>
-						<ToolbarBtn
-							onClick={() => editor?.chain().focus().toggleHeading({ level: 2 }).run()}
-							active={!!editor?.isActive("heading", { level: 2 })}
-						>
-							H2
-						</ToolbarBtn>
-						<div class="w-px h-4 bg-ui-border mx-1 shrink-0" />
-						<ToolbarBtn
-							onClick={() => editor?.chain().focus().toggleBulletList().run()}
-							active={!!editor?.isActive("bulletList")}
-						>
-							•
-						</ToolbarBtn>
-						<ToolbarBtn
-							onClick={() => editor?.chain().focus().toggleOrderedList().run()}
-							active={!!editor?.isActive("orderedList")}
-						>
-							≡
-						</ToolbarBtn>
+						{/* editorTick.value read here so Preact re-renders toolbar on cursor move */}
+						{editorTick.value >= 0 && (
+							<>
+								<ToolbarBtn
+									onClick={() => editor?.chain().focus().toggleBold().run()}
+									active={!!editor?.isActive("bold")}
+								>
+									B
+								</ToolbarBtn>
+								<ToolbarBtn
+									onClick={() => editor?.chain().focus().toggleItalic().run()}
+									active={!!editor?.isActive("italic")}
+									italic
+								>
+									I
+								</ToolbarBtn>
+								<ToolbarBtn
+									onClick={() => editor?.chain().focus().toggleStrike().run()}
+									active={!!editor?.isActive("strike")}
+								>
+									S
+								</ToolbarBtn>
+								<ToolbarBtn
+									onClick={() => editor?.chain().focus().toggleCode().run()}
+									active={!!editor?.isActive("code")}
+								>
+									{"<>"}
+								</ToolbarBtn>
+								<div class="w-px h-4 bg-ui-border mx-1 shrink-0" />
+								<ToolbarBtn
+									onClick={() => editor?.chain().focus().toggleHeading({ level: 1 }).run()}
+									active={!!editor?.isActive("heading", { level: 1 })}
+								>
+									H1
+								</ToolbarBtn>
+								<ToolbarBtn
+									onClick={() => editor?.chain().focus().toggleHeading({ level: 2 }).run()}
+									active={!!editor?.isActive("heading", { level: 2 })}
+								>
+									H2
+								</ToolbarBtn>
+								<div class="w-px h-4 bg-ui-border mx-1 shrink-0" />
+								<ToolbarBtn
+									onClick={() => editor?.chain().focus().toggleBulletList().run()}
+									active={!!editor?.isActive("bulletList")}
+								>
+									•
+								</ToolbarBtn>
+								<ToolbarBtn
+									onClick={() => editor?.chain().focus().toggleOrderedList().run()}
+									active={!!editor?.isActive("orderedList")}
+								>
+									≡
+								</ToolbarBtn>
+							</>
+						)}
 					</div>
 
 					{/* Content area */}
