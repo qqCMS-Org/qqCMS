@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { config } from "@api/config";
 import type { AllowedMimeType } from "@api/constants";
 import { ALLOWED_MIME_TYPES, MAX_UPLOAD_SIZE } from "@api/constants";
-import { NotFoundError } from "@api/errors";
+import { BadRequestError, NotFoundError } from "@api/errors";
 import {
 	deleteMedia as deleteMediaInDb,
 	getMediaFile as getMediaFileById,
@@ -19,11 +19,11 @@ export const listMedia = () => getMediaFiles();
 
 export const uploadMedia = async (file: File) => {
 	if (!(ALLOWED_MIME_TYPES as readonly string[]).includes(file.type)) {
-		throw new Error(`Unsupported file type: ${file.type}`);
+		throw new BadRequestError(`Unsupported file type: ${file.type}`);
 	}
 
 	if (file.size > MAX_UPLOAD_SIZE) {
-		throw new Error(`File exceeds maximum size of ${MAX_UPLOAD_SIZE / 1024 / 1024} MB`);
+		throw new BadRequestError(`File exceeds maximum size of ${MAX_UPLOAD_SIZE / 1024 / 1024} MB`);
 	}
 
 	const extension = file.name.split(".").pop() ?? "";

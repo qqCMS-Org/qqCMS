@@ -1,5 +1,5 @@
 import { config } from "@api/config";
-import { ConflictError, NotFoundError, UnauthorizedError } from "@api/errors";
+import { BadRequestError, ConflictError, NotFoundError, UnauthorizedError } from "@api/errors";
 import { corsMiddleware } from "@api/middleware/cors.middleware";
 import { rateLimitMiddleware } from "@api/middleware/rateLimit.middleware";
 import { Logger } from "@core/Logger";
@@ -25,7 +25,12 @@ const app = new Elysia()
 		}),
 	)
 	.onError(({ code, error, set }) => {
-		if (error instanceof NotFoundError || error instanceof ConflictError || error instanceof UnauthorizedError) {
+		if (
+			error instanceof NotFoundError ||
+			error instanceof ConflictError ||
+			error instanceof UnauthorizedError ||
+			error instanceof BadRequestError
+		) {
 			set.status = error.status;
 			return { error: error.message, code: error.code };
 		}

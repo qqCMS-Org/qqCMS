@@ -2,6 +2,7 @@ import { Elysia } from "elysia";
 
 const RATE_LIMIT_MAX = 100;
 const RATE_LIMIT_WINDOW_MS = 60_000;
+const CLEANUP_INTERVAL_MS = 5 * 60_000;
 
 interface RateLimitRecord {
 	count: number;
@@ -9,6 +10,15 @@ interface RateLimitRecord {
 }
 
 const requestCounts = new Map<string, RateLimitRecord>();
+
+setInterval(() => {
+	const now = Date.now();
+	for (const [ip, record] of requestCounts) {
+		if (record.resetTime < now) {
+			requestCounts.delete(ip);
+		}
+	}
+}, CLEANUP_INTERVAL_MS).unref();
 
 export const rateLimitMiddleware = new Elysia({ name: "rate-limit-middleware" }).onBeforeHandle(
 	{ as: "global" },
