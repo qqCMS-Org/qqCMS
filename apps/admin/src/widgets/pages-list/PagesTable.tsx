@@ -4,7 +4,8 @@ import type { JSX } from "preact";
 export interface PageRow {
 	id: string;
 	slug: string;
-	status: "draft" | "published";
+	status: "draft" | "published" | "unpublished";
+	hasDraft: boolean;
 	isHomepage: boolean;
 	title: string | null;
 	createdAt: string;
@@ -49,7 +50,11 @@ export function PagesTable({ initialPages }: PagesTableProps): JSX.Element {
 				<span>·</span>
 				<span class="text-green">{pages.value.filter((page) => page.status === "published").length} published</span>
 				<span>·</span>
-				<span class="text-amber">{pages.value.filter((page) => page.status === "draft").length} draft</span>
+				<span class="text-amber">{pages.value.filter((page) => page.status === "draft").length} draft</span>{" "}
+				<span>·</span>
+				<span class="text-text2">
+					{pages.value.filter((page) => page.status === "unpublished").length} unpublished
+				</span>{" "}
 			</div>
 			<div class="grid gap-3" style="grid-template-columns: repeat(auto-fill, minmax(220px, 1fr))">
 				{pages.value.map((page) => (
@@ -58,14 +63,24 @@ export function PagesTable({ initialPages }: PagesTableProps): JSX.Element {
 						href={`/pages/${page.id}/edit`}
 						class="bg-bg2 border border-ui-border rounded-lg p-4 no-underline block hover:border-ui-border-hover transition-colors"
 					>
-						<div class="text-[10px] text-green font-mono mb-2.5">
-							{page.slug.startsWith("/") ? page.slug : `/${page.slug}`}
+						<div class="flex items-center gap-1.5 mb-2.5">
+							<span class="text-[10px] text-green font-mono">
+								{page.slug.startsWith("/") ? page.slug : `/${page.slug}`}
+							</span>
+							{page.isHomepage && (
+								<span class="text-[9px] text-accent bg-accent/10 px-1 py-0.5 rounded font-mono">HOME</span>
+							)}
 						</div>
 						<div class="font-serif italic text-text0 mb-3.5" style="font-size: 22px; line-height: 1.2">
 							{page.title ?? <span class="text-text2">Untitled</span>}
 						</div>
 						<div class="flex justify-between items-center">
-							<StatusBadge status={page.status} />
+							<div class="flex items-center gap-1">
+								<StatusBadge status={page.status} />
+								{page.hasDraft && (page.status === "published" || page.status === "unpublished") && (
+									<span class="text-[9px] text-amber bg-amber-faint px-1 py-0.5 rounded font-mono">DRAFT</span>
+								)}
+							</div>
 							<span class="text-[10px] text-text2">Updated {timeAgo(page.updatedAt)}</span>
 						</div>
 					</a>
@@ -77,15 +92,27 @@ export function PagesTable({ initialPages }: PagesTableProps): JSX.Element {
 
 // ── Internal helpers ──────────────────────────────────
 
-const StatusBadge = ({ status }: { status: "draft" | "published" }): JSX.Element =>
-	status === "published" ? (
-		<span class="inline-flex items-center gap-1 bg-green-faint text-green text-[10px] px-1.5 py-0.5 rounded font-mono whitespace-nowrap">
-			<span class="w-1 h-1 rounded-full bg-green shrink-0" />
-			PUBLISHED
-		</span>
-	) : (
+const StatusBadge = ({ status }: { status: "draft" | "published" | "unpublished" }): JSX.Element => {
+	if (status === "published") {
+		return (
+			<span class="inline-flex items-center gap-1 bg-green-faint text-green text-[10px] px-1.5 py-0.5 rounded font-mono whitespace-nowrap">
+				<span class="w-1 h-1 rounded-full bg-green shrink-0" />
+				PUBLISHED
+			</span>
+		);
+	}
+	if (status === "unpublished") {
+		return (
+			<span class="inline-flex items-center gap-1 bg-bg3 text-text2 text-[10px] px-1.5 py-0.5 rounded font-mono whitespace-nowrap">
+				<span class="w-1 h-1 rounded-full bg-text2 shrink-0" />
+				UNPUBLISHED
+			</span>
+		);
+	}
+	return (
 		<span class="inline-flex items-center gap-1 bg-amber-faint text-amber text-[10px] px-1.5 py-0.5 rounded font-mono whitespace-nowrap">
 			<span class="w-1 h-1 rounded-full bg-amber shrink-0" />
 			DRAFT
 		</span>
 	);
+};

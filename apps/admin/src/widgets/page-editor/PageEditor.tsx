@@ -1,4 +1,5 @@
 import { useSignal } from "@preact/signals";
+import { Toggle } from "@repo/ui/Toggle";
 import type { JSONContent } from "@tiptap/core";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -27,7 +28,8 @@ interface PageEditorProps {
 	pageId?: string;
 	initialSlug?: string;
 	initialIsHomepage?: boolean;
-	initialStatus?: "draft" | "published";
+	initialStatus?: "draft" | "published" | "unpublished";
+	initialHasDraft?: boolean;
 	initialTranslations?: PageTranslationData[];
 	languages: PageLanguage[];
 	apiUrl: string;
@@ -38,6 +40,7 @@ export function PageEditor({
 	initialSlug = "",
 	initialIsHomepage = false,
 	initialStatus = "draft",
+	initialHasDraft = true,
 	initialTranslations = [],
 	languages,
 	apiUrl,
@@ -45,7 +48,8 @@ export function PageEditor({
 	const activeLang = useSignal(languages[0]?.code ?? "");
 	const slug = useSignal(initialSlug);
 	const isHomepage = useSignal(initialIsHomepage);
-	const status = useSignal<"draft" | "published">(initialStatus);
+	const status = useSignal<"draft" | "published" | "unpublished">(initialStatus);
+	const hasDraft = useSignal(initialHasDraft);
 	const seoTitle = useSignal("");
 	const saving = useSignal(false);
 	const errorMsg = useSignal<string | null>(null);
@@ -101,7 +105,36 @@ export function PageEditor({
 		editor?.commands.setContent(savedTranslations.value[code]?.content ?? "");
 	};
 
-	const handleSave = async (targetStatus: "draft" | "published"): Promise<void> => {
+	const saveTranslations = async (resolvedPageId: string): Promise<boolean> => {
+		const allTranslations: Record<string, TranslationEntry> = {
+			...savedTranslations.value,
+			[activeLang.value]: {
+				title: activeTitle.value,
+				content: editor?.getJSON() ?? savedTranslations.value[activeLang.value]?.content ?? null,
+			},
+		};
+
+		for (const [langCode, translation] of Object.entries(allTranslations)) {
+			if (!translation.title.trim()) continue;
+
+			const transRes = await fetch(`${apiUrl}/pages/${resolvedPageId}/translations/${langCode}`, {
+				method: "PUT",
+				headers: { "Content-Type": "application/json" },
+				credentials: "include",
+				body: JSON.stringify({ title: translation.title, content: translation.content }),
+			}).catch(() => null);
+
+			if (!transRes?.ok) {
+				const body = (await transRes?.json().catch(() => null)) as { error?: string } | null;
+				errorMsg.value = body?.error ?? `Failed to save ${langCode} translation`;
+				return false;
+			}
+		}
+
+		return true;
+	};
+
+	const handleSaveDraft = async (): Promise<void> => {
 		const trimmedSlug = slug.value.trim() || (isHomepage.value ? "/" : "");
 		if (!trimmedSlug) {
 			errorMsg.value = "Slug is required";
@@ -111,14 +144,6 @@ export function PageEditor({
 		saving.value = true;
 		errorMsg.value = null;
 
-		const allTranslations: Record<string, TranslationEntry> = {
-			...savedTranslations.value,
-			[activeLang.value]: {
-				title: activeTitle.value,
-				content: editor?.getJSON() ?? savedTranslations.value[activeLang.value]?.content ?? null,
-			},
-		};
-
 		let resolvedPageId = pageId;
 
 		if (!resolvedPageId) {
@@ -126,7 +151,7 @@ export function PageEditor({
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				credentials: "include",
-				body: JSON.stringify({ slug: trimmedSlug, status: targetStatus, isHomepage: isHomepage.value }),
+				body: JSON.stringify({ slug: trimmedSlug, status: "draft", isHomepage: isHomepage.value }),
 			}).catch(() => null);
 
 			if (!createRes?.ok) {
@@ -143,7 +168,7 @@ export function PageEditor({
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },
 				credentials: "include",
-				body: JSON.stringify({ slug: trimmedSlug, status: targetStatus, isHomepage: isHomepage.value }),
+				body: JSON.stringify({ slug: trimmedSlug, isHomepage: isHomepage.value }),
 			}).catch(() => null);
 
 			if (!updateRes?.ok) {
@@ -154,26 +179,127 @@ export function PageEditor({
 			}
 		}
 
-		for (const [langCode, translation] of Object.entries(allTranslations)) {
-			if (!translation.title.trim()) continue;
+		const ok = await saveTranslations(resolvedPageId);
+		saving.value = false;
 
-			const transRes = await fetch(`${apiUrl}/pages/${resolvedPageId}/translations/${langCode}`, {
-				method: "PUT",
+		if (ok) {
+			if (status.value === "published" || status.value === "unpublished") {
+				hasDraft.value = true;
+			}
+			window.location.href = "/pages";
+		}
+	};
+
+	const handlePublish = async (): Promise<void> => {
+		const trimmedSlug = slug.value.trim() || (isHomepage.value ? "/" : "");
+		if (!trimmedSlug) {
+			errorMsg.value = "Slug is required";
+			return;
+		}
+
+		saving.value = true;
+		errorMsg.value = null;
+
+		let resolvedPageId = pageId;
+
+		if (!resolvedPageId) {
+			const createRes = await fetch(`${apiUrl}/pages`, {
+				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				credentials: "include",
-				body: JSON.stringify({ title: translation.title, content: translation.content }),
+				body: JSON.stringify({ slug: trimmedSlug, status: "draft", isHomepage: isHomepage.value }),
 			}).catch(() => null);
 
-			if (!transRes?.ok) {
-				const body = (await transRes?.json().catch(() => null)) as { error?: string } | null;
-				errorMsg.value = body?.error ?? `Failed to save ${langCode} translation`;
+			if (!createRes?.ok) {
+				const body = (await createRes?.json().catch(() => null)) as { error?: string } | null;
+				errorMsg.value = body?.error ?? "Failed to create page";
+				saving.value = false;
+				return;
+			}
+
+			const newPage = (await createRes.json()) as { id: string };
+			resolvedPageId = newPage.id;
+		} else {
+			const updateRes = await fetch(`${apiUrl}/pages/${resolvedPageId}`, {
+				method: "PATCH",
+				headers: { "Content-Type": "application/json" },
+				credentials: "include",
+				body: JSON.stringify({ slug: trimmedSlug, isHomepage: isHomepage.value }),
+			}).catch(() => null);
+
+			if (!updateRes?.ok) {
+				const body = (await updateRes?.json().catch(() => null)) as { error?: string } | null;
+				errorMsg.value = body?.error ?? "Failed to update page";
 				saving.value = false;
 				return;
 			}
 		}
 
-		status.value = targetStatus;
+		const translationsOk = await saveTranslations(resolvedPageId);
+		if (!translationsOk) {
+			saving.value = false;
+			return;
+		}
+
+		const publishRes = await fetch(`${apiUrl}/pages/${resolvedPageId}/publish`, {
+			method: "POST",
+			credentials: "include",
+		}).catch(() => null);
+
+		if (!publishRes?.ok) {
+			const body = (await publishRes?.json().catch(() => null)) as { error?: string } | null;
+			errorMsg.value = body?.error ?? "Failed to publish page";
+			saving.value = false;
+			return;
+		}
+
+		saving.value = false;
 		window.location.href = "/pages";
+	};
+
+	const handleDiscardDraft = async (): Promise<void> => {
+		if (!pageId) return;
+
+		saving.value = true;
+		errorMsg.value = null;
+
+		const res = await fetch(`${apiUrl}/pages/${pageId}/draft`, {
+			method: "DELETE",
+			credentials: "include",
+		}).catch(() => null);
+
+		saving.value = false;
+
+		if (!res?.ok) {
+			const body = (await res?.json().catch(() => null)) as { error?: string } | null;
+			errorMsg.value = body?.error ?? "Failed to discard draft";
+			return;
+		}
+
+		window.location.href = "/pages";
+	};
+
+	const handleToggleVisibility = async (): Promise<void> => {
+		if (!pageId) return;
+
+		saving.value = true;
+		errorMsg.value = null;
+
+		const endpoint = status.value === "published" ? "unpublish" : "publish";
+		const res = await fetch(`${apiUrl}/pages/${pageId}/${endpoint}`, {
+			method: "POST",
+			credentials: "include",
+		}).catch(() => null);
+
+		saving.value = false;
+
+		if (!res?.ok) {
+			const body = (await res?.json().catch(() => null)) as { error?: string } | null;
+			errorMsg.value = body?.error ?? "Failed to update visibility";
+			return;
+		}
+
+		status.value = status.value === "published" ? "unpublished" : "published";
 	};
 
 	const activeLangLabel =
@@ -207,7 +333,12 @@ export function PageEditor({
 				{status.value === "published" ? (
 					<span class="inline-flex items-center gap-1.5 text-[11px] text-green bg-green-faint px-2.5 py-1 rounded">
 						<span class="w-1.5 h-1.5 rounded-full bg-green shrink-0" />
-						Published
+						Published{hasDraft.value ? " · draft pending" : ""}
+					</span>
+				) : status.value === "unpublished" ? (
+					<span class="inline-flex items-center gap-1.5 text-[11px] text-text2 bg-bg3 px-2.5 py-1 rounded">
+						<span class="w-1.5 h-1.5 rounded-full bg-text2 shrink-0" />
+						Unpublished
 					</span>
 				) : (
 					<span class="inline-flex items-center gap-1.5 text-[11px] text-amber bg-amber-faint px-2.5 py-1 rounded">
@@ -318,62 +449,106 @@ export function PageEditor({
 				</div>
 
 				{/* ── Right sidebar ─────────────────────────── */}
-				<div class="w-55 shrink-0 bg-bg0 p-3.5 overflow-y-auto flex flex-col gap-3">
+				<div class="w-80 shrink-0 bg-bg0 p-3.5 overflow-y-auto flex flex-col gap-3">
 					{/* Version status card */}
 					<div class="bg-bg2 border border-ui-border rounded-md p-3">
 						<div class="text-[11px] text-text0 mb-2.5">Version status</div>
+
+						{/* Published/Unpublished toggle — only for pages that have ever been published */}
+						{pageId && status.value !== "draft" && (
+							<div class="flex items-center justify-between mb-2.5">
+								<span class="text-[10px] text-text1">{status.value === "published" ? "Published" : "Unpublished"}</span>
+								<Toggle
+									value={status.value === "published"}
+									onChange={handleToggleVisibility}
+									disabled={saving.value}
+								/>
+							</div>
+						)}
+
+						{/* Draft pending banner */}
+						{pageId && hasDraft.value && (status.value === "published" || status.value === "unpublished") && (
+							<div class="bg-amber-faint border border-amber/20 rounded px-2 py-1.5 mb-2.5">
+								<div class="text-[10px] text-amber font-medium mb-1.5">Draft pending</div>
+								<div class="flex gap-1">
+									<button
+										type="button"
+										onClick={handlePublish}
+										disabled={saving.value}
+										class="flex-1 text-center text-[10px] bg-accent text-white border-none rounded py-1 cursor-pointer hover:bg-accent-hover transition-colors disabled:opacity-40"
+									>
+										{saving.value ? "…" : "Publish draft"}
+									</button>
+									<button
+										type="button"
+										onClick={handleDiscardDraft}
+										disabled={saving.value}
+										class="flex-1 text-center text-[10px] bg-bg3 border border-ui-border text-text1 rounded py-1 cursor-pointer hover:border-ui-border-hover transition-colors disabled:opacity-40"
+									>
+										Discard
+									</button>
+								</div>
+							</div>
+						)}
+
 						{!pageId && <div class="text-[10px] text-text1 mb-2.5">Not published yet</div>}
+
 						{errorMsg.value && (
 							<p class="text-[10px] text-coral bg-coral/10 border border-coral/20 rounded px-2 py-1.5 mb-2">
 								{errorMsg.value}
 							</p>
 						)}
-						<div class="flex gap-1.5">
-							<button
-								type="button"
-								onClick={() => handleSave("draft")}
-								disabled={saving.value}
-								class="flex-1 text-center text-[11px] bg-bg3 border border-ui-border text-text0 rounded py-1.5 cursor-pointer hover:border-ui-border-hover transition-colors disabled:opacity-40"
-							>
-								Save draft
-							</button>
-							<button
-								type="button"
-								onClick={() => handleSave("published")}
-								disabled={saving.value}
-								class="flex-1 text-center text-[11px] bg-accent text-white border-none rounded py-1.5 cursor-pointer hover:bg-accent-hover transition-colors disabled:opacity-40"
-							>
-								{saving.value ? "…" : "Publish ↑"}
-							</button>
-						</div>
+
+						{/* Save draft / Publish — shown when page is new or has no pending draft */}
+						{(!pageId || status.value === "draft" || !hasDraft.value) && (
+							<div class="flex gap-1.5">
+								<button
+									type="button"
+									onClick={handleSaveDraft}
+									disabled={saving.value}
+									class="flex-1 text-center text-[11px] bg-bg3 border border-ui-border text-text0 rounded py-1.5 cursor-pointer hover:border-ui-border-hover transition-colors disabled:opacity-40"
+								>
+									Save draft
+								</button>
+								<button
+									type="button"
+									onClick={handlePublish}
+									disabled={saving.value}
+									class="flex-1 text-center text-[11px] bg-accent text-white border-none rounded py-1.5 cursor-pointer hover:bg-accent-hover transition-colors disabled:opacity-40"
+								>
+									{saving.value ? "…" : "Publish ↑"}
+								</button>
+							</div>
+						)}
 					</div>
 
 					{/* Page meta card */}
 					<div class="bg-bg2 border border-ui-border rounded-md p-3">
 						<div class="text-[11px] text-text0 mb-2.5">Page meta</div>
-						<div class="flex items-center justify-between mb-1">
-							<div class="text-[10px] text-text2">Slug</div>
-							<label class="flex items-center gap-1 cursor-pointer">
-								<input
-									type="checkbox"
-									checked={isHomepage.value}
-									onChange={(event) => {
-										isHomepage.value = (event.target as HTMLInputElement).checked;
-									}}
-									class="w-2.5 h-2.5 accent-accent"
-								/>
-								<span class="text-[10px] text-text2">Homepage</span>
-							</label>
-						</div>
+						<label class="flex items-center gap-2.5 cursor-pointer select-none mb-2.5">
+							<input
+								type="checkbox"
+								checked={isHomepage.value}
+								onChange={(event) => {
+									isHomepage.value = (event.target as HTMLInputElement).checked;
+									if ((event.target as HTMLInputElement).checked) {
+										slug.value = "/";
+									}
+								}}
+								class="w-4 h-4 accent-accent cursor-pointer"
+							/>
+							<span class="text-[11px] text-text1">Set as homepage</span>
+						</label>
+						<div class="text-[10px] text-text2 mb-1">Slug</div>
 						<input
 							type="text"
-							value={slug.value}
+							value={isHomepage.value ? "/" : slug.value}
 							onInput={(event) => {
 								slug.value = (event.target as HTMLInputElement).value;
 							}}
-							placeholder={isHomepage.value && !slug.value ? "/ (auto)" : "/about"}
-							disabled={isHomepage.value && !slug.value}
-							class={`w-full bg-bg1 border border-ui-border rounded text-[11px] text-text0 px-2 py-1.5 outline-none focus:border-ui-border-hover transition-colors mb-2.5 ${isHomepage.value && !slug.value ? "opacity-40 cursor-not-allowed" : ""}`}
+							placeholder="/about"
+							disabled={isHomepage.value}
+							class={`w-full bg-bg1 border border-ui-border rounded text-[11px] text-text0 px-2 py-1.5 outline-none focus:border-ui-border-hover transition-colors mb-2.5 ${isHomepage.value ? "opacity-40 cursor-not-allowed" : ""}`}
 						/>
 						<div class="text-[10px] text-text2 mb-1">SEO title</div>
 						<input

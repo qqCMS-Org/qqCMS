@@ -7,7 +7,8 @@ import { COOKIE_NAME, DEFAULT_API_URL } from '@shared/constants';
 interface PageWithTranslations {
   id: string;
   slug: string;
-  status: 'draft' | 'published';
+  status: 'draft' | 'published' | 'unpublished';
+  hasDraft: boolean;
   isHomepage: boolean;
   translations: PageTranslationData[];
 }
@@ -37,10 +38,10 @@ const languages = allLanguages.filter((lang) => lang.isActive);
     initialSlug={page.slug}
     initialIsHomepage={page.isHomepage}
     initialStatus={page.status}
+    initialHasDraft={page.hasDraft}
     initialTranslations={page.translations}
     languages={languages}
     apiUrl={API_URL}
     client:only="preact"
-  />
   />
 </AdminLayout>
