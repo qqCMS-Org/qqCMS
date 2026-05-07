@@ -95,6 +95,24 @@ export const IcoGear = (): JSX.Element => (
 	</svg>
 );
 
+export const IcoLang = (): JSX.Element => (
+	<svg
+		width={14}
+		height={14}
+		viewBox="0 0 16 16"
+		fill="none"
+		stroke="currentColor"
+		strokeWidth="1.2"
+		aria-hidden="true"
+		style={{ flexShrink: 0 }}
+	>
+		<circle cx="8" cy="8" r="6.5" />
+		<path d="M8 1.5C8 1.5 5.5 4 5.5 8s2.5 6.5 2.5 6.5" />
+		<path d="M8 1.5C8 1.5 10.5 4 10.5 8s-2.5 6.5-2.5 6.5" />
+		<line x1="1.5" y1="8" x2="14.5" y2="8" />
+	</svg>
+);
+
 export const IcoLogout = (): JSX.Element => (
 	<svg width={14} height={14} viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" style={{ flexShrink: 0 }}>
 		<path

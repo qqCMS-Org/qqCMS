@@ -1,19 +1,13 @@
 import { useSignal } from "@preact/signals";
+import { api } from "@shared/api/client";
 import type { JSX } from "preact";
 
-interface LogoutButtonProps {
-	apiUrl: string;
-}
-
-export function LogoutButton({ apiUrl }: LogoutButtonProps): JSX.Element {
+export function LogoutButton(): JSX.Element {
 	const loading = useSignal(false);
 
 	const handleLogout = async (): Promise<void> => {
 		loading.value = true;
-		await fetch(`${apiUrl}/auth/logout`, {
-			method: "POST",
-			credentials: "include",
-		}).catch(() => null);
+		await api.auth.logout.post().catch(() => null);
 		window.location.href = "/login";
 	};
 

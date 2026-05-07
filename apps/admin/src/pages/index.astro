@@ -24,7 +24,7 @@ const [pagesCount, languagesCount, mediaCount] = await Promise.all([
 
 <AdminLayout title="Dashboard" activePage="dashboard">
   <Fragment slot="topbar-actions">
-    <LogoutButton apiUrl={API_URL} client:load />
+    <LogoutButton client:load />
   </Fragment>
   <StatsBar pagesCount={pagesCount} languagesCount={languagesCount} mediaCount={mediaCount} />
 </AdminLayout>

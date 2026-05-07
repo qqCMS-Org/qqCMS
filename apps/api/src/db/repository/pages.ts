@@ -1,9 +1,24 @@
 import { db } from "@core/Database";
+import { pageTranslations } from "@schema/page-translations";
 import type { NewPage } from "@schema/pages";
 import { pages } from "@schema/pages";
-import { and, eq, ne } from "drizzle-orm";
+import { and, asc, eq, ne } from "drizzle-orm";
 
-export const getPages = () => db.select().from(pages);
+export const getPages = () =>
+	db
+		.selectDistinctOn([pages.id], {
+			id: pages.id,
+			slug: pages.slug,
+			status: pages.status,
+			hasDraft: pages.hasDraft,
+			isHomepage: pages.isHomepage,
+			createdAt: pages.createdAt,
+			updatedAt: pages.updatedAt,
+			title: pageTranslations.title,
+		})
+		.from(pages)
+		.leftJoin(pageTranslations, eq(pageTranslations.pageId, pages.id))
+		.orderBy(asc(pages.id), asc(pageTranslations.languageCode));
 
 export const getPage = (id: string) =>
 	db.query.pages.findFirst({

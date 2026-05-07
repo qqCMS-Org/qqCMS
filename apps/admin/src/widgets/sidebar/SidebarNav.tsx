@@ -1,12 +1,14 @@
+import { api } from "@shared/api/client";
 import type { JSX } from "preact";
 import { useState } from "preact/hooks";
-import { IcoBurger, IcoColl, IcoDash, IcoGear, IcoKey, IcoLogout, IcoMedia, IcoPage } from "./icons";
+import { IcoBurger, IcoColl, IcoDash, IcoGear, IcoKey, IcoLang, IcoLogout, IcoMedia, IcoPage } from "./icons";
 
 // ── Nav config ────────────────────────────────────────
 
 const NAV_ITEMS = [
 	{ id: "dashboard", label: "Dashboard", href: "/", Icon: IcoDash },
 	{ id: "pages", label: "Pages", href: "/pages", Icon: IcoPage },
+	{ id: "languages", label: "Languages", href: "/languages", Icon: IcoLang },
 	{ id: "collections", label: "Collections", href: "/collections", Icon: IcoColl },
 	{ id: "media", label: "Media", href: "/media", Icon: IcoMedia },
 	{ id: "apikeys", label: "API Keys", href: "/api-keys", Icon: IcoKey },
@@ -20,20 +22,16 @@ export type { NavItemId };
 
 interface SidebarNavProps {
 	activePage: NavItemId;
-	apiUrl: string;
 }
 
 // ── Component ─────────────────────────────────────────
 
-export const SidebarNav = ({ activePage, apiUrl }: SidebarNavProps): JSX.Element => {
+export const SidebarNav = ({ activePage }: SidebarNavProps): JSX.Element => {
 	const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 	const [menuOpen, setMenuOpen] = useState(false);
 
 	const handleLogout = async (): Promise<void> => {
-		await fetch(`${apiUrl}/auth/logout`, {
-			method: "POST",
-			credentials: "include",
-		}).catch(() => null);
+		await api.auth.logout.post().catch(() => null);
 		window.location.href = "/login";
 	};
 

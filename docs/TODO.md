@@ -44,25 +44,25 @@
 > ⛔ Stop here. Ask user to verify dashboard loads, stats display, and logout works.
 
 ### Step 4 — Pages list (`/pages`)
-- [ ] Create `apps/admin/src/pages/pages/index.astro` — fetch pages list server-side
-- [ ] Create `apps/admin/src/widgets/pages-list/PagesTable.tsx` — Preact island, table with slug, title, language columns, delete button
-- [ ] Create `apps/admin/src/features/pages/DeletePageButton.tsx` — calls `DELETE /pages/:id`, invalidates table
+- [x] Create `apps/admin/src/pages/pages/index.astro` — fetch pages list server-side
+- [x] Create `apps/admin/src/widgets/pages-list/PagesTable.tsx` — Preact island, table with slug, title, language columns, delete button
+- [x] Create `apps/admin/src/features/pages/DeletePageButton.tsx` — calls `DELETE /pages/:id`, invalidates table
 
 > ⛔ Stop here. Ask user to verify the pages list renders and delete works.
 
 ### Step 5 — Page editor (`/pages/new` and `/pages/:id/edit`)
-- [ ] Create `apps/admin/src/pages/pages/new.astro`
-- [ ] Create `apps/admin/src/pages/pages/[id]/edit.astro` — fetch page + translations server-side
-- [ ] Create `apps/admin/src/widgets/page-editor/PageEditor.tsx` — Preact island with language tabs, slug field, TipTap editor per language
-- [ ] Install TipTap (`@tiptap/core`, `@tiptap/starter-kit`, `@tiptap/react`)
-- [ ] Wire save to `PUT /pages/:id/translations/:lang`
+- [x] Create `apps/admin/src/pages/pages/new.astro`
+- [x] Create `apps/admin/src/pages/pages/[id]/edit.astro` — fetch page + translations server-side
+- [x] Create `apps/admin/src/widgets/page-editor/PageEditor.tsx` — Preact island with language tabs, slug field, TipTap editor per language
+- [x] Install TipTap (`@tiptap/core`, `@tiptap/starter-kit`, `@tiptap/react`)
+- [x] Wire save to `PUT /pages/:id/translations/:lang`
 
 > ⛔ Stop here. Ask user to test creating a page, editing translations, and saving.
 
 ### Step 6 — Languages (`/languages`)
-- [ ] Create `apps/admin/src/pages/languages/index.astro` — fetch languages server-side
-- [ ] Create `apps/admin/src/widgets/languages/LanguagesTable.tsx` — Preact island, toggle active, add language, delete
-- [ ] Wire to `GET /languages`, `POST /languages`, `PATCH /languages/:id`, `DELETE /languages/:id`
+- [x] Create `apps/admin/src/pages/languages/index.astro` — fetch languages server-side
+- [x] Create `apps/admin/src/widgets/languages/LanguagesTable.tsx` — Preact island, toggle active, add language, delete
+- [x] Wire to `GET /languages`, `POST /languages`, `PATCH /languages/:id`, `DELETE /languages/:id`
 
 > ⛔ Stop here. Ask user to verify language management works end-to-end.
 

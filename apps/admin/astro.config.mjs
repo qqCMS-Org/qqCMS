@@ -12,7 +12,7 @@ const src = (p) => path.resolve(__dirname, 'src', p);
 export default defineConfig({
 	output: 'server',
 	adapter: node({ mode: 'standalone' }),
-	integrations: [preact({ include: ['**/islands/**', '**/features/**', '**/widgets/**', '**/entities/**'] })],
+	integrations: [preact({ compat: true, include: ['**/islands/**', '**/features/**', '**/widgets/**', '**/entities/**'] })],
 	vite: {
 		plugins: [tailwindcss()],
 		resolve: {

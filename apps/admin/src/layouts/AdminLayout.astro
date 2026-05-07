@@ -2,30 +2,32 @@
 import { Layout } from '@layouts';
 import { SidebarNav } from '@widgets/sidebar';
 import type { NavItemId } from '@widgets/sidebar';
-import { DEFAULT_API_URL } from '@shared/constants';
 
 interface Props {
   title: string;
   activePage: NavItemId;
+  noPadding?: boolean;
+  noTopbar?: boolean;
 }
 
-const { title, activePage } = Astro.props;
-const apiUrl = import.meta.env.PUBLIC_API_URL ?? DEFAULT_API_URL;
+const { title, activePage, noPadding = false, noTopbar = false } = Astro.props;
 ---
 
 <Layout title={`${title} — qqCMS`}>
   <div class="admin-shell">
-    <SidebarNav activePage={activePage} apiUrl={apiUrl} client:load />
+    <SidebarNav activePage={activePage} client:load />
     <div class="admin-main">
-      <header class="admin-topbar">
-        <slot name="topbar">
-          <span class="topbar-title">{title}</span>
-        </slot>
-        <div class="topbar-actions">
-          <slot name="topbar-actions" />
-        </div>
-      </header>
-      <main class="admin-content">
+      {!noTopbar && (
+        <header class="admin-topbar">
+          <slot name="topbar">
+            <span class="topbar-title">{title}</span>
+          </slot>
+          <div class="topbar-actions">
+            <slot name="topbar-actions" />
+          </div>
+        </header>
+      )}
+      <main class={`admin-content${noPadding ? ' no-padding' : ''}`}>
         <slot />
       </main>
     </div>
@@ -78,6 +80,11 @@ const apiUrl = import.meta.env.PUBLIC_API_URL ?? DEFAULT_API_URL;
     overflow-y: auto;
     background: var(--bg1);
     padding: 24px;
+  }
+
+  .admin-content.no-padding {
+    padding: 0;
+    overflow: hidden;
   }
 
   /* Sidebar responsive: CSS controls which layout is visible — no JS needed */
