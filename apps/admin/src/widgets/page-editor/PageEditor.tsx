@@ -53,6 +53,7 @@ export function PageEditor({
 	const seoTitle = useSignal("");
 	const saving = useSignal(false);
 	const errorMsg = useSignal<string | null>(null);
+	const showDeleteConfirm = useSignal(false);
 	const skipNextUpdate = useRef(false);
 
 	const savedTranslations = useSignal<Record<string, TranslationEntry>>(
@@ -140,6 +141,10 @@ export function PageEditor({
 			errorMsg.value = "Slug is required";
 			return;
 		}
+		if (trimmedSlug === "/" && !isHomepage.value) {
+			errorMsg.value = 'Slug "/" is reserved for the homepage';
+			return;
+		}
 
 		saving.value = true;
 		errorMsg.value = null;
@@ -194,6 +199,10 @@ export function PageEditor({
 		const trimmedSlug = slug.value.trim() || (isHomepage.value ? "/" : "");
 		if (!trimmedSlug) {
 			errorMsg.value = "Slug is required";
+			return;
+		}
+		if (trimmedSlug === "/" && !isHomepage.value) {
+			errorMsg.value = 'Slug "/" is reserved for the homepage';
 			return;
 		}
 
@@ -300,6 +309,29 @@ export function PageEditor({
 		}
 
 		status.value = status.value === "published" ? "unpublished" : "published";
+	};
+
+	const handleDeletePage = async (): Promise<void> => {
+		if (!pageId) return;
+
+		saving.value = true;
+		errorMsg.value = null;
+
+		const res = await fetch(`${apiUrl}/pages/${pageId}`, {
+			method: "DELETE",
+			credentials: "include",
+		}).catch(() => null);
+
+		saving.value = false;
+
+		if (!res?.ok) {
+			const body = (await res?.json().catch(() => null)) as { error?: string } | null;
+			errorMsg.value = body?.error ?? "Failed to delete page";
+			showDeleteConfirm.value = false;
+			return;
+		}
+
+		window.location.href = "/pages";
 	};
 
 	const activeLangLabel =
@@ -583,6 +615,50 @@ export function PageEditor({
 						</div>
 						<div class="text-[9px] text-text2">Editing: {activeLangLabel} variant</div>
 					</div>
+
+					{/* Danger zone card — only for existing pages */}
+					{pageId && (
+						<div class="bg-bg2 border border-coral/30 rounded-md p-3">
+							<div class="text-[11px] text-coral mb-2.5">Danger zone</div>
+							{showDeleteConfirm.value ? (
+								<>
+									<p class="text-[10px] text-text1 mb-2">
+										This will permanently delete the page and all its translations. This action cannot be undone.
+									</p>
+									<div class="flex gap-1">
+										<button
+											type="button"
+											onClick={handleDeletePage}
+											disabled={saving.value}
+											class="flex-1 text-center text-[10px] bg-coral text-white border-none rounded py-1 cursor-pointer hover:opacity-80 transition-opacity disabled:opacity-40"
+										>
+											{saving.value ? "Deleting…" : "Yes, delete"}
+										</button>
+										<button
+											type="button"
+											onClick={() => {
+												showDeleteConfirm.value = false;
+											}}
+											disabled={saving.value}
+											class="flex-1 text-center text-[10px] bg-bg3 border border-ui-border text-text1 rounded py-1 cursor-pointer hover:border-ui-border-hover transition-colors disabled:opacity-40"
+										>
+											Cancel
+										</button>
+									</div>
+								</>
+							) : (
+								<button
+									type="button"
+									onClick={() => {
+										showDeleteConfirm.value = true;
+									}}
+									class="w-full text-center text-[10px] border border-coral/40 text-coral rounded py-1.5 cursor-pointer hover:bg-coral/10 transition-colors"
+								>
+									Delete page
+								</button>
+							)}
+						</div>
+					)}
 				</div>
 			</div>
 		</div>
