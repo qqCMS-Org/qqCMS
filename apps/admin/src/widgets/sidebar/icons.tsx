@@ -113,6 +113,23 @@ export const IcoLang = (): JSX.Element => (
 	</svg>
 );
 
+export const IcoNav = (): JSX.Element => (
+	<svg
+		width={14}
+		height={14}
+		viewBox="0 0 16 16"
+		fill="none"
+		stroke="currentColor"
+		strokeWidth="1.2"
+		aria-hidden="true"
+		style={{ flexShrink: 0 }}
+	>
+		<line x1="2" y1="4" x2="14" y2="4" />
+		<line x1="2" y1="8" x2="10" y2="8" />
+		<line x1="2" y1="12" x2="12" y2="12" />
+	</svg>
+);
+
 export const IcoLogout = (): JSX.Element => (
 	<svg width={14} height={14} viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" style={{ flexShrink: 0 }}>
 		<path
