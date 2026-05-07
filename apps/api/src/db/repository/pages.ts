@@ -2,7 +2,7 @@ import { db } from "@core/Database";
 import { pageTranslations } from "@schema/page-translations";
 import type { NewPage } from "@schema/pages";
 import { pages } from "@schema/pages";
-import { and, eq, ne } from "drizzle-orm";
+import { and, asc, eq, ne } from "drizzle-orm";
 
 export const getPages = () =>
 	db
@@ -17,7 +17,8 @@ export const getPages = () =>
 			title: pageTranslations.title,
 		})
 		.from(pages)
-		.leftJoin(pageTranslations, eq(pageTranslations.pageId, pages.id));
+		.leftJoin(pageTranslations, eq(pageTranslations.pageId, pages.id))
+		.orderBy(asc(pages.id), asc(pageTranslations.languageCode));
 
 export const getPage = (id: string) =>
 	db.query.pages.findFirst({

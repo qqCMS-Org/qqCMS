@@ -128,8 +128,8 @@ export function LanguagesTable({ initialLanguages, apiUrl }: LanguagesTableProps
 								type="text"
 								placeholder="Code (e.g. en)"
 								value={newCode.value}
-								onInput={(event) => {
-									newCode.value = (event.target as HTMLInputElement).value;
+								onInput={(event: JSX.TargetedEvent<HTMLInputElement, Event>) => {
+									newCode.value = event.currentTarget.value;
 								}}
 								class="bg-bg1 border border-ui-border rounded text-[11px] text-text0 px-2 py-1.5 outline-none focus:border-ui-border-hover w-24"
 							/>
@@ -137,8 +137,8 @@ export function LanguagesTable({ initialLanguages, apiUrl }: LanguagesTableProps
 								type="text"
 								placeholder="Label (e.g. English)"
 								value={newLabel.value}
-								onInput={(event) => {
-									newLabel.value = (event.target as HTMLInputElement).value;
+								onInput={(event: JSX.TargetedEvent<HTMLInputElement, Event>) => {
+									newLabel.value = event.currentTarget.value;
 								}}
 								class="bg-bg1 border border-ui-border rounded text-[11px] text-text0 px-2 py-1.5 outline-none focus:border-ui-border-hover flex-1"
 							/>

@@ -16,7 +16,7 @@ export interface PageLanguage {
 export interface PageTranslationData {
 	languageCode: string;
 	title: string;
-	content: Record<string, unknown> | null;
+	content: JSONContent | null;
 }
 
 interface TranslationEntry {
@@ -60,7 +60,7 @@ export function PageEditor({
 		Object.fromEntries(
 			languages.map((lang) => {
 				const found = initialTranslations.find((t) => t.languageCode === lang.code);
-				return [lang.code, { title: found?.title ?? "", content: (found?.content ?? null) as JSONContent | null }];
+				return [lang.code, { title: found?.title ?? "", content: found?.content ?? null }];
 			}),
 		),
 	);
@@ -156,7 +156,7 @@ export function PageEditor({
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				credentials: "include",
-				body: JSON.stringify({ slug: trimmedSlug, status: "draft", isHomepage: isHomepage.value }),
+				body: JSON.stringify({ slug: trimmedSlug, isHomepage: isHomepage.value }),
 			}).catch(() => null);
 
 			if (!createRes?.ok) {
@@ -216,7 +216,7 @@ export function PageEditor({
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				credentials: "include",
-				body: JSON.stringify({ slug: trimmedSlug, status: "draft", isHomepage: isHomepage.value }),
+				body: JSON.stringify({ slug: trimmedSlug, isHomepage: isHomepage.value }),
 			}).catch(() => null);
 
 			if (!createRes?.ok) {
@@ -250,9 +250,11 @@ export function PageEditor({
 			return;
 		}
 
-		const publishRes = await fetch(`${apiUrl}/pages/${resolvedPageId}/publish`, {
-			method: "POST",
+		const publishRes = await fetch(`${apiUrl}/pages/${resolvedPageId}/status`, {
+			method: "PATCH",
+			headers: { "Content-Type": "application/json" },
 			credentials: "include",
+			body: JSON.stringify({ status: "published" }),
 		}).catch(() => null);
 
 		if (!publishRes?.ok) {
@@ -294,10 +296,12 @@ export function PageEditor({
 		saving.value = true;
 		errorMsg.value = null;
 
-		const endpoint = status.value === "published" ? "unpublish" : "publish";
-		const res = await fetch(`${apiUrl}/pages/${pageId}/${endpoint}`, {
-			method: "POST",
+		const newStatus = status.value === "published" ? "unpublished" : "published";
+		const res = await fetch(`${apiUrl}/pages/${pageId}/status`, {
+			method: "PATCH",
+			headers: { "Content-Type": "application/json" },
 			credentials: "include",
+			body: JSON.stringify({ status: newStatus }),
 		}).catch(() => null);
 
 		saving.value = false;
@@ -308,7 +312,7 @@ export function PageEditor({
 			return;
 		}
 
-		status.value = status.value === "published" ? "unpublished" : "published";
+		status.value = newStatus;
 	};
 
 	const handleDeletePage = async (): Promise<void> => {

@@ -11,6 +11,7 @@ export interface DeletePageButtonProps {
 export function DeletePageButton({ pageId, apiUrl, onDeleted }: DeletePageButtonProps): JSX.Element {
 	const loading = useSignal(false);
 	const confirming = useSignal(false);
+	const error = useSignal<string | null>(null);
 
 	const handleClick = async (): Promise<void> => {
 		if (!confirming.value) {
@@ -19,13 +20,21 @@ export function DeletePageButton({ pageId, apiUrl, onDeleted }: DeletePageButton
 		}
 
 		loading.value = true;
+		error.value = null;
 
-		await fetch(`${apiUrl}/pages/${pageId}`, {
+		const res = await fetch(`${apiUrl}/pages/${pageId}`, {
 			method: "DELETE",
 			credentials: "include",
 		}).catch(() => null);
 
 		loading.value = false;
+
+		if (!res?.ok) {
+			error.value = "Failed to delete page";
+			confirming.value = false;
+			return;
+		}
+
 		confirming.value = false;
 		onDeleted();
 	};
@@ -37,14 +46,17 @@ export function DeletePageButton({ pageId, apiUrl, onDeleted }: DeletePageButton
 	};
 
 	return (
-		<Button
-			variant={confirming.value ? "danger" : "default"}
-			size="sm"
-			loading={loading.value}
-			onClick={handleClick}
-			onBlur={handleBlur}
-		>
-			{confirming.value ? "Confirm?" : "Delete"}
-		</Button>
+		<>
+			{error.value && <span class="text-[11px] text-coral">{error.value}</span>}
+			<Button
+				variant={confirming.value ? "danger" : "default"}
+				size="sm"
+				loading={loading.value}
+				onClick={handleClick}
+				onBlur={handleBlur}
+			>
+				{confirming.value ? "Confirm?" : "Delete"}
+			</Button>
+		</>
 	);
 }

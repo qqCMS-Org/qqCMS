@@ -11,7 +11,7 @@ import {
 	updatePage,
 	upsertTranslation,
 } from "./pages.service";
-import { CreatePageSchema, UpdatePageSchema, UpsertTranslationSchema } from "./pages.types";
+import { CreatePageSchema, UpdatePageSchema, UpdatePageStatusSchema, UpsertTranslationSchema } from "./pages.types";
 
 export const pagesController = new Elysia({ prefix: "/pages" })
 	.use(authPlugin)
@@ -33,8 +33,11 @@ export const pagesController = new Elysia({ prefix: "/pages" })
 		},
 		{ requireAuth: true },
 	)
-	.post("/:id/publish", ({ params }) => publishPage(params.id), { requireAuth: true })
-	.post("/:id/unpublish", ({ params }) => unpublishPage(params.id), { requireAuth: true })
+	.patch(
+		"/:id/status",
+		({ params, body }) => (body.status === "published" ? publishPage(params.id) : unpublishPage(params.id)),
+		{ body: UpdatePageStatusSchema, requireAuth: true },
+	)
 	.delete(
 		"/:id/draft",
 		async ({ params, set }) => {
