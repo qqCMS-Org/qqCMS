@@ -10,6 +10,7 @@ export const getPages = () =>
 			id: pages.id,
 			slug: pages.slug,
 			status: pages.status,
+			hasDraft: pages.hasDraft,
 			isHomepage: pages.isHomepage,
 			createdAt: pages.createdAt,
 			updatedAt: pages.updatedAt,

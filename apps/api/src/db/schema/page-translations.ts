@@ -11,6 +11,8 @@ export const pageTranslations = pgTable(
 		languageCode: text("language_code").notNull(),
 		title: text("title").notNull(),
 		content: jsonb("content").notNull().default({}),
+		publishedTitle: text("published_title"),
+		publishedContent: jsonb("published_content"),
 	},
 	(table) => [unique("page_translations_page_lang_unique").on(table.pageId, table.languageCode)],
 );

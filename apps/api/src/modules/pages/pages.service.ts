@@ -1,6 +1,11 @@
 import { NotFoundError } from "@api/errors";
 import { triggerRebuild } from "@modules/rebuild";
-import { getTranslationsByPage, upsertTranslation as upsertTranslationInDb } from "@repository/page-translations";
+import {
+	getTranslationsByPage,
+	promoteTranslationsToPublished,
+	revertTranslationsToDraft,
+	upsertTranslation as upsertTranslationInDb,
+} from "@repository/page-translations";
 import {
 	clearHomepageFlag,
 	deletePage as deletePageInDb,
@@ -52,11 +57,45 @@ export const deletePage = async (id: string) => {
 	void triggerRebuild();
 };
 
+export const publishPage = async (id: string) => {
+	const existing = await getPageById(id);
+	if (!existing) throw new NotFoundError("Page not found");
+
+	await promoteTranslationsToPublished(id);
+	const [updated] = await updatePageInDb(id, { status: "published", hasDraft: false });
+	void triggerRebuild();
+	return updated;
+};
+
+export const unpublishPage = async (id: string) => {
+	const existing = await getPageById(id);
+	if (!existing) throw new NotFoundError("Page not found");
+
+	const [updated] = await updatePageInDb(id, { status: "unpublished" });
+	void triggerRebuild();
+	return updated;
+};
+
+export const discardDraft = async (id: string) => {
+	const existing = await getPageById(id);
+	if (!existing) throw new NotFoundError("Page not found");
+
+	await revertTranslationsToDraft(id);
+	const [updated] = await updatePageInDb(id, { hasDraft: false });
+	void triggerRebuild();
+	return updated;
+};
+
 export const upsertTranslation = async (pageId: string, languageCode: string, data: UpsertTranslationInput) => {
 	const page = await getPageById(pageId);
 	if (!page) throw new NotFoundError("Page not found");
 
 	const [translation] = await upsertTranslationInDb({ pageId, languageCode, ...data });
+
+	if ((page.status === "published" || page.status === "unpublished") && !page.hasDraft) {
+		await updatePageInDb(pageId, { hasDraft: true });
+	}
+
 	void triggerRebuild();
 	return translation;
 };
