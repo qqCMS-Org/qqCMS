@@ -28,7 +28,7 @@ export const getPage = (id: string) =>
 export const insertPage = (data: Omit<NewPage, "id" | "createdAt" | "updatedAt">) =>
 	db
 		.insert(pages)
-		.values({ ...data, id: crypto.randomUUID() })
+		.values({ status: "draft", hasDraft: true, isHomepage: false, ...data, id: crypto.randomUUID() })
 		.returning();
 
 export const updatePage = (id: string, data: Partial<Omit<NewPage, "id" | "createdAt" | "updatedAt">>) =>
