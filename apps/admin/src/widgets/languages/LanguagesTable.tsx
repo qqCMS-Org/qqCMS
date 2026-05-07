@@ -1,4 +1,5 @@
 import { useSignal } from "@preact/signals";
+import { api, extractApiError } from "@shared/api/client";
 import type { JSX } from "preact";
 
 export interface LanguageRow {
@@ -10,10 +11,9 @@ export interface LanguageRow {
 
 interface LanguagesTableProps {
 	initialLanguages: LanguageRow[];
-	apiUrl: string;
 }
 
-export function LanguagesTable({ initialLanguages, apiUrl }: LanguagesTableProps): JSX.Element {
+export function LanguagesTable({ initialLanguages }: LanguagesTableProps): JSX.Element {
 	const languages = useSignal<LanguageRow[]>(initialLanguages);
 	const adding = useSignal(false);
 	const newCode = useSignal("");
@@ -22,25 +22,17 @@ export function LanguagesTable({ initialLanguages, apiUrl }: LanguagesTableProps
 	const saving = useSignal(false);
 
 	const handleToggleActive = async (id: string, current: boolean): Promise<void> => {
-		const res = await fetch(`${apiUrl}/languages/${id}`, {
-			method: "PATCH",
-			headers: { "Content-Type": "application/json" },
-			credentials: "include",
-			body: JSON.stringify({ isActive: !current }),
-		}).catch(() => null);
+		const { error } = await api.languages({ id }).patch({ isActive: !current });
 
-		if (res?.ok) {
+		if (!error) {
 			languages.value = languages.value.map((lang) => (lang.id === id ? { ...lang, isActive: !current } : lang));
 		}
 	};
 
 	const handleDelete = async (id: string): Promise<void> => {
-		const res = await fetch(`${apiUrl}/languages/${id}`, {
-			method: "DELETE",
-			credentials: "include",
-		}).catch(() => null);
+		const { error } = await api.languages({ id }).delete();
 
-		if (res?.ok || res?.status === 204) {
+		if (!error) {
 			languages.value = languages.value.filter((lang) => lang.id !== id);
 		}
 	};
@@ -57,22 +49,15 @@ export function LanguagesTable({ initialLanguages, apiUrl }: LanguagesTableProps
 		saving.value = true;
 		addError.value = null;
 
-		const res = await fetch(`${apiUrl}/languages`, {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			credentials: "include",
-			body: JSON.stringify({ code, label, isActive: true }),
-		}).catch(() => null);
+		const { data: created, error } = await api.languages.post({ code, label, isActive: true });
 
 		saving.value = false;
 
-		if (!res?.ok) {
-			const body = (await res?.json().catch(() => null)) as { error?: string } | null;
-			addError.value = body?.error ?? "Failed to add language";
+		if (error || !created) {
+			addError.value = error ? (extractApiError(error) ?? "Failed to add language") : "Failed to add language";
 			return;
 		}
 
-		const created = (await res.json()) as LanguageRow;
 		languages.value = [...languages.value, created];
 		newCode.value = "";
 		newLabel.value = "";
@@ -80,20 +65,9 @@ export function LanguagesTable({ initialLanguages, apiUrl }: LanguagesTableProps
 	};
 
 	return (
-		<div style={{ maxWidth: 660 }}>
-			{/* Localization block */}
-			<div class="bg-bg2 border border-ui-border rounded-lg p-4">
-				<div
-					style={{
-						fontFamily: "Instrument Serif, serif",
-						fontStyle: "italic",
-						fontSize: 17,
-						color: "var(--text0)",
-						marginBottom: 14,
-					}}
-				>
-					Localization
-				</div>
+		<div class="h-full overflow-y-auto p-5">
+			<div>
+				<div class="text-[11px] font-semibold uppercase tracking-wider text-text0 mb-3">Localization</div>
 				<div class="text-[11px] text-text1 mb-3.5" style={{ marginTop: -4 }}>
 					Manage the languages available for your content.
 				</div>
@@ -128,7 +102,7 @@ export function LanguagesTable({ initialLanguages, apiUrl }: LanguagesTableProps
 								type="text"
 								placeholder="Code (e.g. en)"
 								value={newCode.value}
-								onInput={(event: JSX.TargetedEvent<HTMLInputElement, Event>) => {
+								onInput={(event: Event & { currentTarget: HTMLInputElement }) => {
 									newCode.value = event.currentTarget.value;
 								}}
 								class="bg-bg1 border border-ui-border rounded text-[11px] text-text0 px-2 py-1.5 outline-none focus:border-ui-border-hover w-24"
@@ -137,7 +111,7 @@ export function LanguagesTable({ initialLanguages, apiUrl }: LanguagesTableProps
 								type="text"
 								placeholder="Label (e.g. English)"
 								value={newLabel.value}
-								onInput={(event: JSX.TargetedEvent<HTMLInputElement, Event>) => {
+								onInput={(event: Event & { currentTarget: HTMLInputElement }) => {
 									newLabel.value = event.currentTarget.value;
 								}}
 								class="bg-bg1 border border-ui-border rounded text-[11px] text-text0 px-2 py-1.5 outline-none focus:border-ui-border-hover flex-1"

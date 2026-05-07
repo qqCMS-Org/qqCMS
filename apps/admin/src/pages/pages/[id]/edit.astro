@@ -41,7 +41,6 @@ const languages = allLanguages.filter((lang) => lang.isActive);
     initialHasDraft={page.hasDraft}
     initialTranslations={page.translations}
     languages={languages}
-    apiUrl={API_URL}
     client:only="preact"
   />
 </AdminLayout>

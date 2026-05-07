@@ -1,3 +1,4 @@
+import { api } from "@shared/api/client";
 import type { JSX } from "preact";
 import { useState } from "preact/hooks";
 import { IcoBurger, IcoColl, IcoDash, IcoGear, IcoKey, IcoLang, IcoLogout, IcoMedia, IcoPage } from "./icons";
@@ -21,20 +22,16 @@ export type { NavItemId };
 
 interface SidebarNavProps {
 	activePage: NavItemId;
-	apiUrl: string;
 }
 
 // ── Component ─────────────────────────────────────────
 
-export const SidebarNav = ({ activePage, apiUrl }: SidebarNavProps): JSX.Element => {
+export const SidebarNav = ({ activePage }: SidebarNavProps): JSX.Element => {
 	const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 	const [menuOpen, setMenuOpen] = useState(false);
 
 	const handleLogout = async (): Promise<void> => {
-		await fetch(`${apiUrl}/auth/logout`, {
-			method: "POST",
-			credentials: "include",
-		}).catch(() => null);
+		await api.auth.logout.post().catch(() => null);
 		window.location.href = "/login";
 	};
 

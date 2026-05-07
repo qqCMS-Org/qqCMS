@@ -14,5 +14,5 @@ const languages = allLanguages.filter((lang) => lang.isActive);
 ---
 
 <AdminLayout title="New page" activePage="pages" noPadding noTopbar>
-  <PageEditor languages={languages} apiUrl={API_URL} client:only="preact" />
+  <PageEditor languages={languages} client:only="preact" />
 </AdminLayout>

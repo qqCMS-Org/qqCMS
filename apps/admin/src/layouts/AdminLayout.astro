@@ -2,7 +2,6 @@
 import { Layout } from '@layouts';
 import { SidebarNav } from '@widgets/sidebar';
 import type { NavItemId } from '@widgets/sidebar';
-import { DEFAULT_API_URL } from '@shared/constants';
 
 interface Props {
   title: string;
@@ -12,12 +11,11 @@ interface Props {
 }
 
 const { title, activePage, noPadding = false, noTopbar = false } = Astro.props;
-const apiUrl = import.meta.env.PUBLIC_API_URL ?? DEFAULT_API_URL;
 ---
 
 <Layout title={`${title} — qqCMS`}>
   <div class="admin-shell">
-    <SidebarNav activePage={activePage} apiUrl={apiUrl} client:load />
+    <SidebarNav activePage={activePage} client:load />
     <div class="admin-main">
       {!noTopbar && (
         <header class="admin-topbar">

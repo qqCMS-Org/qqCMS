@@ -1,5 +1,6 @@
 import { useSignal } from "@preact/signals";
 import { Toggle } from "@repo/ui/Toggle";
+import { api, extractApiError } from "@shared/api/client";
 import type { JSONContent } from "@tiptap/core";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -32,7 +33,6 @@ interface PageEditorProps {
 	initialHasDraft?: boolean;
 	initialTranslations?: PageTranslationData[];
 	languages: PageLanguage[];
-	apiUrl: string;
 }
 
 export function PageEditor({
@@ -43,7 +43,6 @@ export function PageEditor({
 	initialHasDraft = true,
 	initialTranslations = [],
 	languages,
-	apiUrl,
 }: PageEditorProps): JSX.Element {
 	const activeLang = useSignal(languages[0]?.code ?? "");
 	const slug = useSignal(initialSlug);
@@ -118,16 +117,16 @@ export function PageEditor({
 		for (const [langCode, translation] of Object.entries(allTranslations)) {
 			if (!translation.title.trim()) continue;
 
-			const transRes = await fetch(`${apiUrl}/pages/${resolvedPageId}/translations/${langCode}`, {
-				method: "PUT",
-				headers: { "Content-Type": "application/json" },
-				credentials: "include",
-				body: JSON.stringify({ title: translation.title, content: translation.content }),
-			}).catch(() => null);
+			const { error } = await api
+				.pages({ id: resolvedPageId })
+				.translations({ lang: langCode })
+				.put({
+					title: translation.title,
+					content: translation.content ?? undefined,
+				});
 
-			if (!transRes?.ok) {
-				const body = (await transRes?.json().catch(() => null)) as { error?: string } | null;
-				errorMsg.value = body?.error ?? `Failed to save ${langCode} translation`;
+			if (error) {
+				errorMsg.value = extractApiError(error) ?? `Failed to save ${langCode} translation`;
 				return false;
 			}
 		}
@@ -152,33 +151,28 @@ export function PageEditor({
 		let resolvedPageId = pageId;
 
 		if (!resolvedPageId) {
-			const createRes = await fetch(`${apiUrl}/pages`, {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				credentials: "include",
-				body: JSON.stringify({ slug: trimmedSlug, isHomepage: isHomepage.value }),
-			}).catch(() => null);
+			const { data: newPage, error: createError } = await api.pages.post({
+				slug: trimmedSlug,
+				isHomepage: isHomepage.value,
+			});
 
-			if (!createRes?.ok) {
-				const body = (await createRes?.json().catch(() => null)) as { error?: string } | null;
-				errorMsg.value = body?.error ?? "Failed to create page";
+			if (createError || !newPage) {
+				errorMsg.value = createError
+					? (extractApiError(createError) ?? "Failed to create page")
+					: "Failed to create page";
 				saving.value = false;
 				return;
 			}
 
-			const newPage = (await createRes.json()) as { id: string };
 			resolvedPageId = newPage.id;
 		} else {
-			const updateRes = await fetch(`${apiUrl}/pages/${resolvedPageId}`, {
-				method: "PATCH",
-				headers: { "Content-Type": "application/json" },
-				credentials: "include",
-				body: JSON.stringify({ slug: trimmedSlug, isHomepage: isHomepage.value }),
-			}).catch(() => null);
+			const { error: updateError } = await api.pages({ id: resolvedPageId }).patch({
+				slug: trimmedSlug,
+				isHomepage: isHomepage.value,
+			});
 
-			if (!updateRes?.ok) {
-				const body = (await updateRes?.json().catch(() => null)) as { error?: string } | null;
-				errorMsg.value = body?.error ?? "Failed to update page";
+			if (updateError) {
+				errorMsg.value = extractApiError(updateError) ?? "Failed to update page";
 				saving.value = false;
 				return;
 			}
@@ -212,33 +206,28 @@ export function PageEditor({
 		let resolvedPageId = pageId;
 
 		if (!resolvedPageId) {
-			const createRes = await fetch(`${apiUrl}/pages`, {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				credentials: "include",
-				body: JSON.stringify({ slug: trimmedSlug, isHomepage: isHomepage.value }),
-			}).catch(() => null);
+			const { data: newPage, error: createError } = await api.pages.post({
+				slug: trimmedSlug,
+				isHomepage: isHomepage.value,
+			});
 
-			if (!createRes?.ok) {
-				const body = (await createRes?.json().catch(() => null)) as { error?: string } | null;
-				errorMsg.value = body?.error ?? "Failed to create page";
+			if (createError || !newPage) {
+				errorMsg.value = createError
+					? (extractApiError(createError) ?? "Failed to create page")
+					: "Failed to create page";
 				saving.value = false;
 				return;
 			}
 
-			const newPage = (await createRes.json()) as { id: string };
 			resolvedPageId = newPage.id;
 		} else {
-			const updateRes = await fetch(`${apiUrl}/pages/${resolvedPageId}`, {
-				method: "PATCH",
-				headers: { "Content-Type": "application/json" },
-				credentials: "include",
-				body: JSON.stringify({ slug: trimmedSlug, isHomepage: isHomepage.value }),
-			}).catch(() => null);
+			const { error: updateError } = await api.pages({ id: resolvedPageId }).patch({
+				slug: trimmedSlug,
+				isHomepage: isHomepage.value,
+			});
 
-			if (!updateRes?.ok) {
-				const body = (await updateRes?.json().catch(() => null)) as { error?: string } | null;
-				errorMsg.value = body?.error ?? "Failed to update page";
+			if (updateError) {
+				errorMsg.value = extractApiError(updateError) ?? "Failed to update page";
 				saving.value = false;
 				return;
 			}
@@ -250,16 +239,10 @@ export function PageEditor({
 			return;
 		}
 
-		const publishRes = await fetch(`${apiUrl}/pages/${resolvedPageId}/status`, {
-			method: "PATCH",
-			headers: { "Content-Type": "application/json" },
-			credentials: "include",
-			body: JSON.stringify({ status: "published" }),
-		}).catch(() => null);
+		const { error: publishError } = await api.pages({ id: resolvedPageId }).status.patch({ status: "published" });
 
-		if (!publishRes?.ok) {
-			const body = (await publishRes?.json().catch(() => null)) as { error?: string } | null;
-			errorMsg.value = body?.error ?? "Failed to publish page";
+		if (publishError) {
+			errorMsg.value = extractApiError(publishError) ?? "Failed to publish page";
 			saving.value = false;
 			return;
 		}
@@ -274,16 +257,12 @@ export function PageEditor({
 		saving.value = true;
 		errorMsg.value = null;
 
-		const res = await fetch(`${apiUrl}/pages/${pageId}/draft`, {
-			method: "DELETE",
-			credentials: "include",
-		}).catch(() => null);
+		const { error: discardError } = await api.pages({ id: pageId }).draft.delete();
 
 		saving.value = false;
 
-		if (!res?.ok) {
-			const body = (await res?.json().catch(() => null)) as { error?: string } | null;
-			errorMsg.value = body?.error ?? "Failed to discard draft";
+		if (discardError) {
+			errorMsg.value = extractApiError(discardError) ?? "Failed to discard draft";
 			return;
 		}
 
@@ -297,18 +276,12 @@ export function PageEditor({
 		errorMsg.value = null;
 
 		const newStatus = status.value === "published" ? "unpublished" : "published";
-		const res = await fetch(`${apiUrl}/pages/${pageId}/status`, {
-			method: "PATCH",
-			headers: { "Content-Type": "application/json" },
-			credentials: "include",
-			body: JSON.stringify({ status: newStatus }),
-		}).catch(() => null);
+		const { error: visibilityError } = await api.pages({ id: pageId }).status.patch({ status: newStatus });
 
 		saving.value = false;
 
-		if (!res?.ok) {
-			const body = (await res?.json().catch(() => null)) as { error?: string } | null;
-			errorMsg.value = body?.error ?? "Failed to update visibility";
+		if (visibilityError) {
+			errorMsg.value = extractApiError(visibilityError) ?? "Failed to update visibility";
 			return;
 		}
 
@@ -321,16 +294,12 @@ export function PageEditor({
 		saving.value = true;
 		errorMsg.value = null;
 
-		const res = await fetch(`${apiUrl}/pages/${pageId}`, {
-			method: "DELETE",
-			credentials: "include",
-		}).catch(() => null);
+		const { error: deleteError } = await api.pages({ id: pageId }).delete();
 
 		saving.value = false;
 
-		if (!res?.ok) {
-			const body = (await res?.json().catch(() => null)) as { error?: string } | null;
-			errorMsg.value = body?.error ?? "Failed to delete page";
+		if (deleteError) {
+			errorMsg.value = extractApiError(deleteError) ?? "Failed to delete page";
 			showDeleteConfirm.value = false;
 			return;
 		}
@@ -454,8 +423,8 @@ export function PageEditor({
 							<input
 								type="text"
 								value={activeTitle.value}
-								onInput={(event) => {
-									activeTitle.value = (event.target as HTMLInputElement).value;
+								onInput={(event: Event & { currentTarget: HTMLInputElement }) => {
+									activeTitle.value = event.currentTarget.value;
 								}}
 								placeholder="Page title…"
 								style={{
@@ -565,9 +534,9 @@ export function PageEditor({
 							<input
 								type="checkbox"
 								checked={isHomepage.value}
-								onChange={(event) => {
-									isHomepage.value = (event.target as HTMLInputElement).checked;
-									if ((event.target as HTMLInputElement).checked) {
+								onChange={(event: Event & { currentTarget: HTMLInputElement }) => {
+									isHomepage.value = event.currentTarget.checked;
+									if (event.currentTarget.checked) {
 										slug.value = "/";
 									}
 								}}
@@ -579,8 +548,8 @@ export function PageEditor({
 						<input
 							type="text"
 							value={isHomepage.value ? "/" : slug.value}
-							onInput={(event) => {
-								slug.value = (event.target as HTMLInputElement).value;
+							onInput={(event: Event & { currentTarget: HTMLInputElement }) => {
+								slug.value = event.currentTarget.value;
 							}}
 							placeholder="/about"
 							disabled={isHomepage.value}
@@ -590,8 +559,8 @@ export function PageEditor({
 						<input
 							type="text"
 							value={seoTitle.value}
-							onInput={(event) => {
-								seoTitle.value = (event.target as HTMLInputElement).value;
+							onInput={(event: Event & { currentTarget: HTMLInputElement }) => {
+								seoTitle.value = event.currentTarget.value;
 							}}
 							placeholder="Page title — My Website"
 							class="w-full bg-bg1 border border-ui-border rounded text-[11px] text-text0 px-2 py-1.5 outline-none focus:border-ui-border-hover transition-colors"

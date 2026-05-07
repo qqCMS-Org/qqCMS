@@ -1,14 +1,14 @@
 import { useSignal } from "@preact/signals";
 import { Button } from "@repo/ui/Button";
+import { api } from "@shared/api/client";
 import type { JSX } from "preact";
 
 export interface DeletePageButtonProps {
 	pageId: string;
-	apiUrl: string;
 	onDeleted: () => void;
 }
 
-export function DeletePageButton({ pageId, apiUrl, onDeleted }: DeletePageButtonProps): JSX.Element {
+export function DeletePageButton({ pageId, onDeleted }: DeletePageButtonProps): JSX.Element {
 	const loading = useSignal(false);
 	const confirming = useSignal(false);
 	const error = useSignal<string | null>(null);
@@ -22,14 +22,11 @@ export function DeletePageButton({ pageId, apiUrl, onDeleted }: DeletePageButton
 		loading.value = true;
 		error.value = null;
 
-		const res = await fetch(`${apiUrl}/pages/${pageId}`, {
-			method: "DELETE",
-			credentials: "include",
-		}).catch(() => null);
+		const { error: apiError } = await api.pages({ id: pageId }).delete();
 
 		loading.value = false;
 
-		if (!res?.ok) {
+		if (apiError) {
 			error.value = "Failed to delete page";
 			confirming.value = false;
 			return;

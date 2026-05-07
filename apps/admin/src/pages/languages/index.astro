@@ -13,5 +13,5 @@ const languages: LanguageRow[] = res?.ok ? await res.json().catch(() => []) : []
 ---
 
 <AdminLayout title="Languages" activePage="languages">
-  <LanguagesTable initialLanguages={languages} apiUrl={API_URL} client:load />
+  <LanguagesTable initialLanguages={languages} client:load />
 </AdminLayout>
