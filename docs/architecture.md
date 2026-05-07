@@ -5,6 +5,7 @@
 - **apps/admin**: Astro SSR + Preact Islands — Admin panel, MPA with file-based routing and View Transitions.
 - **apps/web**: Astro SSG + Preact Islands — Public-facing website.
 - **apps/api**: Elysia — Backend server.
+- **packages/types**: Shared TypeScript types, constants, and error classes used across all apps.
 - **packages/ui**: Shared Preact components used by both `apps/admin` and `apps/web`.
 - **packages/biome-config**: Unified linting and formatting.
 - **packages/typescript-config**: Shared TS compiler options.

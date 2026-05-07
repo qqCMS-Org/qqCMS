@@ -36,12 +36,14 @@ apps/api/src/modules/
 
 | Method | Path | Auth | Description |
 |---|---|---|---|
-| `GET` | `/pages` | No | List all pages |
-| `GET` | `/pages/:id` | No | Get page with all translations |
-| `POST` | `/pages` | Yes | Create a new page |
-| `PATCH` | `/pages/:id` | Yes | Update page (slug, is_homepage) |
-| `DELETE` | `/pages/:id` | Yes | Delete page and translations |
-| `PUT` | `/pages/:id/translations/:lang` | Yes | Upsert translation for a language |
+| `GET` | `/pages` | No | List all pages (slug, status, hasDraft, isHomepage, first translation title) |
+| `GET` | `/pages/:id` | No | Get page with all translations (including draft and published content) |
+| `POST` | `/pages` | Yes | Create a new page (status defaults to `draft`) |
+| `PATCH` | `/pages/:id` | Yes | Update page (slug, isHomepage) |
+| `DELETE` | `/pages/:id` | Yes | Delete page and all translations |
+| `PATCH` | `/pages/:id/status` | Yes | Publish (`published`) or unpublish (`unpublished`) a page — promotes draft content |
+| `DELETE` | `/pages/:id/draft` | Yes | Discard draft — reverts translations to last published content |
+| `PUT` | `/pages/:id/translations/:lang` | Yes | Upsert translation (title + TipTap JSON content) for a language |
 
 ### Navigation
 

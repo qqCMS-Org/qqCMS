@@ -45,9 +45,18 @@ All primary keys are **UUID v4**. All timestamps are `created_at` / `updated_at`
 |---|---|---|
 | `id` | UUID | Primary key |
 | `slug` | text | Unique, URL-safe identifier |
-| `is_homepage` | boolean | Only one page can be `true` at a time |
+| `status` | enum | `draft` \| `published` \| `unpublished`. Defaults to `draft` |
+| `has_draft` | boolean | `true` when unpublished/published page has pending draft changes |
+| `is_homepage` | boolean | Only one page can be `true` at a time; API enforces this |
 | `created_at` | timestamp | |
 | `updated_at` | timestamp | |
+
+**Page status state machine:**
+- New page starts as `draft`
+- `PATCH /pages/:id/status` with `{ status: "published" }` → copies draft content to `published_title`/`published_content` on translations
+- `PATCH /pages/:id/status` with `{ status: "unpublished" }` → hides from public, keeps published content
+- `DELETE /pages/:id/draft` → discards draft, reverts to last published content
+- Every `PUT /pages/:id/translations/:lang` on a published/unpublished page sets `has_draft: true`
 
 ### `page_translations`
 
@@ -56,8 +65,10 @@ All primary keys are **UUID v4**. All timestamps are `created_at` / `updated_at`
 | `id` | UUID | Primary key |
 | `page_id` | UUID | FK → `pages.id`, cascade delete |
 | `language_code` | text | e.g. `en`, `ru`, `et` |
-| `title` | text | Page title in this language |
-| `content` | JSON | TipTap editor output (JSON document) |
+| `title` | text | Draft title in this language |
+| `content` | JSON | Draft TipTap editor output (JSON document) |
+| `published_title` | text | Last published title (nullable) |
+| `published_content` | JSON | Last published content (nullable) |
 
 Unique constraint: `(page_id, language_code)`.
 
