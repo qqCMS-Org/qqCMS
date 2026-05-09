@@ -67,9 +67,9 @@
 > ⛔ Stop here. Ask user to verify language management works end-to-end.
 
 ### Step 7 — Navigation editor (`/navigation`)
-- [ ] Create `apps/admin/src/pages/navigation/index.astro`
-- [ ] Create `apps/admin/src/widgets/navigation/NavigationEditor.tsx` — Preact island, list of nav items with drag-to-reorder, add/delete
-- [ ] Wire to `GET /navigation`, `POST /navigation`, `PATCH /navigation/:id`, `DELETE /navigation/:id`, `PATCH /navigation/reorder`
+- [x] Create `apps/admin/src/pages/navigation/index.astro`
+- [x] Create `apps/admin/src/widgets/navigation/NavigationEditor.tsx` — Preact island, list of nav items with drag-to-reorder, add/delete
+- [x] Wire to `GET /navigation`, `POST /navigation`, `PATCH /navigation/:id`, `DELETE /navigation/:id`, `PATCH /navigation/reorder`
 
 > ⛔ Stop here. Ask user to verify navigation editing and reordering works.
 
