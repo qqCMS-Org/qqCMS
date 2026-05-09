@@ -8,6 +8,16 @@ export class NotFoundError extends Error {
 	}
 }
 
+export class BadRequestError extends Error {
+	readonly status = 400;
+	readonly code: string;
+
+	constructor(message: string, code = "BAD_REQUEST") {
+		super(message);
+		this.code = code;
+	}
+}
+
 export class ConflictError extends Error {
 	readonly status = 409;
 	readonly code: string;

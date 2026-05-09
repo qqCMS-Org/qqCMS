@@ -1,1 +1,1 @@
-export { type Db, db } from "@db/index";
+export { type Db, db, runMigrations } from "@db/index";

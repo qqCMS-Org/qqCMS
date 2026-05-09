@@ -20,8 +20,18 @@ These must be set before the API server starts. The server validates their prese
 | `DEBUG` | Enable debug logging output | `false` |
 | `DATABASE_URL` | DB connection string. If not set → PGLite (local file) | — (PGLite) |
 | `UPLOAD_DIR` | Path to file upload directory | `./uploads` |
-| `PUBLIC_CLIENT_URL` | URL of the public Astro client (for rebuild webhook) | — |
+| `PUBLIC_CLIENT_URL` | URL of the public website (for rebuild webhook) | `http://localhost:4322` |
 | `PORT` | Port the API server listens on | `3000` |
+| `RUN_MIGRATIONS_ON_STARTUP` | Run DB migrations on every startup. Disable in multi-instance deployments. | `false` |
+
+## Public Website Variables (`apps/web`)
+
+| Variable | Description | Example |
+|---|---|---|
+| `PUBLIC_API_URL` | API endpoint visible to the browser | `http://localhost:3000` |
+| `REVALIDATE_SECRET` | Shared secret for `/api/revalidate` webhook (must match API caller) | `some-random-secret` |
+
+> The rebuild webhook in `apps/web/src/pages/api/revalidate.ts` validates the `x-revalidate-secret` header against this variable. If the variable is not set, the endpoint rejects all requests.
 
 ## PGLite vs PostgreSQL
 
@@ -47,39 +57,29 @@ bun -e "import bcrypt from 'bcryptjs'; console.log(await bcrypt.hash('YOUR_PASSW
 ```sh
 # Admin credentials
 # login: admin@example.com / password: admin
-# Bcrypt embeds the salt inside the hash — no separate SALT variable needed.
 # To generate a new hash run:
 #   bun -e "import bcrypt from 'bcryptjs'; console.log(await bcrypt.hash('YOUR_PASSWORD', 10));"
 # Note: Bun expands $ in .env — prefix each $ with \ to prevent it
 ADMIN_LOGIN=admin@example.com
 ADMIN_PASSWORD_HASH=\$2b\$10\$ETeFKRO0Bjf/sjtc2kpdQuGQL69BdpjbVcPn8t9iDjqkF5TKJk/rW
 
-# Debug logging (set to "true" to enable Logger.debug() output)
+# Debug logging
 DEBUG=false
 
 # JWT
 JWT_SECRET=your-super-secret-jwt-key
 
-# CORS
-CORS_ORIGINS=http://localhost:4321,https://mysite.com
+# CORS (comma-separated allowed origins)
+CORS_ORIGINS=http://localhost:4321,http://localhost:3001
 
-# Database — if not set, PGLite is used (local, no server required)
+# Database (leave empty to use PGLite)
 DATABASE_URL=
 
-# Public client URL (for rebuild webhook)
+# Public website URL (for rebuild webhook)
 PUBLIC_CLIENT_URL=http://localhost:4322
-
-# CORS
-CORS_ORIGINS=http://localhost:3001,http://localhost:3000
-
-# Database (leave empty to use PGLite — local file-based PostgreSQL)
-DATABASE_URL=
 
 # File uploads
 UPLOAD_DIR=./uploads
-
-# Public client URL (for rebuild webhook)
-PUBLIC_CLIENT_URL=http://localhost:3001
 
 # Server port
 PORT=3000
