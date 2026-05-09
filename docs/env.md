@@ -22,6 +22,7 @@ These must be set before the API server starts. The server validates their prese
 | `UPLOAD_DIR` | Path to file upload directory | `./uploads` |
 | `PUBLIC_CLIENT_URL` | URL of the public website (for rebuild webhook) | `http://localhost:4322` |
 | `PORT` | Port the API server listens on | `3000` |
+| `RUN_MIGRATIONS_ON_STARTUP` | Run DB migrations on every startup. Disable in multi-instance deployments. | `false` |
 
 ## Public Website Variables (`apps/web`)
 

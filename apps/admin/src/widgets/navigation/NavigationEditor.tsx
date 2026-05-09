@@ -32,9 +32,13 @@ export function NavigationEditor({ initialItems }: NavigationEditorProps): JSX.E
 
 	const handleDelete = async (id: string): Promise<void> => {
 		const { error } = await api.navigation({ id }).delete();
-		if (!error) {
-			items.value = items.value.filter((item) => item.id !== id);
+
+		if (error) {
+			window.alert(extractApiError(error));
+			return;
 		}
+
+		items.value = items.value.filter((item) => item.id !== id);
 	};
 
 	const startEdit = (item: NavigationItemRow): void => {
@@ -61,7 +65,10 @@ export function NavigationEditor({ initialItems }: NavigationEditorProps): JSX.E
 		saving.value = true;
 		editError.value = null;
 
-		const { data: updated, error } = await api.navigation({ id }).patch({ label: { en: label }, href });
+		const existingItem = items.value.find((item) => item.id === id);
+		const mergedLabel = { ...(existingItem?.label ?? {}), en: label };
+
+		const { data: updated, error } = await api.navigation({ id }).patch({ label: mergedLabel, href });
 
 		saving.value = false;
 
@@ -70,7 +77,7 @@ export function NavigationEditor({ initialItems }: NavigationEditorProps): JSX.E
 			return;
 		}
 
-		items.value = items.value.map((item) => (item.id === id ? { ...item, label: { en: label }, href } : item));
+		items.value = items.value.map((item) => (item.id === id ? { ...item, label: mergedLabel, href } : item));
 		editingId.value = null;
 	};
 
@@ -86,7 +93,8 @@ export function NavigationEditor({ initialItems }: NavigationEditorProps): JSX.E
 		saving.value = true;
 		addError.value = null;
 
-		const nextOrder = items.value.length;
+		const highestOrder = Math.max(-1, ...items.value.map((item) => item.order));
+		const nextOrder = highestOrder + 1;
 		const { data: created, error } = await api.navigation.post({ label: { en: label }, href, order: nextOrder });
 
 		saving.value = false;
@@ -96,7 +104,7 @@ export function NavigationEditor({ initialItems }: NavigationEditorProps): JSX.E
 			return;
 		}
 
-		items.value = [...items.value, created as NavigationItemRow];
+		items.value = [...items.value, created];
 		newLabel.value = "";
 		newHref.value = "";
 		adding.value = false;
@@ -132,10 +140,15 @@ export function NavigationEditor({ initialItems }: NavigationEditorProps): JSX.E
 		const [moved] = list.splice(fromIndex, 1);
 		list.splice(toIndex, 0, moved);
 
+		const previousItems = items.value;
 		const reordered = list.map((item, index) => ({ ...item, order: index }));
 		items.value = reordered;
 
-		await api.navigation.reorder.patch({ orderedIds: reordered.map((item) => item.id) });
+		const { error } = await api.navigation.reorder.patch({ orderedIds: reordered.map((item) => item.id) });
+
+		if (error) {
+			items.value = previousItems;
+		}
 	};
 
 	const handleDragEnd = (): void => {

@@ -15,7 +15,10 @@ import { settingsModule } from "@modules/settings";
 import { Elysia } from "elysia";
 
 await ensureUploadDir();
-await runMigrations();
+
+if (process.env.RUN_MIGRATIONS_ON_STARTUP === "true") {
+	await runMigrations();
+}
 
 const app = new Elysia()
 	.use(corsMiddleware)
