@@ -1,16 +1,16 @@
 ---
-import { AdminLayout } from '@layouts';
-import { PageEditor } from '@widgets/page-editor';
-import type { PageLanguage, PageTranslationData } from '@widgets/page-editor';
-import { COOKIE_NAME, DEFAULT_API_URL } from '@shared/constants';
+import { AdminLayout } from "@layouts";
+import { PageEditor } from "@widgets/page-editor";
+import type { PageLanguage, PageTranslationData } from "@widgets/page-editor";
+import { COOKIE_NAME, DEFAULT_API_URL } from "@shared/constants";
 
 interface PageWithTranslations {
-  id: string;
-  slug: string;
-  status: 'draft' | 'published' | 'unpublished';
-  hasDraft: boolean;
-  isHomepage: boolean;
-  translations: PageTranslationData[];
+	id: string;
+	slug: string;
+	status: "draft" | "published" | "unpublished";
+	hasDraft: boolean;
+	isHomepage: boolean;
+	translations: PageTranslationData[];
 }
 
 const { id } = Astro.params;
@@ -19,15 +19,15 @@ const token = Astro.cookies.get(COOKIE_NAME)?.value;
 const authHeaders: Record<string, string> = token ? { Cookie: `${COOKIE_NAME}=${token}` } : {};
 
 const [pageRes, langsRes] = await Promise.all([
-  fetch(`${API_URL}/pages/${id}`, { headers: authHeaders }).catch(() => null),
-  fetch(`${API_URL}/languages`, { headers: authHeaders }).catch(() => null),
+	fetch(`${API_URL}/pages/${id}`, { headers: authHeaders }).catch(() => null),
+	fetch(`${API_URL}/languages`, { headers: authHeaders }).catch(() => null),
 ]);
 
 if (!pageRes?.ok) {
-  return Astro.redirect('/pages');
+	return Astro.redirect("/pages");
 }
 
-const page = await pageRes.json() as PageWithTranslations;
+const page = (await pageRes.json()) as PageWithTranslations;
 const allLanguages: PageLanguage[] = langsRes?.ok ? await langsRes.json().catch(() => []) : [];
 const languages = allLanguages.filter((lang) => lang.isActive);
 ---

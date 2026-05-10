@@ -81,10 +81,10 @@
 > ⛔ Stop here. Ask user to verify file upload and media grid.
 
 ### Step 9 — Settings (`/settings`)
-- [ ] Create `apps/admin/src/pages/settings/index.astro`
-- [ ] Create `apps/admin/src/widgets/settings/SettingsForm.tsx` — Preact island, key-value settings form
-- [ ] Wire to `GET /settings`, `PUT /settings/:key`
-- [ ] Add "Rebuild site" button wired to rebuild webhook
+- [x] Create `apps/admin/src/pages/settings/index.astro`
+- [x] Create `apps/admin/src/widgets/settings/SettingsForm.tsx` — Preact island, key-value settings form
+- [x] Wire to `GET /settings`, `PUT /settings/:key`
+- [x] Add "Rebuild site" button wired to rebuild webhook
 
 > ⛔ Stop here. Ask user to verify settings save and rebuild trigger.
 
