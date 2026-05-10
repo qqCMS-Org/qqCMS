@@ -1,7 +1,9 @@
 import { useComputed, useSignal } from "@preact/signals";
+import { ALLOWED_MIME_TYPES, MAX_UPLOAD_SIZE } from "@repo/types";
 import { api } from "@shared/api/client";
 import { Grid2x2, List, Search, Upload, X } from "lucide-preact";
 import type { JSX } from "preact";
+import { useEffect } from "preact/hooks";
 
 // ── Types ─────────────────────────────────────────────
 
@@ -25,14 +27,19 @@ type FilterKey = "All" | "Images" | "Video" | "Documents";
 
 const FILTER_KEYS: FilterKey[] = ["All", "Images", "Video", "Documents"];
 
-const IMAGE_MIME_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml"];
-const VIDEO_MIME_TYPES = ["video/mp4", "video/webm"];
-const DOCUMENT_MIME_TYPES = ["application/pdf", "text/csv", "application/msword"];
+const IMAGE_MIME_TYPES = ALLOWED_MIME_TYPES.filter((mime) => mime.startsWith("image/"));
+const VIDEO_MIME_TYPES = ALLOWED_MIME_TYPES.filter((mime) => mime.startsWith("video/"));
+const DOCUMENT_MIME_TYPES = ALLOWED_MIME_TYPES.filter(
+	(mime) => !mime.startsWith("image/") && !mime.startsWith("video/"),
+);
+
+const MAX_UPLOAD_SIZE_MB = MAX_UPLOAD_SIZE / 1024 / 1024;
+const ACCEPTED_MIME_TYPES = ALLOWED_MIME_TYPES.join(",");
 
 const MIME_FILTERS: Record<FilterKey, (file: MediaFile) => boolean> = {
 	All: () => true,
-	Images: (file) => IMAGE_MIME_TYPES.includes(file.mimeType),
-	Video: (file) => VIDEO_MIME_TYPES.includes(file.mimeType),
+	Images: (file) => IMAGE_MIME_TYPES.some((mime) => mime === file.mimeType),
+	Video: (file) => VIDEO_MIME_TYPES.some((mime) => mime === file.mimeType),
 	Documents: (file) => DOCUMENT_MIME_TYPES.some((mime) => file.mimeType.startsWith(mime)),
 };
 
@@ -179,12 +186,21 @@ const DetailPanel = ({ file, apiUrl, onDelete, onClose }: DetailPanelProps): JSX
 interface UploadModalProps {
 	onClose: () => void;
 	onUploaded: (file: MediaFile) => void;
+	apiUrl: string;
 }
 
-const UploadModal = ({ onClose, onUploaded }: UploadModalProps): JSX.Element => {
+const UploadModal = ({ onClose, onUploaded, apiUrl }: UploadModalProps): JSX.Element => {
 	const dragging = useSignal(false);
 	const uploading = useSignal(false);
 	const error = useSignal<string | null>(null);
+
+	useEffect(() => {
+		const handleKeyDown = (event: KeyboardEvent) => {
+			if (event.key === "Escape") onClose();
+		};
+		document.addEventListener("keydown", handleKeyDown);
+		return () => document.removeEventListener("keydown", handleKeyDown);
+	}, []);
 
 	const uploadFile = async (file: File): Promise<void> => {
 		uploading.value = true;
@@ -193,7 +209,7 @@ const UploadModal = ({ onClose, onUploaded }: UploadModalProps): JSX.Element => 
 		const formData = new FormData();
 		formData.append("file", file);
 
-		const response = await fetch(`${import.meta.env.PUBLIC_API_URL ?? "http://localhost:3000"}/media`, {
+		const response = await fetch(`${apiUrl}/media`, {
 			method: "POST",
 			body: formData,
 			credentials: "include",
@@ -281,14 +297,14 @@ const UploadModal = ({ onClose, onUploaded }: UploadModalProps): JSX.Element => 
 								<>
 									<Upload size={28} class="mx-auto mb-2 text-accent opacity-70" />
 									<div class="text-[13px] text-text0 mb-1">Drop files here or click to browse</div>
-									<div class="text-[10px] text-text2">JPG, PNG, SVG, GIF, WebP, PDF — max 20 MB</div>
+									<div class="text-[10px] text-text2">Images, PDF, Video, Audio — max {MAX_UPLOAD_SIZE_MB} MB</div>
 								</>
 							)}
 						</div>
 						<input
 							type="file"
 							class="hidden"
-							accept="image/*,application/pdf,text/csv"
+							accept={ACCEPTED_MIME_TYPES}
 							onChange={handleInputChange}
 							disabled={uploading.value}
 						/>
@@ -419,7 +435,7 @@ export function MediaLibrary({ initialFiles }: MediaLibraryProps): JSX.Element {
 									type="button"
 									onClick={() => handleSelect(file.id)}
 									class={`relative aspect-4/3 flex flex-col items-center justify-center gap-1.5 cursor-pointer p-2 transition-colors bg-bg2 border-0 ${
-										file.id === selectedId.value ? "outline-2 outline-accent z-10" : "hover:bg-bg3"
+										file.id === selectedId.value ? "ring-2 ring-accent z-10" : "hover:bg-bg3"
 									}`}
 								>
 									<div class="w-full h-full absolute inset-0 overflow-hidden">
@@ -497,6 +513,7 @@ export function MediaLibrary({ initialFiles }: MediaLibraryProps): JSX.Element {
 						showUpload.value = false;
 					}}
 					onUploaded={handleUploaded}
+					apiUrl={apiUrl}
 				/>
 			)}
 		</div>
