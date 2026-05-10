@@ -74,9 +74,9 @@
 > ⛔ Stop here. Ask user to verify navigation editing and reordering works.
 
 ### Step 8 — Media library (`/media`)
-- [ ] Create `apps/admin/src/pages/media/index.astro`
-- [ ] Create `apps/admin/src/widgets/media/MediaLibrary.tsx` — Preact island, grid of uploaded files, upload button
-- [ ] Wire to `GET /media`, `POST /media` (multipart upload), `DELETE /media/:id`
+- [x] Create `apps/admin/src/pages/media/index.astro`
+- [x] Create `apps/admin/src/widgets/media/MediaLibrary.tsx` — Preact island, grid of uploaded files, upload button
+- [x] Wire to `GET /media`, `POST /media` (multipart upload), `DELETE /media/:id`
 
 > ⛔ Stop here. Ask user to verify file upload and media grid.
 
