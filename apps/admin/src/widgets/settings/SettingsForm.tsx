@@ -1,4 +1,4 @@
-import { Button, Input, Toggle } from "@repo/ui";
+import { Button, Input } from "@repo/ui";
 import { api } from "@shared/api/client";
 import type { ComponentChildren } from "preact";
 import { useState } from "preact/compat";
@@ -46,8 +46,6 @@ export const SettingsForm = ({ initialSettings }: SettingsFormProps) => {
 		const map: Record<string, unknown> = {
 			projectName: "",
 			adminUrl: "",
-			darkMode: false,
-			compactSidebar: false,
 			apiUrl: "",
 			contentApiKey: "",
 		};
@@ -116,9 +114,7 @@ export const SettingsForm = ({ initialSettings }: SettingsFormProps) => {
 				<Button
 					variant="primary"
 					loading={isSaving}
-					onClick={() =>
-						handleSave(["projectName", "adminUrl", "darkMode", "compactSidebar", "apiUrl", "contentApiKey"])
-					}
+					onClick={() => handleSave(["projectName", "adminUrl", "apiUrl", "contentApiKey"])}
 				>
 					Save all changes
 				</Button>
@@ -148,15 +144,6 @@ export const SettingsForm = ({ initialSettings }: SettingsFormProps) => {
 						onChange={(e) => handleChange("adminUrl", (e.target as HTMLInputElement).value)}
 						placeholder="https://admin.example.com"
 					/>
-				</FormRow>
-			</SettingsBlock>
-
-			<SettingsBlock id="appearance" title="Appearance">
-				<FormRow label="Dark mode" hint="Use dark theme across the admin interface.">
-					<Toggle value={!!settingsMap.darkMode} onChange={(v) => handleChange("darkMode", v)} />
-				</FormRow>
-				<FormRow label="Compact sidebar" hint="Collapse sidebar labels, show only icons.">
-					<Toggle value={!!settingsMap.compactSidebar} onChange={(v) => handleChange("compactSidebar", v)} />
 				</FormRow>
 			</SettingsBlock>
 
