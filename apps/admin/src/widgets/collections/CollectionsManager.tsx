@@ -1,6 +1,7 @@
 import { useComputed, useSignal } from "@preact/signals";
+import { Button, Input } from "@repo/ui";
 import { api, extractApiError } from "@shared/api/client";
-import type { JSX } from "preact";
+import type { ComponentChildren, JSX } from "preact";
 
 // ─── Types ────────────────────────────────────────────
 
@@ -48,35 +49,70 @@ interface CollectionsManagerProps {
 	initialCollections: CollectionRow[];
 }
 
+// ─── Modal shell ──────────────────────────────────────
+
+function ModalShell({
+	title,
+	onClose,
+	children,
+	width = "w-80",
+}: {
+	title: string;
+	onClose: () => void;
+	children: ComponentChildren;
+	width?: string;
+}): JSX.Element {
+	return (
+		<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/75">
+			<button type="button" class="absolute inset-0 cursor-default" onClick={onClose} aria-label="Close" />
+			<div
+				class={`relative bg-bg2 border border-ui-border rounded-lg overflow-hidden flex flex-col max-h-[85vh] ${width}`}
+			>
+				<div class="flex items-center justify-between px-4 py-3 border-b border-ui-border shrink-0">
+					<span class="text-xs text-text0">{title}</span>
+					<button
+						type="button"
+						onClick={onClose}
+						class="bg-transparent border-none text-text1 hover:text-text0 cursor-pointer text-lg leading-none px-0.5"
+					>
+						×
+					</button>
+				</div>
+				<div class="p-4 overflow-y-auto">{children}</div>
+			</div>
+		</div>
+	);
+}
+
 // ─── Entry value renderer ─────────────────────────────
 
 function EntryVal({ val, type }: { val: unknown; type: FieldType }): JSX.Element {
 	if (type === "Boolean") {
-		return val ? <span class="text-success text-xs">✓ true</span> : <span class="text-warning text-xs">- false</span>;
+		return val ? (
+			<span class="text-[11px] text-green">✓ true</span>
+		) : (
+			<span class="text-[11px] text-amber">- false</span>
+		);
 	}
-	return <span class="text-xs text-base-content">{String(val ?? "")}</span>;
+	return <span class="text-[11px] text-text0">{String(val ?? "")}</span>;
 }
 
 // ─── Main component ───────────────────────────────────
 
 export function CollectionsManager({ initialCollections }: CollectionsManagerProps): JSX.Element {
-	// Collections state
 	const collections = useSignal<CollectionRow[]>(initialCollections);
 	const selectedId = useSignal<string | null>(initialCollections[0]?.id ?? null);
 	const mode = useSignal<TabMode>("entries");
 
-	// Per-collection data cache
 	const fieldsCache = useSignal<Record<string, FieldRow[]>>({});
 	const entriesCache = useSignal<Record<string, EntryRow[]>>({});
 	const loadingId = useSignal<string | null>(null);
 
-	// New collection modal
 	const newCollModal = useSignal(false);
 	const newCollName = useSignal("");
 	const newCollError = useSignal<string | null>(null);
 	const newCollSaving = useSignal(false);
 
-	// Add field modal
 	const addFieldModal = useSignal(false);
 	const fieldName = useSignal("");
 	const fieldType = useSignal<FieldType>("Text");
@@ -86,17 +122,13 @@ export function CollectionsManager({ initialCollections }: CollectionsManagerPro
 	const addFieldError = useSignal<string | null>(null);
 	const addFieldSaving = useSignal(false);
 
-	// Add / edit entry modal
 	const entryModal = useSignal<"add" | "edit" | null>(null);
 	const editingEntry = useSignal<EntryRow | null>(null);
 	const entryFormData = useSignal<Record<string, string>>({});
 	const entryError = useSignal<string | null>(null);
 	const entrySaving = useSignal(false);
 
-	// Mobile panel
 	const mobilePanelOpen = useSignal(false);
-
-	// Hover row
 
 	const selectedCollection = useComputed(() => collections.value.find((col) => col.id === selectedId.value) ?? null);
 	const currentFields = useComputed(() => (selectedId.value ? (fieldsCache.value[selectedId.value] ?? []) : []));
@@ -113,14 +145,8 @@ export function CollectionsManager({ initialCollections }: CollectionsManagerPro
 			api.collections({ id }).entries.get(),
 		]);
 
-		const newFields: Record<string, FieldRow[]> = { ...fieldsCache.value };
-		const newEntries: Record<string, EntryRow[]> = { ...entriesCache.value };
-
-		newFields[id] = fieldsRes.data ?? [];
-		newEntries[id] = entriesRes.data ?? [];
-
-		fieldsCache.value = newFields;
-		entriesCache.value = newEntries;
+		fieldsCache.value = { ...fieldsCache.value, [id]: fieldsRes.data ?? [] };
+		entriesCache.value = { ...entriesCache.value, [id]: entriesRes.data ?? [] };
 		loadingId.value = null;
 	};
 
@@ -131,7 +157,6 @@ export function CollectionsManager({ initialCollections }: CollectionsManagerPro
 		await loadCollectionData(id);
 	};
 
-	// Load first collection on mount
 	if (selectedId.value) {
 		void loadCollectionData(selectedId.value);
 	}
@@ -146,7 +171,6 @@ export function CollectionsManager({ initialCollections }: CollectionsManagerPro
 		newCollError.value = null;
 
 		const { data: created, error } = await api.collections.post({ name });
-
 		newCollSaving.value = false;
 
 		if (error || !created) {
@@ -154,13 +178,9 @@ export function CollectionsManager({ initialCollections }: CollectionsManagerPro
 			return;
 		}
 
-		const newRow: CollectionRow = { id: created.id, name: created.name, fieldCount: 0, entryCount: 0 };
-		collections.value = [...collections.value, newRow];
-
-		const newFields: Record<string, FieldRow[]> = { ...fieldsCache.value, [created.id]: [] };
-		const newEntries: Record<string, EntryRow[]> = { ...entriesCache.value, [created.id]: [] };
-		fieldsCache.value = newFields;
-		entriesCache.value = newEntries;
+		collections.value = [...collections.value, { id: created.id, name: created.name, fieldCount: 0, entryCount: 0 }];
+		fieldsCache.value = { ...fieldsCache.value, [created.id]: [] };
+		entriesCache.value = { ...entriesCache.value, [created.id]: [] };
 
 		newCollModal.value = false;
 		newCollName.value = "";
@@ -170,11 +190,8 @@ export function CollectionsManager({ initialCollections }: CollectionsManagerPro
 
 	const handleDeleteCollection = async (id: string): Promise<void> => {
 		if (!confirm("Delete this collection and all its data?")) return;
-
 		await api.collections({ id }).delete();
-
 		collections.value = collections.value.filter((col) => col.id !== id);
-
 		if (selectedId.value === id) {
 			selectedId.value = collections.value[0]?.id ?? null;
 		}
@@ -204,8 +221,7 @@ export function CollectionsManager({ initialCollections }: CollectionsManagerPro
 			return;
 		}
 
-		const updated = { ...fieldsCache.value, [id]: [...(fieldsCache.value[id] ?? []), field] };
-		fieldsCache.value = updated;
+		fieldsCache.value = { ...fieldsCache.value, [id]: [...(fieldsCache.value[id] ?? []), field] };
 		collections.value = collections.value.map((col) =>
 			col.id === id ? { ...col, fieldCount: col.fieldCount + 1 } : col,
 		);
@@ -221,14 +237,11 @@ export function CollectionsManager({ initialCollections }: CollectionsManagerPro
 	const handleDeleteField = async (fieldId: string): Promise<void> => {
 		const id = selectedId.value;
 		if (!id) return;
-
 		await api.collections({ id }).fields({ fieldId }).delete();
-
-		const updated = {
+		fieldsCache.value = {
 			...fieldsCache.value,
 			[id]: (fieldsCache.value[id] ?? []).filter((field) => field.id !== fieldId),
 		};
-		fieldsCache.value = updated;
 		collections.value = collections.value.map((col) =>
 			col.id === id ? { ...col, fieldCount: Math.max(0, col.fieldCount - 1) } : col,
 		);
@@ -285,7 +298,6 @@ export function CollectionsManager({ initialCollections }: CollectionsManagerPro
 		if (entryModal.value === "edit" && editingEntry.value) {
 			const entryId = editingEntry.value.id;
 			const { data: updated, error } = await api.collections({ id }).entries({ entryId }).patch({ data });
-
 			entrySaving.value = false;
 
 			if (error || !updated) {
@@ -293,14 +305,12 @@ export function CollectionsManager({ initialCollections }: CollectionsManagerPro
 				return;
 			}
 
-			const updatedEntries = {
+			entriesCache.value = {
 				...entriesCache.value,
 				[id]: (entriesCache.value[id] ?? []).map((entry) => (entry.id === entryId ? updated : entry)),
 			};
-			entriesCache.value = updatedEntries;
 		} else {
 			const { data: created, error } = await api.collections({ id }).entries.post({ data });
-
 			entrySaving.value = false;
 
 			if (error || !created) {
@@ -308,11 +318,10 @@ export function CollectionsManager({ initialCollections }: CollectionsManagerPro
 				return;
 			}
 
-			const updatedEntries = {
+			entriesCache.value = {
 				...entriesCache.value,
 				[id]: [...(entriesCache.value[id] ?? []), created],
 			};
-			entriesCache.value = updatedEntries;
 			collections.value = collections.value.map((col) =>
 				col.id === id ? { ...col, entryCount: col.entryCount + 1 } : col,
 			);
@@ -325,31 +334,28 @@ export function CollectionsManager({ initialCollections }: CollectionsManagerPro
 	const handleDeleteEntry = async (entryId: string): Promise<void> => {
 		const id = selectedId.value;
 		if (!id) return;
-
 		await api.collections({ id }).entries({ entryId }).delete();
-
-		const updatedEntries = {
+		entriesCache.value = {
 			...entriesCache.value,
 			[id]: (entriesCache.value[id] ?? []).filter((entry) => entry.id !== entryId),
 		};
-		entriesCache.value = updatedEntries;
 		collections.value = collections.value.map((col) =>
 			col.id === id ? { ...col, entryCount: Math.max(0, col.entryCount - 1) } : col,
 		);
 	};
 
-	// ─── Sidebar list (shared desktop/mobile) ─────────
+	// ─── Sidebar list ──────────────────────────────────
 
 	const CollectionList = (): JSX.Element => (
 		<>
-			<div class="flex items-center justify-between px-3.5 py-2.5 border-b border-base-300">
-				<span class="text-[9px] uppercase tracking-widest text-base-content/40">Collections</span>
+			<div class="flex items-center justify-between px-3.5 py-2.5 border-b border-ui-border">
+				<span class="text-[9px] uppercase tracking-[0.07em] text-text2">Collections</span>
 				<button
 					type="button"
 					onClick={() => {
 						newCollModal.value = true;
 					}}
-					class="text-base-content/60 hover:text-base-content text-xl leading-none bg-transparent border-none cursor-pointer"
+					class="bg-transparent border-none text-text1 hover:text-text0 cursor-pointer text-base leading-none"
 				>
 					+
 				</button>
@@ -361,17 +367,15 @@ export function CollectionsManager({ initialCollections }: CollectionsManagerPro
 						key={col.id}
 						type="button"
 						onClick={() => void selectCollection(col.id)}
-						class={`w-full flex items-center gap-1.5 px-3.5 py-2.5 text-left text-xs border-l-2 bg-transparent border-none cursor-pointer transition-colors ${
+						class={`w-full flex items-center gap-2 px-3.5 py-2.5 border-none border-l-2 cursor-pointer text-[11px] text-left transition-colors ${
 							active
-								? "border-l-primary bg-primary/5 text-base-content"
-								: "border-l-transparent text-base-content/60 hover:text-base-content"
+								? "bg-accent-faint border-l-accent text-text0"
+								: "bg-transparent border-l-transparent text-text1 hover:text-text0"
 						}`}
 					>
-						<span class="text-[9px] text-base-content/40">≡</span>
+						<span class="text-[9px] text-text2">≡</span>
 						<span class="flex-1 overflow-hidden text-ellipsis whitespace-nowrap">{col.name}</span>
-						<span
-							class={`text-[9px] bg-base-300 px-1 py-0.5 rounded shrink-0 ${active ? "text-primary" : "text-base-content/40"}`}
-						>
+						<span class={`text-[9px] bg-bg3 px-1.5 py-px rounded-sm shrink-0 ${active ? "text-accent" : "text-text2"}`}>
 							{col.entryCount}
 						</span>
 					</button>
@@ -389,45 +393,46 @@ export function CollectionsManager({ initialCollections }: CollectionsManagerPro
 
 	return (
 		<div class="flex flex-col h-full">
-			{/* TopBar */}
-			<div class="flex items-center justify-between px-4 h-11 border-b border-base-300 bg-base-100 shrink-0">
-				<h1 class="font-serif italic text-base-content text-base">Collections</h1>
-				<div class="flex items-center gap-2">
+			{/* Topbar */}
+			<div class="flex items-center gap-2.5 px-[18px] h-11 border-b border-ui-border bg-bg0 shrink-0">
+				<span class="font-serif italic text-text0 text-xl leading-none">Collections</span>
+				<div class="ml-auto flex items-center gap-1.5">
 					<button
 						type="button"
-						class="btn btn-xs btn-ghost md:hidden"
+						class="md:hidden bg-bg3 border border-ui-border text-text1 hover:text-text0 text-[11px] px-2 py-1 rounded cursor-pointer transition-colors"
 						onClick={() => {
 							mobilePanelOpen.value = true;
 						}}
 					>
 						≡ {coll?.name}
 					</button>
-					<button
-						type="button"
-						class="btn btn-xs btn-primary"
+					<Button
+						variant="primary"
+						size="sm"
 						onClick={() => {
 							newCollModal.value = true;
 						}}
 					>
 						<span class="hidden md:inline">+ New collection</span>
 						<span class="md:hidden">+</span>
-					</button>
+					</Button>
 				</div>
 			</div>
 
+			{/* Body */}
 			<div class="flex flex-1 overflow-hidden">
 				{/* Desktop sidebar */}
-				<div class="hidden md:flex flex-col w-48 border-r border-base-300 bg-base-100 shrink-0 overflow-y-auto">
+				<div class="hidden md:flex flex-col w-[190px] border-r border-ui-border bg-bg0 shrink-0 overflow-y-auto">
 					<CollectionList />
 				</div>
 
 				{/* Main area */}
 				{coll ? (
-					<div class="flex flex-col flex-1 overflow-hidden bg-base-200">
+					<div class="flex flex-col flex-1 overflow-hidden bg-bg1">
 						{/* Sub-header */}
-						<div class="flex items-center gap-2 px-3.5 py-2 border-b border-base-300 bg-base-100 shrink-0 flex-wrap">
-							<span class="font-serif italic text-base-content text-[17px]">{coll.name}</span>
-							<span class="hidden md:inline text-xs text-base-content/40">
+						<div class="flex items-center gap-2 px-3.5 py-2 border-b border-ui-border bg-bg0 shrink-0 flex-wrap">
+							<span class="font-serif italic text-text0 text-[17px]">{coll.name}</span>
+							<span class="hidden md:inline text-[10px] text-text2">
 								{coll.entryCount} entries · {coll.fieldCount} fields
 							</span>
 							<div class="flex-1" />
@@ -436,39 +441,36 @@ export function CollectionsManager({ initialCollections }: CollectionsManagerPro
 								onClick={() => {
 									mode.value = mode.value === "schema" ? "entries" : "schema";
 								}}
-								class={`px-2.5 py-1 rounded text-xs border cursor-pointer transition-colors ${
+								class={`px-2.5 py-[3px] rounded border cursor-pointer text-[11px] transition-colors ${
 									mode.value === "schema"
-										? "bg-primary border-primary text-primary-content"
-										: "bg-base-300 border-base-300 text-base-content"
+										? "bg-accent border-accent text-white"
+										: "bg-bg3 border-ui-border text-text1 hover:text-text0"
 								}`}
 							>
 								Schema
 							</button>
-							<button type="button" class="btn btn-xs btn-ghost" onClick={openAddEntry}>
+							<Button variant="default" size="sm" onClick={openAddEntry}>
 								+ Add entry
-							</button>
-							<button
-								type="button"
-								class="btn btn-xs btn-ghost text-error"
-								onClick={() => void handleDeleteCollection(coll.id)}
-							>
+							</Button>
+							<Button variant="danger" size="sm" onClick={() => void handleDeleteCollection(coll.id)}>
 								Delete
-							</button>
+							</Button>
 						</div>
 
+						{/* Content */}
 						{isLoading ? (
-							<div class="flex items-center justify-center flex-1 text-xs text-base-content/40">Loading…</div>
+							<div class="flex items-center justify-center flex-1 text-xs text-text2">Loading…</div>
 						) : mode.value === "entries" ? (
 							/* Entries table */
 							<div class="flex-1 overflow-y-auto">
 								{fields.length === 0 ? (
-									<div class="p-6 text-xs text-base-content/40">No fields yet. Switch to Schema to add fields.</div>
+									<div class="p-6 text-xs text-text2">No fields yet. Switch to Schema to add fields.</div>
 								) : (
 									<div class="overflow-x-auto">
-										{/* Header */}
-										<div class="flex px-3.5 border-b border-base-300 min-h-8 items-center bg-base-100 min-w-96">
+										{/* Table header */}
+										<div class="flex px-3.5 border-b border-ui-border min-h-8 items-center bg-bg0 min-w-96">
 											{fields.map((field) => (
-												<div key={field.id} class="flex-1 text-[10px] text-base-content/40 min-w-20">
+												<div key={field.id} class="flex-1 text-[10px] text-text2 min-w-20">
 													{field.name}
 												</div>
 											))}
@@ -478,7 +480,7 @@ export function CollectionsManager({ initialCollections }: CollectionsManagerPro
 										{entries.map((entry) => (
 											<div
 												key={entry.id}
-												class="group flex items-center px-3.5 min-h-10 border-b border-base-300 min-w-96 transition-colors hover:bg-base-300/30"
+												class="group flex items-center px-3.5 min-h-10 border-b border-ui-border min-w-96 transition-colors hover:bg-bg2"
 											>
 												{fields.map((field) => (
 													<div key={field.id} class="flex-1 min-w-20">
@@ -488,14 +490,14 @@ export function CollectionsManager({ initialCollections }: CollectionsManagerPro
 												<div class="w-12 flex gap-1 justify-end opacity-0 group-hover:opacity-100 transition-opacity">
 													<button
 														type="button"
-														class="bg-transparent border-none text-base-content/60 hover:text-base-content cursor-pointer text-xs p-1"
+														class="bg-transparent border-none text-text1 hover:text-text0 cursor-pointer text-xs p-1"
 														onClick={() => openEditEntry(entry)}
 													>
 														✎
 													</button>
 													<button
 														type="button"
-														class="bg-transparent border-none text-error cursor-pointer text-xs p-1"
+														class="bg-transparent border-none text-coral cursor-pointer text-xs p-1"
 														onClick={() => void handleDeleteEntry(entry.id)}
 													>
 														⊗
@@ -506,7 +508,7 @@ export function CollectionsManager({ initialCollections }: CollectionsManagerPro
 										<div class="p-2.5">
 											<button
 												type="button"
-												class="bg-transparent border-none text-base-content/40 cursor-pointer text-xs"
+												class="bg-transparent border-none text-text2 hover:text-text1 cursor-pointer text-xs transition-colors"
 												onClick={openAddEntry}
 											>
 												+ Add entry
@@ -522,17 +524,17 @@ export function CollectionsManager({ initialCollections }: CollectionsManagerPro
 									{fields.map((field) => (
 										<div
 											key={field.id}
-											class="flex items-center gap-2.5 bg-base-100 border border-base-300 rounded px-3.5 py-2.5"
+											class="flex items-center gap-2.5 bg-bg2 border border-ui-border rounded px-3.5 py-2.5"
 										>
-											<span class="text-[10px] text-base-content/40 w-3">≡</span>
-											<span class="text-xs text-base-content flex-1">{field.name}</span>
-											<span class="bg-primary/10 text-primary text-[10px] px-1.5 py-0.5 rounded">{field.type}</span>
+											<span class="text-[10px] text-text2 w-3">≡</span>
+											<span class="text-xs text-text0 flex-1">{field.name}</span>
+											<span class="bg-accent-faint text-accent text-[10px] px-1.5 py-0.5 rounded-sm">{field.type}</span>
 											{field.required && (
-												<span class="bg-success/10 text-success text-[10px] px-1.5 py-0.5 rounded">req</span>
+												<span class="bg-green-faint text-green text-[10px] px-1.5 py-0.5 rounded-sm">req</span>
 											)}
 											<button
 												type="button"
-												class="bg-transparent border-none text-error cursor-pointer text-xs"
+												class="bg-transparent border-none text-coral cursor-pointer text-xs"
 												onClick={() => void handleDeleteField(field.id)}
 											>
 												⊗
@@ -542,7 +544,7 @@ export function CollectionsManager({ initialCollections }: CollectionsManagerPro
 								</div>
 								<button
 									type="button"
-									class="bg-base-300 border border-dashed border-base-300 rounded w-full px-3.5 py-2.5 text-xs text-base-content/60 text-left cursor-pointer hover:text-base-content transition-colors"
+									class="bg-bg3 border border-dashed border-ui-border rounded w-full px-3.5 py-2.5 text-xs text-text1 text-left cursor-pointer hover:text-text0 transition-colors"
 									onClick={() => {
 										addFieldModal.value = true;
 									}}
@@ -553,15 +555,15 @@ export function CollectionsManager({ initialCollections }: CollectionsManagerPro
 						)}
 					</div>
 				) : (
-					<div class="flex-1 flex items-center justify-center text-xs text-base-content/40">
+					<div class="flex-1 flex items-center justify-center text-xs text-text2">
 						{collections.value.length === 0 ? "No collections yet. Create one to get started." : "Select a collection"}
 					</div>
 				)}
 			</div>
 
-			{/* Mobile: collection picker modal */}
+			{/* Mobile: bottom sheet */}
 			{mobilePanelOpen.value && (
-				<div class="fixed inset-0 z-50 flex items-end md:hidden">
+				<div class="fixed inset-0 z-50 flex items-end md:hidden bg-black/75">
 					<button
 						type="button"
 						class="absolute inset-0 cursor-default"
@@ -570,17 +572,17 @@ export function CollectionsManager({ initialCollections }: CollectionsManagerPro
 						}}
 						aria-label="Close"
 					/>
-					<div role="dialog" class="relative bg-base-100 w-full rounded-t-xl max-h-[70vh] overflow-y-auto">
-						<div class="flex items-center justify-between px-4 py-3 border-b border-base-300">
-							<span class="font-medium text-sm">Collections</span>
+					<div class="relative bg-bg0 w-full rounded-t-xl max-h-[70vh] overflow-y-auto">
+						<div class="flex items-center justify-between px-4 py-3 border-b border-ui-border">
+							<span class="text-xs text-text0">Collections</span>
 							<button
 								type="button"
-								class="btn btn-xs btn-ghost"
+								class="bg-transparent border-none text-text1 hover:text-text0 cursor-pointer text-lg leading-none"
 								onClick={() => {
 									mobilePanelOpen.value = false;
 								}}
 							>
-								✕
+								×
 							</button>
 						</div>
 						<CollectionList />
@@ -590,88 +592,71 @@ export function CollectionsManager({ initialCollections }: CollectionsManagerPro
 
 			{/* New collection modal */}
 			{newCollModal.value && (
-				<div class="fixed inset-0 z-50 flex items-center justify-center">
-					<button
-						type="button"
-						class="absolute inset-0 bg-black/50 cursor-default"
-						onClick={() => {
-							newCollModal.value = false;
-						}}
-						aria-label="Close"
-					/>
-					<div
-						role="dialog"
-						class="relative bg-base-100 border border-base-300 rounded-lg p-5 w-80 flex flex-col gap-3"
-					>
-						<div class="text-sm font-medium">New collection</div>
-						<div>
-							<div class="text-[10px] text-base-content/60 mb-1.5">Collection name</div>
-							<input
-								class="input input-bordered input-sm w-full font-mono"
-								placeholder="e.g. blog_posts"
-								value={newCollName.value}
-								onInput={(e) => {
-									newCollName.value = e.currentTarget.value;
-								}}
-								onKeyDown={(e) => {
-									if (e.key === "Enter") void handleCreateCollection();
-								}}
-							/>
-							<div class="text-[10px] text-base-content/40 mt-1">Lowercase letters, numbers and underscores only</div>
-						</div>
-						{newCollError.value && <div class="text-xs text-error">{newCollError.value}</div>}
-						<div class="flex justify-end gap-2 pt-1 border-t border-base-300">
-							<button
-								type="button"
-								class="btn btn-xs btn-ghost"
+				<ModalShell
+					title="New collection"
+					onClose={() => {
+						newCollModal.value = false;
+						newCollName.value = "";
+						newCollError.value = null;
+					}}
+				>
+					<div class="flex flex-col gap-3">
+						<Input
+							label="Collection name"
+							placeholder="e.g. blog_posts"
+							value={newCollName.value}
+							onInput={(e) => {
+								newCollName.value = e.currentTarget.value;
+							}}
+							onKeyDown={(e) => {
+								if (e.key === "Enter") void handleCreateCollection();
+							}}
+						/>
+						<p class="text-[10px] text-text2 -mt-1">Lowercase letters, numbers and underscores only</p>
+						{newCollError.value && <div class="text-xs text-coral">{newCollError.value}</div>}
+						<div class="flex justify-end gap-2 pt-2 border-t border-ui-border">
+							<Button
+								variant="default"
+								size="sm"
 								onClick={() => {
 									newCollModal.value = false;
 								}}
 							>
 								Cancel
-							</button>
-							<button
-								type="button"
-								class="btn btn-xs btn-primary"
+							</Button>
+							<Button
+								variant="primary"
+								size="sm"
 								disabled={!newCollName.value.trim() || newCollSaving.value}
 								onClick={() => void handleCreateCollection()}
 							>
 								{newCollSaving.value ? "Creating…" : "Create"}
-							</button>
+							</Button>
 						</div>
 					</div>
-				</div>
+				</ModalShell>
 			)}
 
 			{/* Add field modal */}
 			{addFieldModal.value && (
-				<div class="fixed inset-0 z-50 flex items-center justify-center">
-					<button
-						type="button"
-						class="absolute inset-0 bg-black/50 cursor-default"
-						onClick={() => {
-							addFieldModal.value = false;
-						}}
-						aria-label="Close"
-					/>
-					<div
-						role="dialog"
-						class="relative bg-base-100 border border-base-300 rounded-lg p-5 w-96 flex flex-col gap-3.5"
-					>
-						<div class="text-sm font-medium">Add field</div>
+				<ModalShell
+					title="Add field"
+					onClose={() => {
+						addFieldModal.value = false;
+					}}
+					width="w-96"
+				>
+					<div class="flex flex-col gap-4">
+						<Input
+							label="Field name"
+							placeholder="e.g. title"
+							value={fieldName.value}
+							onInput={(e) => {
+								fieldName.value = e.currentTarget.value;
+							}}
+						/>
 						<div>
-							<div class="text-[10px] text-base-content/60 mb-1.5">Field name</div>
-							<input
-								class="input input-bordered input-sm w-full font-mono"
-								placeholder="e.g. title"
-								value={fieldName.value}
-								onInput={(e) => {
-									fieldName.value = e.currentTarget.value;
-								}}
-							/>
-						</div>
-						<div>
-							<div class="text-[10px] text-base-content/60 mb-2">Field type</div>
+							<div class="text-[10px] text-text1 mb-2">Field type</div>
 							<div class="grid grid-cols-3 gap-1.5">
 								{FIELD_TYPES.map((type) => {
 									const active = fieldType.value === type;
@@ -682,10 +667,10 @@ export function CollectionsManager({ initialCollections }: CollectionsManagerPro
 											onClick={() => {
 												fieldType.value = type;
 											}}
-											class={`flex flex-col items-center gap-1 py-2.5 px-1.5 rounded border cursor-pointer transition-colors ${
+											class={`flex flex-col items-center gap-1.5 py-2.5 px-1.5 rounded border cursor-pointer transition-colors ${
 												active
-													? "bg-primary/10 border-primary text-primary"
-													: "bg-base-200 border-base-300 text-base-content/60 hover:text-base-content"
+													? "bg-accent-faint border-accent text-accent"
+													: "bg-bg3 border-ui-border text-text1 hover:text-text0"
 											}`}
 										>
 											<span class="text-lg">{FIELD_ICONS[type]}</span>
@@ -701,70 +686,64 @@ export function CollectionsManager({ initialCollections }: CollectionsManagerPro
 								const signals = { required: fieldRequired, isUnique: fieldUnique, localised: fieldLocalised };
 								const signal = signals[key];
 								return (
-									<label key={key} class="flex items-center gap-1.5 cursor-pointer text-xs text-base-content/60">
+									<label key={key} class="flex items-center gap-1.5 cursor-pointer text-[11px] text-text1">
 										<input
 											type="checkbox"
-											class="checkbox checkbox-xs checkbox-primary"
 											checked={signal.value}
 											onChange={(e) => {
 												signal.value = e.currentTarget.checked;
 											}}
+											style="accent-color: var(--accent)"
 										/>
 										{labels[key]}
 									</label>
 								);
 							})}
 						</div>
-						{addFieldError.value && <div class="text-xs text-error">{addFieldError.value}</div>}
-						<div class="flex justify-end gap-2 pt-1 border-t border-base-300">
-							<button
-								type="button"
-								class="btn btn-xs btn-ghost"
+						{addFieldError.value && <div class="text-xs text-coral">{addFieldError.value}</div>}
+						<div class="flex justify-end gap-2 pt-2 border-t border-ui-border">
+							<Button
+								variant="default"
+								size="sm"
 								onClick={() => {
 									addFieldModal.value = false;
 								}}
 							>
 								Cancel
-							</button>
-							<button
-								type="button"
-								class="btn btn-xs btn-primary"
+							</Button>
+							<Button
+								variant="primary"
+								size="sm"
 								disabled={!fieldName.value.trim() || addFieldSaving.value}
 								onClick={() => void handleAddField()}
 							>
 								{addFieldSaving.value ? "Adding…" : "Add field"}
-							</button>
+							</Button>
 						</div>
 					</div>
-				</div>
+				</ModalShell>
 			)}
 
 			{/* Add / Edit entry modal */}
 			{entryModal.value && (
-				<div class="fixed inset-0 z-50 flex items-center justify-center">
-					<button
-						type="button"
-						class="absolute inset-0 bg-black/50 cursor-default"
-						onClick={() => {
-							entryModal.value = null;
-						}}
-						aria-label="Close"
-					/>
-					<div
-						role="dialog"
-						class="relative bg-base-100 border border-base-300 rounded-lg p-5 w-96 flex flex-col gap-3 max-h-[80vh] overflow-y-auto"
-					>
-						<div class="text-sm font-medium">{entryModal.value === "edit" ? "Edit entry" : "Add entry"}</div>
+				<ModalShell
+					title={entryModal.value === "edit" ? "Edit entry" : "Add entry"}
+					onClose={() => {
+						entryModal.value = null;
+					}}
+					width="w-96"
+				>
+					<div class="flex flex-col gap-3">
 						{fields.map((field) => (
 							<div key={field.id}>
-								<div class="text-[10px] text-base-content/60 mb-1.5">
+								<div class="text-[10px] text-text1 mb-1.5">
 									{field.name}
-									{field.required && <span class="text-error ml-1">*</span>}
-									<span class="ml-1.5 text-base-content/30">{field.type}</span>
+									{field.required && <span class="text-coral ml-1">*</span>}
+									<span class="ml-1.5 text-text2">{field.type}</span>
 								</div>
 								{field.type === "Boolean" ? (
 									<select
-										class="select select-bordered select-sm w-full"
+										class="w-full bg-bg1 border border-ui-border rounded px-2.5 py-1.5 text-xs text-text0 outline-none cursor-pointer focus:border-accent"
 										value={entryFormData.value[field.name] ?? "false"}
 										onChange={(e) => {
 											entryFormData.value = { ...entryFormData.value, [field.name]: e.currentTarget.value };
@@ -774,10 +753,9 @@ export function CollectionsManager({ initialCollections }: CollectionsManagerPro
 										<option value="true">true</option>
 									</select>
 								) : (
-									<input
-										class="input input-bordered input-sm w-full"
-										type={field.type === "Number" ? "number" : field.type === "Date" ? "date" : "text"}
+									<Input
 										value={entryFormData.value[field.name] ?? ""}
+										type={field.type === "Number" ? "number" : field.type === "Date" ? "date" : "text"}
 										onInput={(e) => {
 											entryFormData.value = { ...entryFormData.value, [field.name]: e.currentTarget.value };
 										}}
@@ -785,28 +763,23 @@ export function CollectionsManager({ initialCollections }: CollectionsManagerPro
 								)}
 							</div>
 						))}
-						{entryError.value && <div class="text-xs text-error">{entryError.value}</div>}
-						<div class="flex justify-end gap-2 pt-1 border-t border-base-300">
-							<button
-								type="button"
-								class="btn btn-xs btn-ghost"
+						{entryError.value && <div class="text-xs text-coral">{entryError.value}</div>}
+						<div class="flex justify-end gap-2 pt-2 border-t border-ui-border">
+							<Button
+								variant="default"
+								size="sm"
 								onClick={() => {
 									entryModal.value = null;
 								}}
 							>
 								Cancel
-							</button>
-							<button
-								type="button"
-								class="btn btn-xs btn-primary"
-								disabled={entrySaving.value}
-								onClick={() => void handleSaveEntry()}
-							>
+							</Button>
+							<Button variant="primary" size="sm" disabled={entrySaving.value} onClick={() => void handleSaveEntry()}>
 								{entrySaving.value ? "Saving…" : "Save"}
-							</button>
+							</Button>
 						</div>
 					</div>
-				</div>
+				</ModalShell>
 			)}
 		</div>
 	);

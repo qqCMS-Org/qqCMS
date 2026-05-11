@@ -12,6 +12,6 @@ const res = await fetch(`${API_URL}/collections`, { headers: authHeaders }).catc
 const collections: CollectionRow[] = res?.ok ? await res.json().catch(() => []) : [];
 ---
 
-<AdminLayout title="Collections" activePage="collections">
+<AdminLayout title="Collections" activePage="collections" noTopbar noPadding>
   <CollectionsManager initialCollections={collections} client:load />
 </AdminLayout>
