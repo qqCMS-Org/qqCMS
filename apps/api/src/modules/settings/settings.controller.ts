@@ -8,7 +8,7 @@ export const settingsController = new Elysia({ prefix: "/settings" })
 	.use(authPlugin)
 	.get("/", () => listSettings(), { requireAuth: true })
 	.post(
-		"/rebuild",
+		"/rebuilds",
 		async () => {
 			await triggerRebuild();
 			return { success: true };
