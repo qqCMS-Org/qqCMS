@@ -66,16 +66,18 @@ const isImage = (mimeType: string) => mimeType.startsWith("image/");
 
 const FileIcon = ({ mimeType, size = 28 }: { mimeType: string; size?: number }) => {
 	const label = getMimeLabel(mimeType);
-	const color = isImage(mimeType)
-		? "var(--accent)"
+	const colorClass = isImage(mimeType)
+		? "text-accent"
 		: mimeType === "application/pdf"
-			? "var(--coral)"
+			? "text-coral"
 			: mimeType.startsWith("video/")
-				? "var(--green)"
-				: "var(--amber)";
+				? "text-green"
+				: "text-amber";
 
 	return (
-		<span style={{ fontSize: size, color, opacity: 0.6, lineHeight: 1, fontFamily: "monospace" }}>{label[0]}</span>
+		<span class={`${colorClass} opacity-60 leading-none font-mono`} style={{ fontSize: size }}>
+			{label[0]}
+		</span>
 	);
 };
 
@@ -425,10 +427,7 @@ export function MediaLibrary({ initialFiles }: MediaLibraryProps): JSX.Element {
 							<span class="text-[11px] text-text2">No files found.</span>
 						</div>
 					) : viewMode.value === "grid" ? (
-						<div
-							class="grid gap-px bg-ui-border"
-							style={{ gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))" }}
-						>
+						<div class="grid gap-px bg-ui-border grid-cols-[repeat(auto-fill,minmax(150px,1fr))]">
 							{visible.value.map((file) => (
 								<button
 									key={file.id}
@@ -476,9 +475,7 @@ export function MediaLibrary({ initialFiles }: MediaLibraryProps): JSX.Element {
 										<FileIcon mimeType={file.mimeType} size={13} />
 										<span class="text-[11px] text-text0 truncate">{file.originalName}</span>
 									</div>
-									<div class="flex-1 text-[10px]" style={{ color: "var(--accent)" }}>
-										{getMimeLabel(file.mimeType)}
-									</div>
+									<div class="flex-1 text-[10px] text-accent">{getMimeLabel(file.mimeType)}</div>
 									<div class="flex-1 text-[11px] text-text1">{formatBytes(file.size)}</div>
 									<div class="flex-1 text-[10px] text-text2 max-sm:hidden">{formatDate(file.createdAt)}</div>
 								</button>

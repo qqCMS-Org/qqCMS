@@ -1,7 +1,7 @@
 import type { JSX } from "preact";
 
 export const IcoDash = (): JSX.Element => (
-	<svg width={14} height={14} viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" style={{ flexShrink: 0 }}>
+	<svg width={14} height={14} viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="shrink-0">
 		<rect x="1" y="1" width="6" height="6" rx="1" />
 		<rect x="9" y="1" width="6" height="6" rx="1" />
 		<rect x="1" y="9" width="6" height="6" rx="1" />
@@ -18,7 +18,7 @@ export const IcoPage = (): JSX.Element => (
 		stroke="currentColor"
 		strokeWidth="1.2"
 		aria-hidden="true"
-		style={{ flexShrink: 0 }}
+		class="shrink-0"
 	>
 		<path d="M3 1h7l3 3v11H3V1z" />
 		<path d="M10 1v3h3" />
@@ -36,7 +36,7 @@ export const IcoColl = (): JSX.Element => (
 		stroke="currentColor"
 		strokeWidth="1.2"
 		aria-hidden="true"
-		style={{ flexShrink: 0 }}
+		class="shrink-0"
 	>
 		<ellipse cx="8" cy="4" rx="6" ry="2" />
 		<path d="M2 4v3c0 1.1 2.7 2 6 2s6-.9 6-2V4" />
@@ -54,7 +54,7 @@ export const IcoMedia = (): JSX.Element => (
 		stroke="currentColor"
 		strokeWidth="1.2"
 		aria-hidden="true"
-		style={{ flexShrink: 0 }}
+		class="shrink-0"
 	>
 		<rect x="1" y="2" width="14" height="12" rx="1" />
 		<path d="M1 10l4-4 3 3 2-2 5 5" />
@@ -71,7 +71,7 @@ export const IcoKey = (): JSX.Element => (
 		stroke="currentColor"
 		strokeWidth="1.2"
 		aria-hidden="true"
-		style={{ flexShrink: 0 }}
+		class="shrink-0"
 	>
 		<circle cx="6" cy="7" r="4" />
 		<circle cx="6" cy="7" r="2" />
@@ -88,7 +88,7 @@ export const IcoGear = (): JSX.Element => (
 		stroke="currentColor"
 		strokeWidth="1.2"
 		aria-hidden="true"
-		style={{ flexShrink: 0 }}
+		class="shrink-0"
 	>
 		<circle cx="8" cy="8" r="2.5" />
 		<path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.2 3.2l1.4 1.4M11.4 11.4l1.4 1.4M3.2 12.8l1.4-1.4M11.4 4.6l1.4-1.4" />
@@ -104,7 +104,7 @@ export const IcoLang = (): JSX.Element => (
 		stroke="currentColor"
 		strokeWidth="1.2"
 		aria-hidden="true"
-		style={{ flexShrink: 0 }}
+		class="shrink-0"
 	>
 		<circle cx="8" cy="8" r="6.5" />
 		<path d="M8 1.5C8 1.5 5.5 4 5.5 8s2.5 6.5 2.5 6.5" />
@@ -122,7 +122,7 @@ export const IcoNav = (): JSX.Element => (
 		stroke="currentColor"
 		strokeWidth="1.2"
 		aria-hidden="true"
-		style={{ flexShrink: 0 }}
+		class="shrink-0"
 	>
 		<line x1="2" y1="4" x2="14" y2="4" />
 		<line x1="2" y1="8" x2="10" y2="8" />
@@ -131,7 +131,7 @@ export const IcoNav = (): JSX.Element => (
 );
 
 export const IcoLogout = (): JSX.Element => (
-	<svg width={14} height={14} viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" style={{ flexShrink: 0 }}>
+	<svg width={14} height={14} viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="shrink-0">
 		<path
 			d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3M10 11l3-3-3-3M13 8H6"
 			stroke="currentColor"

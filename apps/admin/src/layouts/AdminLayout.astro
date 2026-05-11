@@ -1,13 +1,13 @@
 ---
-import { Layout } from '@layouts';
-import { SidebarNav } from '@widgets/sidebar';
-import type { NavItemId } from '@widgets/sidebar';
+import { Layout } from "@layouts";
+import { SidebarNav } from "@widgets/sidebar";
+import type { NavItemId } from "@widgets/sidebar";
 
 interface Props {
-  title: string;
-  activePage: NavItemId;
-  noPadding?: boolean;
-  noTopbar?: boolean;
+	title: string;
+	activePage: NavItemId;
+	noPadding?: boolean;
+	noTopbar?: boolean;
 }
 
 const { title, activePage, noPadding = false, noTopbar = false } = Astro.props;

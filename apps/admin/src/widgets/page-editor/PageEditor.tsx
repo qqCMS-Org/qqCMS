@@ -418,8 +418,8 @@ export function PageEditor({
 					</div>
 
 					{/* Content area */}
-					<div class="flex-1 overflow-y-auto bg-bg1" style={{ padding: "28px 48px" }}>
-						<div style={{ maxWidth: 640, margin: "0 auto" }}>
+					<div class="flex-1 overflow-y-auto bg-bg1 px-12 py-7">
+						<div class="max-w-[640px] mx-auto">
 							<input
 								type="text"
 								value={activeTitle.value}
@@ -427,18 +427,7 @@ export function PageEditor({
 									activeTitle.value = event.currentTarget.value;
 								}}
 								placeholder="Page title…"
-								style={{
-									fontFamily: "Instrument Serif, serif",
-									fontStyle: "italic",
-									fontSize: 28,
-									color: "var(--text0)",
-									background: "transparent",
-									border: "none",
-									outline: "none",
-									width: "100%",
-									marginBottom: 20,
-									lineHeight: 1.3,
-								}}
+								class="font-serif italic text-[28px] text-text0 bg-transparent border-none outline-none w-full mb-5 leading-[1.3]"
 							/>
 							<EditorContent
 								editor={editor}

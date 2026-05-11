@@ -6,7 +6,7 @@ interface StatCardProps {
 	label: string;
 	value: number;
 	href: string;
-	color: string;
+	colorClass: string;
 	Icon: LucideIcon;
 }
 
@@ -21,21 +21,19 @@ export interface StatsBarProps {
 type StatCardConfig = Omit<StatCardProps, "value">;
 
 const STAT_CARDS: StatCardConfig[] = [
-	{ label: "Total Pages", href: "/pages", color: "var(--accent)", Icon: FileText },
-	{ label: "Languages", href: "/languages", color: "var(--green)", Icon: Globe },
-	{ label: "Media Items", href: "/media", color: "var(--amber)", Icon: Image },
+	{ label: "Total Pages", href: "/pages", colorClass: "text-accent", Icon: FileText },
+	{ label: "Languages", href: "/languages", colorClass: "text-green", Icon: Globe },
+	{ label: "Media Items", href: "/media", colorClass: "text-amber", Icon: Image },
 ];
 
 // ── StatCard ──────────────────────────────────────────
 
-const StatCard = ({ label, value, href, color, Icon }: StatCardProps) => (
+const StatCard = ({ label, value, href, colorClass, Icon }: StatCardProps) => (
 	<a href={href} class="block bg-bg2 border border-ui-border rounded-lg p-[20px_18px] no-underline cursor-pointer">
-		<div class="mb-2 opacity-70" style={{ color }}>
+		<div class={`mb-2 opacity-70 ${colorClass}`}>
 			<Icon size={16} />
 		</div>
-		<div class="font-serif italic text-[34px] leading-none mb-1" style={{ color }}>
-			{value}
-		</div>
+		<div class={`font-serif italic text-[34px] leading-none mb-1 ${colorClass}`}>{value}</div>
 		<div class="text-[11px] text-text1 leading-snug">{label}</div>
 	</a>
 );

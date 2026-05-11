@@ -157,12 +157,10 @@ export function NavigationEditor({ initialItems }: NavigationEditorProps): JSX.E
 	};
 
 	return (
-		<div class="h-full overflow-y-auto p-5">
+		<div class="h-full overflow-y-auto p-5 max-w-[700px]">
 			<div>
 				<div class="text-[11px] font-semibold uppercase tracking-wider text-text0 mb-3">Navigation</div>
-				<div class="text-[11px] text-text1 mb-3.5" style={{ marginTop: -4 }}>
-					Manage navigation menu items and their order.
-				</div>
+				<div class="text-[11px] text-text1 mb-3.5 -mt-1">Manage navigation menu items and their order.</div>
 
 				{items.value.length === 0 && !adding.value && (
 					<div class="text-[11px] text-text2 py-4">No navigation items yet.</div>
@@ -177,19 +175,14 @@ export function NavigationEditor({ initialItems }: NavigationEditorProps): JSX.E
 							onDragOver={(event: DragEvent) => handleDragOver(event, item.id)}
 							onDrop={handleDrop}
 							onDragEnd={handleDragEnd}
-							class={`flex items-center gap-2 py-2.5 cursor-grab active:cursor-grabbing ${draggingId.value === item.id ? DRAG_CLASS : ""}`}
-							style={{
-								borderBottom: index < items.value.length - 1 ? "1px solid var(--border)" : "none",
-								outline: dragOverId.value === item.id ? "1px dashed var(--border-hover)" : "none",
-								outlineOffset: "2px",
-							}}
+							class={`flex items-center gap-2 py-2.5 cursor-grab active:cursor-grabbing transition-colors ${draggingId.value === item.id ? DRAG_CLASS : ""} ${index < items.value.length - 1 ? "border-b border-ui-border" : ""} ${dragOverId.value === item.id ? "outline-dashed outline-1 outline-ui-border-hover outline-offset-2" : ""}`}
 						>
 							<span class="text-[11px] text-text2 select-none" aria-hidden="true">
 								⠿
 							</span>
 
 							{editingId.value === item.id ? (
-								<div class="flex-1 flex flex-col gap-1.5">
+								<div class="flex-1 flex flex-col gap-1.5 py-1">
 									<div class="flex gap-2">
 										<input
 											type="text"
@@ -198,7 +191,7 @@ export function NavigationEditor({ initialItems }: NavigationEditorProps): JSX.E
 											onInput={(event: Event & { currentTarget: HTMLInputElement }) => {
 												editLabel.value = event.currentTarget.value;
 											}}
-											class="bg-bg1 border border-ui-border rounded text-[11px] text-text0 px-2 py-1.5 outline-none focus:border-ui-border-hover flex-1"
+											class="bg-bg1 border border-ui-border rounded text-[11px] text-text0 px-2.5 py-1.5 outline-none focus:border-accent flex-1 transition-colors"
 										/>
 										<input
 											type="text"
@@ -207,23 +200,23 @@ export function NavigationEditor({ initialItems }: NavigationEditorProps): JSX.E
 											onInput={(event: Event & { currentTarget: HTMLInputElement }) => {
 												editHref.value = event.currentTarget.value;
 											}}
-											class="bg-bg1 border border-ui-border rounded text-[11px] text-text0 px-2 py-1.5 outline-none focus:border-ui-border-hover flex-1"
+											class="bg-bg1 border border-ui-border rounded text-[11px] text-text0 px-2.5 py-1.5 outline-none focus:border-accent flex-1 transition-colors"
 										/>
 									</div>
-									{editError.value && <p class="text-[10px] text-coral">{editError.value}</p>}
-									<div class="flex gap-2">
+									{editError.value && <p class="text-[10px] text-coral m-0">{editError.value}</p>}
+									<div class="flex gap-2 mt-1">
 										<button
 											type="button"
 											onClick={() => handleSaveEdit(item.id)}
 											disabled={saving.value}
-											class="text-[11px] text-text0 bg-transparent border border-ui-border rounded px-2 py-1 cursor-pointer hover:border-ui-border-hover transition-colors disabled:opacity-50"
+											class="text-[11px] bg-accent border border-accent text-white rounded px-2.5 py-1 cursor-pointer hover:bg-accent-hover transition-colors disabled:opacity-50"
 										>
 											Save
 										</button>
 										<button
 											type="button"
 											onClick={cancelEdit}
-											class="text-[11px] text-text2 bg-transparent border-none cursor-pointer hover:text-text0 transition-colors"
+											class="text-[11px] text-text2 bg-transparent border border-transparent rounded px-2 py-1 cursor-pointer hover:text-text0 hover:bg-white/5 transition-colors"
 										>
 											Cancel
 										</button>
@@ -232,7 +225,7 @@ export function NavigationEditor({ initialItems }: NavigationEditorProps): JSX.E
 							) : (
 								<>
 									<div class="flex-1 min-w-0">
-										<span class="text-[11px] text-text0 block truncate">
+										<span class="text-[12px] text-text0 block truncate">
 											{item.label.en ?? Object.values(item.label)[0] ?? "—"}
 										</span>
 										<span class="text-[10px] text-text2 font-mono block truncate">{item.href}</span>
@@ -240,14 +233,14 @@ export function NavigationEditor({ initialItems }: NavigationEditorProps): JSX.E
 									<button
 										type="button"
 										onClick={() => startEdit(item)}
-										class="text-text2 text-[11px] bg-transparent border-none cursor-pointer px-1 py-0.5 hover:text-text0 transition-colors"
+										class="text-text2 text-[11px] bg-transparent border border-transparent rounded cursor-pointer px-2 py-1 hover:text-text0 hover:bg-white/5 transition-colors"
 									>
 										Edit
 									</button>
 									<button
 										type="button"
 										onClick={() => handleDelete(item.id)}
-										class="text-text2 text-[13px] leading-none bg-transparent border-none cursor-pointer px-1 py-0.5 hover:text-coral transition-colors"
+										class="text-text2 text-[14px] leading-none bg-transparent border border-transparent rounded cursor-pointer px-2 py-1 hover:text-coral hover:bg-coral-faint transition-colors"
 									>
 										×
 									</button>
@@ -258,7 +251,7 @@ export function NavigationEditor({ initialItems }: NavigationEditorProps): JSX.E
 				</ul>
 
 				{adding.value && (
-					<div class="py-3" style={{ borderTop: items.value.length > 0 ? "1px solid var(--border)" : "none" }}>
+					<div class={`py-3 ${items.value.length > 0 ? "border-t border-ui-border" : ""}`}>
 						<div class="flex gap-2 mb-2">
 							<input
 								type="text"
@@ -267,7 +260,7 @@ export function NavigationEditor({ initialItems }: NavigationEditorProps): JSX.E
 								onInput={(event: Event & { currentTarget: HTMLInputElement }) => {
 									newLabel.value = event.currentTarget.value;
 								}}
-								class="bg-bg1 border border-ui-border rounded text-[11px] text-text0 px-2 py-1.5 outline-none focus:border-ui-border-hover flex-1"
+								class="bg-bg1 border border-ui-border rounded text-[11px] text-text0 px-2.5 py-1.5 outline-none focus:border-accent flex-1 transition-colors"
 							/>
 							<input
 								type="text"
@@ -276,7 +269,7 @@ export function NavigationEditor({ initialItems }: NavigationEditorProps): JSX.E
 								onInput={(event: Event & { currentTarget: HTMLInputElement }) => {
 									newHref.value = event.currentTarget.value;
 								}}
-								class="bg-bg1 border border-ui-border rounded text-[11px] text-text0 px-2 py-1.5 outline-none focus:border-ui-border-hover flex-1"
+								class="bg-bg1 border border-ui-border rounded text-[11px] text-text0 px-2.5 py-1.5 outline-none focus:border-accent flex-1 transition-colors"
 							/>
 						</div>
 						{addError.value && <p class="text-[10px] text-coral mb-2">{addError.value}</p>}
@@ -285,7 +278,7 @@ export function NavigationEditor({ initialItems }: NavigationEditorProps): JSX.E
 								type="button"
 								onClick={handleAdd}
 								disabled={saving.value}
-								class="text-[11px] text-text0 bg-transparent border border-ui-border rounded px-2 py-1 cursor-pointer hover:border-ui-border-hover transition-colors disabled:opacity-50"
+								class="text-[11px] bg-accent border border-accent text-white rounded px-2.5 py-1 cursor-pointer hover:bg-accent-hover transition-colors disabled:opacity-50"
 							>
 								Add
 							</button>
@@ -297,7 +290,7 @@ export function NavigationEditor({ initialItems }: NavigationEditorProps): JSX.E
 									newLabel.value = "";
 									newHref.value = "";
 								}}
-								class="text-[11px] text-text2 bg-transparent border-none cursor-pointer hover:text-text0 transition-colors"
+								class="text-[11px] text-text2 bg-transparent border border-transparent rounded px-2 py-1 cursor-pointer hover:text-text0 hover:bg-white/5 transition-colors"
 							>
 								Cancel
 							</button>
@@ -306,14 +299,14 @@ export function NavigationEditor({ initialItems }: NavigationEditorProps): JSX.E
 				)}
 
 				{!adding.value && (
-					<div style={{ marginTop: items.value.length > 0 ? "8px" : "0" }}>
+					<div class={items.value.length > 0 ? "mt-2" : ""}>
 						<button
 							type="button"
 							onClick={() => {
 								adding.value = true;
 								addError.value = null;
 							}}
-							class="text-[11px] text-text2 bg-transparent border-none cursor-pointer hover:text-text0 transition-colors p-0"
+							class="text-[11px] text-accent font-medium bg-transparent border-none cursor-pointer hover:text-accent-hover transition-colors p-0"
 						>
 							+ Add item
 						</button>
