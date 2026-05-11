@@ -6,7 +6,7 @@ import { SetSettingSchema } from "./settings.types";
 
 export const settingsController = new Elysia({ prefix: "/settings" })
 	.use(authPlugin)
-	.get("/", () => listSettings())
+	.get("/", () => listSettings(), { requireAuth: true })
 	.post(
 		"/rebuild",
 		async () => {
