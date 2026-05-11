@@ -23,6 +23,8 @@ Minimal required setup:
 3. Set `REVALIDATE_SECRET` for the `web` service in Dokploy environment variables
 4. Keep `DATABASE_URL` unset to stay on PGLite
 
+For optional API variables (such as `UPLOAD_DIR` or `RUN_MIGRATIONS_ON_STARTUP`), see [env.md](./env.md).
+
 ### `ADMIN_PASSWORD_HASH` note (`$` interpolation)
 
 Avoid passing bcrypt hashes through Compose interpolation (e.g. `ADMIN_PASSWORD_HASH=${ADMIN_PASSWORD_HASH}`). The `$` characters in bcrypt hashes can be interpreted as variable references by Compose/Dokploy and corrupt the hash value.
