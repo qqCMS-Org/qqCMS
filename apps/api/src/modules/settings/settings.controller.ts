@@ -4,13 +4,20 @@ import { Elysia } from "elysia";
 import { listSettings, setSetting } from "./settings.service";
 import { SetSettingSchema } from "./settings.types";
 
+const REBUILD_FAILED_ERROR = "Failed to trigger rebuild";
+const REBUILD_FAILED_CODE = "REBUILD_FAILED";
+
 export const settingsController = new Elysia({ prefix: "/settings" })
 	.use(authPlugin)
 	.get("/", () => listSettings(), { requireAuth: true })
 	.post(
 		"/rebuilds",
-		async () => {
-			await triggerRebuild();
+		async ({ set }) => {
+			const success = await triggerRebuild();
+			if (!success) {
+				set.status = 500;
+				return { error: REBUILD_FAILED_ERROR, code: REBUILD_FAILED_CODE };
+			}
 			return { success: true };
 		},
 		{ requireAuth: true },
