@@ -1,5 +1,5 @@
 import { Button, Input } from "@repo/ui";
-import { api } from "@shared/api/client";
+import { api, extractApiError } from "@shared/api/client";
 import type { ComponentChildren } from "preact";
 import { useState } from "preact/compat";
 
@@ -42,15 +42,15 @@ const FormRow = ({ label, hint, children }: { label: string; hint?: string; chil
 );
 
 export const SettingsForm = ({ initialSettings }: SettingsFormProps) => {
-	const [settingsMap, setSettingsMap] = useState<Record<string, unknown>>(() => {
-		const map: Record<string, unknown> = {
+	const [settingsMap, setSettingsMap] = useState<Record<string, string>>(() => {
+		const map: Record<string, string> = {
 			projectName: "",
 			adminUrl: "",
 			apiUrl: "",
 			contentApiKey: "",
 		};
 		initialSettings.forEach((s) => {
-			if (s.value !== undefined) {
+			if (typeof s.value === "string") {
 				map[s.key] = s.value;
 			}
 		});
@@ -64,7 +64,7 @@ export const SettingsForm = ({ initialSettings }: SettingsFormProps) => {
 		type: "success" | "error";
 	} | null>(null);
 
-	const handleChange = (key: string, value: unknown) => {
+	const handleChange = (key: string, value: string) => {
 		setSettingsMap((prev) => ({ ...prev, [key]: value }));
 	};
 
@@ -80,7 +80,7 @@ export const SettingsForm = ({ initialSettings }: SettingsFormProps) => {
 			for (const key of keys) {
 				const res = await api.settings({ key }).put({ value: settingsMap[key] });
 				if (res.error) {
-					throw new Error((res.error.value as any)?.error || `Failed to save ${key}`);
+					throw new Error(extractApiError(res.error) ?? `Failed to save ${key}`);
 				}
 			}
 			showMessage("Settings saved successfully", "success");
@@ -95,9 +95,9 @@ export const SettingsForm = ({ initialSettings }: SettingsFormProps) => {
 		setIsRebuilding(true);
 		setMessage(null);
 		try {
-			const res = await api.settings.rebuild.post();
+			const res = await api.settings.rebuilds.post();
 			if (res.error) {
-				throw new Error((res.error.value as any)?.error || "Failed to trigger rebuild");
+				throw new Error(extractApiError(res.error) ?? "Failed to trigger rebuild");
 			}
 			showMessage("Rebuild webhook triggered successfully", "success");
 		} catch (error) {
@@ -133,15 +133,15 @@ export const SettingsForm = ({ initialSettings }: SettingsFormProps) => {
 			<SettingsBlock id="project" title="Project">
 				<FormRow label="Project name" hint="Display name shown in the browser tab.">
 					<Input
-						value={(settingsMap.projectName as string) || ""}
-						onChange={(e) => handleChange("projectName", (e.target as HTMLInputElement).value)}
+						value={settingsMap.projectName || ""}
+						onChange={(e) => handleChange("projectName", e.currentTarget.value)}
 						placeholder="My qqCMS Project"
 					/>
 				</FormRow>
 				<FormRow label="Admin URL" hint="Base URL for the admin interface.">
 					<Input
-						value={(settingsMap.adminUrl as string) || ""}
-						onChange={(e) => handleChange("adminUrl", (e.target as HTMLInputElement).value)}
+						value={settingsMap.adminUrl || ""}
+						onChange={(e) => handleChange("adminUrl", e.currentTarget.value)}
 						placeholder="https://admin.example.com"
 					/>
 				</FormRow>
@@ -150,16 +150,16 @@ export const SettingsForm = ({ initialSettings }: SettingsFormProps) => {
 			<SettingsBlock id="api" title="API">
 				<FormRow label="API URL" hint="Public-facing base URL for the API.">
 					<Input
-						value={(settingsMap.apiUrl as string) || ""}
-						onChange={(e) => handleChange("apiUrl", (e.target as HTMLInputElement).value)}
+						value={settingsMap.apiUrl || ""}
+						onChange={(e) => handleChange("apiUrl", e.currentTarget.value)}
 						placeholder="https://api.example.com"
 					/>
 				</FormRow>
 				<FormRow label="Content API key" hint="Read-only key for public content access.">
 					<div class="flex gap-2">
 						<Input
-							value={(settingsMap.contentApiKey as string) || ""}
-							onChange={(e) => handleChange("contentApiKey", (e.target as HTMLInputElement).value)}
+							value={settingsMap.contentApiKey || ""}
+							onChange={(e) => handleChange("contentApiKey", e.currentTarget.value)}
 							class="flex-1"
 						/>
 					</div>

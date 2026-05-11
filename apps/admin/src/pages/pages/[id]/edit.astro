@@ -13,6 +13,22 @@ interface PageWithTranslations {
 	translations: PageTranslationData[];
 }
 
+const PAGE_STATUSES = ["draft", "published", "unpublished"] as const;
+
+function isPageWithTranslations(data: unknown): data is PageWithTranslations {
+	if (!data || typeof data !== "object") return false;
+	const obj = data as Record<string, unknown>;
+	return (
+		typeof obj.id === "string" &&
+		typeof obj.slug === "string" &&
+		typeof obj.status === "string" &&
+		(PAGE_STATUSES as readonly string[]).includes(obj.status) &&
+		typeof obj.hasDraft === "boolean" &&
+		typeof obj.isHomepage === "boolean" &&
+		Array.isArray(obj.translations)
+	);
+}
+
 const { id } = Astro.params;
 const API_URL = import.meta.env.PUBLIC_API_URL ?? DEFAULT_API_URL;
 const token = Astro.cookies.get(COOKIE_NAME)?.value;
@@ -27,7 +43,11 @@ if (!pageRes?.ok) {
 	return Astro.redirect("/pages");
 }
 
-const page = (await pageRes.json()) as PageWithTranslations;
+const pageData: unknown = await pageRes.json();
+if (!isPageWithTranslations(pageData)) {
+	return Astro.redirect("/pages");
+}
+const page = pageData;
 const allLanguages: PageLanguage[] = langsRes?.ok ? await langsRes.json().catch(() => []) : [];
 const languages = allLanguages.filter((lang) => lang.isActive);
 ---
