@@ -142,21 +142,21 @@
 > **Agent rule**: complete one step, then **stop and ask the user to review** before proceeding to the next.
 
 ### Step 1 — Foundation & Config
-- [ ] Switch `output` to `hybrid` in `apps/web/astro.config.mjs`
-- [ ] Install Tailwind CSS v4 + `@astrojs/tailwind` in `apps/web` (same versions as `apps/admin`)
-- [ ] Install DaisyUI in `apps/web` + add custom theme from design tokens in `prototype/index.html` (same as `apps/admin`)
-- [ ] Mirror `apps/admin/tsconfig.json` path aliases in `apps/web/tsconfig.json`: `@app/*`, `@layouts`, `@widgets/*`, `@features/*`, `@entities/*`, `@shared/*`, `@repo/types`, `@repo/server/client`, `@repo/ui`, `@api-shared/*`
-- [ ] Create FSD folder skeleton: `src/app/styles/`, `src/widgets/`, `src/features/`, `src/entities/`, `src/shared/ui/`, `src/shared/api/`, `src/shared/config/`
-- [ ] Create `src/shared/api/client.ts` — Eden Treaty client using `PUBLIC_API_URL` env var (mirror `apps/admin/src/shared/api/client.ts`)
-- [ ] Create `src/layouts/WebLayout.astro` — HTML shell: `<head>` with title/description slots, `<body class="bg-base-100 text-base-content">` with `<Header>` slot + `<slot />`; accepts `title`, `description`, `lang` props; sets `<html lang={lang} data-theme="...">`; import Tailwind global CSS from `@app/styles`
-- [ ] Create `src/layouts/index.ts` barrel
+- [x] Switch `output` to `static` (Astro v5+ removed `hybrid`; same behaviour — individual pages use `export const prerender = false`) in `apps/web/astro.config.mjs`
+- [x] Install Tailwind CSS v4 + `@tailwindcss/vite` in `apps/web` (same versions as `apps/admin`)
+- [x] Install DaisyUI in `apps/web` + add custom theme from design tokens in `prototype/index.html` (same as `apps/admin`)
+- [x] Mirror `apps/admin/tsconfig.json` path aliases in `apps/web/tsconfig.json`: `@app/*`, `@layouts`, `@widgets/*`, `@features/*`, `@entities/*`, `@shared/*`, `@repo/types`, `@repo/server/client`, `@repo/ui`, `@api-shared/*`
+- [x] Create FSD folder skeleton: `src/app/styles/`, `src/widgets/`, `src/features/`, `src/entities/`, `src/shared/ui/`, `src/shared/api/`, `src/shared/config/`
+- [x] Create `src/shared/api/client.ts` — Eden Treaty client using `PUBLIC_API_URL` env var (mirror `apps/admin/src/shared/api/client.ts`)
+- [x] Create `src/layouts/WebLayout.astro` — HTML shell: `<head>` with title/description slots, `<body class="bg-base-100 text-base-content">` with `<Header>` slot + `<slot />`; accepts `title`, `description`, `lang` props; sets `<html lang={lang} data-theme="...">`; import Tailwind global CSS from `@app/styles`
+- [x] Create `src/layouts/index.ts` barrel
 
 > ⛔ Stop here. Ask user to review the foundation before continuing.
 
 ### Step 2 — Header widget
-- [ ] Create `src/widgets/header/Header.astro` — accepts `navItems`, `languages`, `currentLang`, `currentSlug` as props (data fetched by the page, not inside the widget); use `<Logo />` from `@repo/ui`; use DaisyUI `navbar`, `menu`, `btn` classes for layout and nav links
-- [ ] Create `src/features/language-switch/LanguageSwitcher.astro` — renders `<a class="btn btn-ghost btn-xs">` links for each active language; active lang gets `btn-active`; zero JS
-- [ ] Create `src/widgets/header/index.ts` barrel
+- [x] Create `src/widgets/header/Header.astro` — accepts `navItems`, `languages`, `currentLang`, `currentSlug` as props (data fetched by the page, not inside the widget); use `<Logo />` from `@repo/ui`; use DaisyUI `navbar`, `menu`, `btn` classes for layout and nav links
+- [x] Create `src/features/language-switch/LanguageSwitcher.astro` — renders `<a class="btn btn-ghost btn-xs">` links for each active language; active lang gets `btn-active`; zero JS
+- [x] Create `src/widgets/header/index.ts` barrel
 
 > ⛔ Stop here. Ask user to verify the header renders nav and language switcher correctly.
 
