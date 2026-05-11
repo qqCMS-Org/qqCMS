@@ -96,16 +96,16 @@
 ## Phase 2 (continued): Collections
 
 ### Step 10 — Collections backend
-- [ ] Add DB schema: `collections`, `collection_fields`, `collection_entries` tables
-- [ ] Generate and run Drizzle migration
-- [ ] Add repository functions: `collections.ts`, `collection-fields.ts`, `collection-entries.ts`
-- [ ] Add `apps/api/src/modules/collections/` (types, service, controller, index)
-- [ ] Register `collectionsModule` in `apps/api/src/index.ts`
+- [x] Add DB schema: `collections`, `collection_fields`, `collection_entries` tables
+- [x] Generate and run Drizzle migration
+- [x] Add repository functions: `collections.ts`, `collection-fields.ts`, `collection-entries.ts`
+- [x] Add `apps/api/src/modules/collections/` (types, service, controller, index)
+- [x] Register `collectionsModule` in `apps/api/src/index.ts`
 
 ### Step 11 — Collections admin UI
-- [ ] Create `apps/admin/src/pages/collections/index.astro`
-- [ ] Create `apps/admin/src/widgets/collections/CollectionsManager.tsx` (full UI per prototype)
-- [ ] Export widget from `apps/admin/src/widgets/collections/index.ts`
+- [x] Create `apps/admin/src/pages/collections/index.astro`
+- [x] Create `apps/admin/src/widgets/collections/CollectionsManager.tsx` (full UI per prototype)
+- [x] Export widget from `apps/admin/src/widgets/collections/index.ts`
 
 ## Phase 4: CI/CD & Tooling
 - [x] Configure Biome for unified formatting across monorepo
