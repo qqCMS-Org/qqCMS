@@ -25,7 +25,7 @@ Minimal required setup:
 
 ### `ADMIN_PASSWORD_HASH` note (`$` interpolation)
 
-Avoid passing bcrypt hashes through Compose interpolation (e.g. `ADMIN_PASSWORD_HASH=${ADMIN_PASSWORD_HASH}`), because `$` fragments can be interpreted as variables by Compose/Dokploy.
+Avoid passing bcrypt hashes through Compose interpolation (e.g. `ADMIN_PASSWORD_HASH=${ADMIN_PASSWORD_HASH}`). The `$` characters in bcrypt hashes can be interpreted as variable references by Compose/Dokploy and corrupt the hash value.
 
 Recommended for this repo:
 
