@@ -110,9 +110,9 @@
 > **Agent rule**: complete one step, then **stop and ask the user to review** before proceeding to the next.
 
 ### Step 1 — TipTap renderer in `packages/ui`
-- [ ] Add `astro` as a dev dependency in `packages/ui` (needed only for type compat with Astro imports; no integration required)
-- [ ] Create `packages/ui/src/tiptap/types.ts` — `TipTapNode` interface and `NodeRegistry` type (`Record<string, ComponentType<{ node: TipTapNode }>>`)
-- [ ] Create node renderer components in `packages/ui/src/tiptap/nodes/`:
+- [x] Add `astro` as a dev dependency in `packages/ui` (needed only for type compat with Astro imports; no integration required)
+- [x] Create `packages/ui/src/tiptap/types.ts` — `TipTapNode` interface and `NodeRegistry` type (`Record<string, ComponentType<{ node: TipTapNode }>>`)
+- [x] Create node renderer components in `packages/ui/src/tiptap/nodes/`:
   - `DocNode.tsx` — renders `node.content` children recursively
   - `ParagraphNode.tsx` — `<p class="mb-4">`
   - `HeadingNode.tsx` — `<h1>`–`<h6>` based on `node.attrs.level`; apply `text-3xl font-bold` … `text-lg font-semibold` via level map
@@ -126,10 +126,10 @@
   - `HorizontalRuleNode.tsx` — `<hr class="divider" />` (DaisyUI `divider`)
   - `ImageNode.tsx` — `<img class="rounded-box max-w-full" src alt>` from `node.attrs`
   - `YoutubeNode.tsx` — `<div class="aspect-video"><iframe class="w-full h-full" ...>` from `node.attrs`
-- [ ] Create `packages/ui/src/tiptap/TipTapRenderer.tsx` — accepts `node: TipTapNode` and `registry: NodeRegistry`; recursively maps `node.content[]` through registry; falls back to `<span data-unknown-node={type} />` for unregistered types
-- [ ] Create `packages/ui/src/tiptap/registry.ts` — `defaultRegistry` mapping all standard node types to their components above
-- [ ] Create `packages/ui/src/tiptap/index.ts` barrel — export `TipTapRenderer`, `defaultRegistry`, `NodeRegistry`, `TipTapNode`
-- [ ] Re-export from `packages/ui/src/index.ts`
+- [x] Create `packages/ui/src/tiptap/TipTapRenderer.tsx` — accepts `node: TipTapNode` and `registry: NodeRegistry`; recursively maps `node.content[]` through registry; falls back to `<span data-unknown-node={type} />` for unregistered types
+- [x] Create `packages/ui/src/tiptap/registry.ts` — `defaultRegistry` mapping all standard node types to their components above
+- [x] Create `packages/ui/src/tiptap/index.ts` barrel — export `TipTapRenderer`, `defaultRegistry`, `NodeRegistry`, `TipTapNode`
+- [x] Re-export from `packages/ui/src/index.ts`
 
 > ⛔ Stop here. Ask user to review the renderer and registry before wiring to any app.
 
