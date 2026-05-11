@@ -1,0 +1,19 @@
+import { db } from "@core/Database";
+import type { NewCollectionField } from "@schema/collection-fields";
+import { collectionFields } from "@schema/collection-fields";
+import { asc, eq } from "drizzle-orm";
+
+export const getFieldsByCollection = (collectionId: string) =>
+	db
+		.select()
+		.from(collectionFields)
+		.where(eq(collectionFields.collectionId, collectionId))
+		.orderBy(asc(collectionFields.sortOrder));
+
+export const insertCollectionField = (data: Omit<NewCollectionField, "id">) =>
+	db
+		.insert(collectionFields)
+		.values({ ...data, id: crypto.randomUUID() })
+		.returning();
+
+export const deleteCollectionField = (id: string) => db.delete(collectionFields).where(eq(collectionFields.id, id));
