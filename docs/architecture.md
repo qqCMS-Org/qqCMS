@@ -72,4 +72,5 @@ See [api.md](./api.md), [database.md](./database.md), [auth.md](./auth.md) for d
 | [rebuild-flow.md](./rebuild-flow.md) | SSG rebuild webhook |
 | [deployment.md](./deployment.md) | Docker and hosting |
 | [design.md](./design.md) | UI design references |
+| [web.md](./web.md) | Public web client architecture |
 | [adr/](./adr/) | Architecture decision records |
