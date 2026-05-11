@@ -1,6 +1,36 @@
 # Deployment
 
-> **Status: NOT IMPLEMENTED** — `Dockerfile` and `docker-compose.yml` exist in the repo root but are not yet configured for the actual apps. Multi-app Docker setup is not done.
+> **Status: IMPLEMENTED** — root `Dockerfile` and `docker-compose.yml` support `api`, `admin`, and `web` targets.
+
+## Dokploy (branch `feat/admin-panel`, PGLite path)
+
+Use Dokploy **Compose Application** with:
+
+- Repository: `qqCMS-Org/qqCMS`
+- Branch: `feat/admin-panel`
+- Compose path: `docker-compose.yml`
+
+`docker-compose.yml` is configured for the default **PGLite** mode:
+
+- `api` mounts `pglite_data` to `/app/apps/api/data`
+- API database file persists at `/app/apps/api/data/qqcms.db`
+- `DATABASE_URL` is not required unless you explicitly switch to PostgreSQL
+
+Minimal required setup:
+
+1. Create `apps/api/.env` from `apps/api/.env.example`
+2. Set required API vars (`ADMIN_LOGIN`, `ADMIN_PASSWORD_HASH`, `JWT_SECRET`)
+3. Set `CORS_ORIGINS` to the actual admin/web origins (IP/localhost is fine before a final domain is ready)
+4. Set `REVALIDATE_SECRET` for the `web` service in Dokploy environment variables
+
+### `ADMIN_PASSWORD_HASH` note (`$` interpolation)
+
+Avoid passing bcrypt hashes through Compose interpolation (for example `ADMIN_PASSWORD_HASH=${ADMIN_PASSWORD_HASH}`), because `$` fragments can be interpreted as variables by Compose/Dokploy.
+
+Recommended for this repo:
+
+- keep API secrets in `apps/api/.env`
+- use escaped `$` in that file (as in `.env.example`): `\$2b\$10\$...`
 
 ## Architecture
 

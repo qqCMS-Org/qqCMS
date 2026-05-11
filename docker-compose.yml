@@ -1,23 +1,14 @@
 services:
-  postgres:
-    image: postgres:17-alpine
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: qqcms
-      POSTGRES_PASSWORD: qqcms
-      POSTGRES_DB: qqcms
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - dokploy-network
-
   api:
     build:
       context: .
       target: api
     restart: unless-stopped
+    env_file:
+      - ./apps/api/.env
+    volumes:
+      # PGLite file lives at ./data/qqcms.db relative to /app/apps/api
+      - pglite_data:/app/apps/api/data
     networks:
       - dokploy-network
 
@@ -46,4 +37,4 @@ networks:
     external: true
 
 volumes:
-  postgres_data:
+  pglite_data:
