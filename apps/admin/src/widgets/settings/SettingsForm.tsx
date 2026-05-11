@@ -43,9 +43,18 @@ const FormRow = ({ label, hint, children }: { label: string; hint?: string; chil
 
 export const SettingsForm = ({ initialSettings }: SettingsFormProps) => {
 	const [settingsMap, setSettingsMap] = useState<Record<string, unknown>>(() => {
-		const map: Record<string, unknown> = {};
+		const map: Record<string, unknown> = {
+			projectName: "",
+			adminUrl: "",
+			darkMode: false,
+			compactSidebar: false,
+			apiUrl: "",
+			contentApiKey: "",
+		};
 		initialSettings.forEach((s) => {
-			map[s.key] = s.value;
+			if (s.value !== undefined) {
+				map[s.key] = s.value;
+			}
 		});
 		return map;
 	});
