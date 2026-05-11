@@ -19,6 +19,8 @@ If you do not have a final domain yet, use the real temporary origins you open i
 CORS_ORIGINS=http://YOUR_SERVER_IP:3001,http://YOUR_SERVER_IP:3002
 ```
 
+Use this only as a temporary setup for testing. Replace IP/localhost origins with final HTTPS domains before production.
+
 ## Optional Variables
 
 | Variable | Description | Default |

@@ -13,7 +13,7 @@ Use Dokploy **Compose Application** with:
 `docker-compose.yml` is configured for the default **PGLite** mode:
 
 - `api` mounts `pglite_data` to `/app/apps/api/data`
-- API database file persists at `/app/apps/api/data/qqcms.db` (set in `apps/api/src/db/index.ts`)
+- API database file persists at `/app/apps/api/data/qqcms.db` (from `new PGlite("./data/qqcms.db")` in `apps/api/src/db/index.ts`)
 - `DATABASE_URL` is not required unless you explicitly switch to PostgreSQL
 
 Minimal required setup:
@@ -33,6 +33,7 @@ Recommended for this repo:
 
 - set API env vars directly in Dokploy (or an external secret manager)
 - do not put `ADMIN_PASSWORD_HASH` in compose `${...}` expressions
+- pass values via env passthrough entries used in `docker-compose.yml` (e.g. `- ADMIN_PASSWORD_HASH`)
 
 ## Architecture
 

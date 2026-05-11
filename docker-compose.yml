@@ -16,7 +16,7 @@ services:
       - RUN_MIGRATIONS_ON_STARTUP
       - PORT
     volumes:
-      # PGLite file lives at ./data/qqcms.db relative to /app/apps/api inside the container
+      # Matches apps/api/src/db/index.ts -> new PGlite("./data/qqcms.db") in container workdir /app/apps/api
       - pglite_data:/app/apps/api/data
     networks:
       - dokploy-network
