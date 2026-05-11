@@ -2,35 +2,35 @@
 
 > **Status: IMPLEMENTED** — root `Dockerfile` and `docker-compose.yml` support `api`, `admin`, and `web` targets.
 
-## Dokploy (branch `feat/admin-panel`, PGLite path)
+## Dokploy (PGLite path)
 
 Use Dokploy **Compose Application** with:
 
 - Repository: `qqCMS-Org/qqCMS`
-- Branch: `feat/admin-panel`
+- Branch: `feat/admin-panel` (or your deployment branch with the same compose setup)
 - Compose path: `docker-compose.yml`
 
 `docker-compose.yml` is configured for the default **PGLite** mode:
 
 - `api` mounts `pglite_data` to `/app/apps/api/data`
-- API database file persists at `/app/apps/api/data/qqcms.db`
+- API database file persists at `/app/apps/api/data/qqcms.db` (set in `apps/api/src/db/index.ts`)
 - `DATABASE_URL` is not required unless you explicitly switch to PostgreSQL
 
 Minimal required setup:
 
-1. Create `apps/api/.env` from `apps/api/.env.example`
-2. Set required API vars (`ADMIN_LOGIN`, `ADMIN_PASSWORD_HASH`, `JWT_SECRET`)
-3. Set `CORS_ORIGINS` to the actual admin/web origins (IP/localhost is fine before a final domain is ready)
-4. Set `REVALIDATE_SECRET` for the `web` service in Dokploy environment variables
+1. Set required API vars in Dokploy (`ADMIN_LOGIN`, `ADMIN_PASSWORD_HASH`, `JWT_SECRET`, `CORS_ORIGINS`)
+2. Set `CORS_ORIGINS` to the actual admin/web origins (IP/localhost is fine before a final domain is ready)
+3. Set `REVALIDATE_SECRET` for the `web` service in Dokploy environment variables
+4. Keep `DATABASE_URL` unset to stay on PGLite
 
 ### `ADMIN_PASSWORD_HASH` note (`$` interpolation)
 
-Avoid passing bcrypt hashes through Compose interpolation (for example `ADMIN_PASSWORD_HASH=${ADMIN_PASSWORD_HASH}`), because `$` fragments can be interpreted as variables by Compose/Dokploy.
+Avoid passing bcrypt hashes through Compose interpolation (e.g. `ADMIN_PASSWORD_HASH=${ADMIN_PASSWORD_HASH}`), because `$` fragments can be interpreted as variables by Compose/Dokploy.
 
 Recommended for this repo:
 
-- keep API secrets in `apps/api/.env`
-- use escaped `$` in that file (as in `.env.example`): `\$2b\$10\$...`
+- set API env vars directly in Dokploy (or an external secret manager)
+- do not put `ADMIN_PASSWORD_HASH` in compose `${...}` expressions
 
 ## Architecture
 

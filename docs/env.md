@@ -13,7 +13,7 @@ These must be set before the API server starts. The server validates their prese
 | `JWT_SECRET` | Secret for signing JWT tokens (min 32 chars) | `supersecretkey...` |
 | `CORS_ORIGINS` | Comma-separated list of allowed origins | `http://localhost:4321,https://mysite.com` |
 
-If you do not have a final domain yet, use the real temporary origins you open in browser (for example server IP + port):
+If you do not have a final domain yet, use the real temporary origins you open in browser (e.g. server IP + port):
 
 ```sh
 CORS_ORIGINS=http://YOUR_SERVER_IP:3001,http://YOUR_SERVER_IP:3002
@@ -91,7 +91,7 @@ UPLOAD_DIR=./uploads
 PORT=3000
 ```
 
-For Dokploy + Compose, prefer `env_file` (`apps/api/.env`) for API variables instead of Compose interpolation (`${...}`) for bcrypt hash values.
+For Dokploy + Compose, set API values in Dokploy environment variables and avoid compose interpolation (`${...}`) for bcrypt hash values.
 
 ## Security Rules
 

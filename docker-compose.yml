@@ -4,8 +4,17 @@ services:
       context: .
       target: api
     restart: unless-stopped
-    env_file:
-      - ./apps/api/.env
+    environment:
+      - ADMIN_LOGIN
+      - ADMIN_PASSWORD_HASH
+      - JWT_SECRET
+      - CORS_ORIGINS
+      - DEBUG
+      - DATABASE_URL
+      - UPLOAD_DIR
+      - PUBLIC_CLIENT_URL
+      - RUN_MIGRATIONS_ON_STARTUP
+      - PORT
     volumes:
       # PGLite file lives at ./data/qqcms.db relative to /app/apps/api
       - pglite_data:/app/apps/api/data
@@ -28,7 +37,7 @@ services:
     environment:
       - HOST=0.0.0.0
       - PORT=3002
-      - REVALIDATE_SECRET=${REVALIDATE_SECRET}
+      - REVALIDATE_SECRET
     networks:
       - dokploy-network
 
