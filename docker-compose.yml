@@ -5,10 +5,12 @@ services:
       target: api
     restart: unless-stopped
     environment:
+      # Required vars are validated in apps/api/src/shared/config.ts: ADMIN_LOGIN, ADMIN_PASSWORD_HASH, JWT_SECRET, CORS_ORIGINS
       - ADMIN_LOGIN
       - ADMIN_PASSWORD_HASH
       - JWT_SECRET
       - CORS_ORIGINS
+      # Optional vars
       - DEBUG
       - DATABASE_URL
       - UPLOAD_DIR

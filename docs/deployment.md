@@ -35,6 +35,16 @@ Recommended for this repo:
 - do not put `ADMIN_PASSWORD_HASH` in compose `${...}` expressions
 - pass values via env passthrough entries used in `docker-compose.yml` (e.g. `- ADMIN_PASSWORD_HASH`)
 
+```yaml
+# ✅ correct passthrough
+environment:
+  - ADMIN_PASSWORD_HASH
+
+# ❌ avoid interpolation for bcrypt hashes
+environment:
+  - ADMIN_PASSWORD_HASH=${ADMIN_PASSWORD_HASH}
+```
+
 ## Architecture
 
 Three separate Docker images — one per app:
