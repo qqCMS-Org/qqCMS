@@ -1,3 +1,4 @@
+import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { config } from "@api/config";
 import { PGlite } from "@electric-sql/pglite";
@@ -16,20 +17,25 @@ function createDb() {
 		const database = drizzlePostgres(client, { schema });
 		return {
 			db: database,
+			// For Postgres (multi-instance), migrations are opt-in via RUN_MIGRATIONS_ON_STARTUP
+			autoMigrate: false,
 			runMigrations: () => migratePostgres(database, { migrationsFolder: MIGRATIONS_FOLDER }),
 		};
 	}
 
+	// PGlite is always a single local instance — safe to always auto-migrate
+	mkdirSync("./data", { recursive: true });
 	const pglite = new PGlite("./data/qqcms.db");
 	const database = drizzlePglite(pglite, { schema });
 	return {
 		db: database,
+		autoMigrate: true,
 		runMigrations: () => migratePglite(database, { migrationsFolder: MIGRATIONS_FOLDER }),
 	};
 }
 
-const { db, runMigrations } = createDb();
+const { db, runMigrations, autoMigrate } = createDb();
 
-export { db, runMigrations };
+export { db, runMigrations, autoMigrate };
 
 export type Db = typeof db;
