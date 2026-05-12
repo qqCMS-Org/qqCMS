@@ -16,7 +16,18 @@ export default defineConfig({
 		preact({ compat: true, include: ["**/islands/**", "**/features/**", "**/widgets/**", "**/entities/**"] }),
 	],
 	vite: {
-		plugins: [tailwindcss()],
+		plugins: [
+			tailwindcss(),
+			{
+				name: "astro-ssr-hmr",
+				handleHotUpdate({ file, server }) {
+					if (!file.includes("node_modules") && /\.(astro|tsx?|jsx?|css|scss)$/.test(file)) {
+						server.hot.send({ type: "full-reload" });
+						return [];
+					}
+				},
+			},
+		],
 		resolve: {
 			alias: {
 				"@app": src("app"),

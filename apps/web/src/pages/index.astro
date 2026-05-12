@@ -49,9 +49,10 @@ try {
 	// API unreachable — fall back to /en/
 }
 
-// 3. Redirect
+// 3. Redirect — strip leading slash from slug to avoid double slashes
+const normalizedSlug = targetSlug.replace(/^\/+/, "");
 return Astro.redirect(
-	targetSlug ? `/${targetLang}/${targetSlug}` : `/${targetLang}`,
+	normalizedSlug ? `/${targetLang}/${normalizedSlug}` : `/${targetLang}/`,
 	302,
 );
 ---

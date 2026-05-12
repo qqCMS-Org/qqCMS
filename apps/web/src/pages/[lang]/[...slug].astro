@@ -2,38 +2,38 @@
 import { defaultRegistry, TipTapRenderer } from "@repo/ui";
 import { WebLayout } from "@layouts";
 import { Header } from "@widgets/header";
-import { getAllPublishedPages, getPageTranslation } from "@entities/page";
+import { getPageTranslation } from "@entities/page";
 import { api } from "@shared/api/client";
 
-export const prerender = true;
+export const prerender = false;
 
-export async function getStaticPaths() {
-	const entries = await getAllPublishedPages();
+const lang = Astro.params.lang ?? "";
+const slug = Astro.params.slug ?? "";
 
-	return entries.map(({ lang, slug, pageId, isHomepage }) => ({
-		params: { lang, slug },
-		props: { pageId, lang, slug, isHomepage },
-	}));
+const pagesRes = await api.pages.get().catch(() => null);
+
+if (!pagesRes || pagesRes.error) {
+	return Astro.redirect("/404");
 }
 
-interface Props {
-	pageId: string;
-	lang: string;
-	slug: string;
-	isHomepage: boolean;
+// Normalize slug: strip leading slashes. Empty slug means homepage.
+const normalizedSlug = slug.replace(/^\/+/, "");
+
+const page = normalizedSlug
+	? pagesRes.data.find((p) => p.slug.replace(/^\/+/, "") === normalizedSlug && p.status === "published")
+	: pagesRes.data.find((p) => p.isHomepage && p.status === "published");
+
+if (!page) {
+	return Astro.redirect("/404");
 }
 
-const { pageId, lang, slug } = Astro.props;
-
-// Fetch translation, languages, and nav items in parallel
-// Wrap in try-catch so an unavailable API doesn't crash a prerendered page.
 let translation: Awaited<ReturnType<typeof getPageTranslation>> = null;
 let languages: Array<{ code: string; label: string }> = [];
 let navItems: Array<{ id: string; label: Record<string, string>; href: string }> = [];
 
 try {
 	const [t, langsRes, navRes] = await Promise.all([
-		getPageTranslation(pageId, lang),
+		getPageTranslation(page.id, lang),
 		api.languages.get(),
 		api.navigation.get(),
 	]);

@@ -3,6 +3,7 @@ import { getCache, setCache } from "./lib/cache";
 
 export const onRequest = defineMiddleware(async (context, next) => {
 	if (context.request.method !== "GET") return next();
+	if (import.meta.env.DEV) return next();
 
 	// Skip caching for the web app's own API routes
 	if (context.url.pathname.startsWith("/api/")) return next();
