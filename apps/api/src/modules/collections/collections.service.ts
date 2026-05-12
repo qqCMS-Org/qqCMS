@@ -58,8 +58,11 @@ export const addField = async (collectionId: string, data: AddFieldInput) => {
 		isUnique: data.isUnique ?? false,
 		localised: data.localised ?? false,
 		sortOrder,
-	}).catch(() => {
-		throw new ConflictError("Field with this name already exists in the collection");
+	}).catch((error: unknown) => {
+		const isUniqueViolation =
+			typeof error === "object" && error !== null && "code" in error && (error as { code: string }).code === "23505";
+		if (isUniqueViolation) throw new ConflictError("Field with this name already exists in the collection");
+		throw error;
 	});
 
 	return field;
@@ -68,8 +71,11 @@ export const addField = async (collectionId: string, data: AddFieldInput) => {
 export const removeField = async (collectionId: string, fieldId: string) => {
 	const existing = await getCollection(collectionId);
 	if (!existing) throw new NotFoundError("Collection not found");
+
 	const field = await getCollectionField(fieldId);
-	if (field) await nullifyEntryFieldKey(collectionId, field.name);
+	if (!field || field.collectionId !== collectionId) throw new NotFoundError("Field not found");
+
+	await nullifyEntryFieldKey(collectionId, field.name);
 	await deleteCollectionField(fieldId);
 };
 
@@ -83,25 +89,28 @@ export const updateField = async (collectionId: string, fieldId: string, data: U
 	const nameChanging = data.name !== undefined && data.name !== field.name;
 	const typeChanging = data.type !== undefined && data.type !== field.type;
 
-	if (typeChanging) {
-		await nullifyEntryFieldKey(collectionId, field.name);
-	}
-
-	if (nameChanging) {
-		const keyToRename = field.name;
-		const newKey = data.name as string;
-		await renameEntryFieldKey(collectionId, keyToRename, newKey);
-	}
-
+	// Update the field row first so a constraint failure (e.g. duplicate name)
+	// aborts before any entry data is mutated.
 	const [updated] = await updateCollectionField(fieldId, {
 		name: data.name,
 		type: data.type as FieldType | undefined,
 		required: data.required,
 		isUnique: data.isUnique,
 		localised: data.localised,
-	}).catch(() => {
-		throw new ConflictError("A field with this name already exists in the collection");
+	}).catch((error: unknown) => {
+		const isUniqueViolation =
+			typeof error === "object" && error !== null && "code" in error && (error as { code: string }).code === "23505";
+		if (isUniqueViolation) throw new ConflictError("A field with this name already exists in the collection");
+		throw error;
 	});
+
+	if (typeChanging) {
+		await nullifyEntryFieldKey(collectionId, field.name);
+	}
+
+	if (nameChanging) {
+		await renameEntryFieldKey(collectionId, field.name, data.name as string);
+	}
 
 	return updated;
 };

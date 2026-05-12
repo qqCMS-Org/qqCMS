@@ -2,6 +2,7 @@ import { useComputed, useSignal } from "@preact/signals";
 import { Button, Input } from "@repo/ui";
 import { api, extractApiError } from "@shared/api/client";
 import type { ComponentChildren, JSX } from "preact";
+import { useEffect } from "preact/hooks";
 
 // ─── Types ────────────────────────────────────────────
 
@@ -66,6 +67,9 @@ function ModalShell({
 		<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/75">
 			<button type="button" class="absolute inset-0 cursor-default" onClick={onClose} aria-label="Close" />
 			<div
+				role="dialog"
+				aria-modal="true"
+				aria-label={title}
 				class={`relative bg-bg2 border border-ui-border rounded-lg overflow-hidden flex flex-col max-h-[85vh] ${width}`}
 			>
 				<div class="flex items-center justify-between px-4 py-3 border-b border-ui-border shrink-0">
@@ -146,7 +150,7 @@ export function CollectionsManager({ initialCollections }: CollectionsManagerPro
 	// ─── Data loading ──────────────────────────────────
 
 	const loadCollectionData = async (id: string): Promise<void> => {
-		if (fieldsCache.value[id] !== undefined) return;
+		if (fieldsCache.value[id] !== undefined || loadingId.value === id) return;
 		loadingId.value = id;
 
 		const [fieldsRes, entriesRes] = await Promise.all([
@@ -166,9 +170,11 @@ export function CollectionsManager({ initialCollections }: CollectionsManagerPro
 		await loadCollectionData(id);
 	};
 
-	if (selectedId.value) {
-		void loadCollectionData(selectedId.value);
-	}
+	useEffect(() => {
+		if (selectedId.value) {
+			void loadCollectionData(selectedId.value);
+		}
+	}, []);
 
 	// ─── Collection actions ────────────────────────────
 
@@ -544,6 +550,8 @@ export function CollectionsManager({ initialCollections }: CollectionsManagerPro
 														type="button"
 														class="bg-transparent border-none text-text1 hover:text-text0 cursor-pointer text-xs p-1"
 														onClick={() => openEditEntry(entry)}
+														aria-label="Edit entry"
+														title="Edit entry"
 													>
 														✎
 													</button>
@@ -551,6 +559,8 @@ export function CollectionsManager({ initialCollections }: CollectionsManagerPro
 														type="button"
 														class="bg-transparent border-none text-coral cursor-pointer text-xs p-1"
 														onClick={() => void handleDeleteEntry(entry.id)}
+														aria-label="Delete entry"
+														title="Delete entry"
 													>
 														⊗
 													</button>
@@ -596,6 +606,8 @@ export function CollectionsManager({ initialCollections }: CollectionsManagerPro
 												type="button"
 												class="bg-transparent border-none text-coral cursor-pointer text-base leading-none px-1"
 												onClick={() => void handleDeleteField(field.id)}
+												aria-label="Delete field"
+												title="Delete field"
 											>
 												⊗
 											</button>

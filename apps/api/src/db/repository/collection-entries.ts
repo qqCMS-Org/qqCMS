@@ -46,7 +46,7 @@ export const renameEntryFieldKey = (collectionId: string, oldKey: string, newKey
 	db
 		.update(collectionEntries)
 		.set({
-			data: sql`(${collectionEntries.data} - ${oldKey}) || jsonb_build_object(${newKey}, ${collectionEntries.data}->>${oldKey})`,
+			data: sql`(${collectionEntries.data} - ${oldKey}) || jsonb_build_object(${newKey}, ${collectionEntries.data}->${oldKey})`,
 			updatedAt: new Date(),
 		})
 		.where(eq(collectionEntries.collectionId, collectionId));
