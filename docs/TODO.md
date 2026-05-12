@@ -205,7 +205,7 @@
 > ⛔ Stop here. Ask user to verify root `/` redirects correctly.
 
 ### Step 5 — Revalidate webhook (SSR)
-- [ ] Implement `src/pages/api/revalidate.ts` (`export const prerender = false`):
+- [x] Implement `src/pages/api/revalidate.ts` (`export const prerender = false`):
   - Verify `x-revalidate-secret` with `crypto.timingSafeEqual` against `REVALIDATE_SECRET` env var
   - On valid: POST to `DEPLOY_HOOK_URL` if set, otherwise return `{ ok: true }`
   - On invalid: return `401`
