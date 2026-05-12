@@ -2,7 +2,7 @@ import { config } from "@api/config";
 import { BadRequestError, ConflictError, NotFoundError, UnauthorizedError } from "@api/errors";
 import { corsMiddleware } from "@api/middleware/cors.middleware";
 import { rateLimitMiddleware } from "@api/middleware/rateLimit.middleware";
-import { runMigrations } from "@core/Database";
+import { autoMigrate, runMigrations } from "@core/Database";
 import { Logger } from "@core/Logger";
 import staticPlugin from "@elysiajs/static";
 import { authModule } from "@modules/auth";
@@ -17,7 +17,9 @@ import { Elysia } from "elysia";
 
 await ensureUploadDir();
 
-if (process.env.RUN_MIGRATIONS_ON_STARTUP === "true") {
+// PGlite (autoMigrate=true): always run migrations — it's a single local instance.
+// Postgres (autoMigrate=false): respect RUN_MIGRATIONS_ON_STARTUP to avoid races in multi-instance deployments.
+if (autoMigrate || process.env.RUN_MIGRATIONS_ON_STARTUP === "true") {
 	await runMigrations();
 }
 

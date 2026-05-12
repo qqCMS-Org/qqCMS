@@ -1,0 +1,89 @@
+---
+import { defaultRegistry, TipTapRenderer } from "@repo/ui";
+import { WebLayout } from "@layouts";
+import { Header } from "@widgets/header";
+import { getAllPublishedPages, getPageTranslation } from "@entities/page";
+import { api } from "@shared/api/client";
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+	const entries = await getAllPublishedPages();
+
+	return entries.map(({ lang, slug, pageId, isHomepage }) => ({
+		params: { lang, slug },
+		props: { pageId, lang, slug, isHomepage },
+	}));
+}
+
+interface Props {
+	pageId: string;
+	lang: string;
+	slug: string;
+	isHomepage: boolean;
+}
+
+const { pageId, lang, slug } = Astro.props;
+
+// Fetch translation, languages, and nav items in parallel
+// Wrap in try-catch so an unavailable API doesn't crash a prerendered page.
+let translation: Awaited<ReturnType<typeof getPageTranslation>> = null;
+let languages: Array<{ code: string; label: string }> = [];
+let navItems: Array<{ id: string; label: Record<string, string>; href: string }> = [];
+
+try {
+	const [t, langsRes, navRes] = await Promise.all([
+		getPageTranslation(pageId, lang),
+		api.languages.get(),
+		api.navigation.get(),
+	]);
+
+	translation = t;
+
+	if (!langsRes.error) {
+		languages = langsRes.data
+			.filter((l) => l.isActive)
+			.map((l) => ({ code: l.code, label: l.label }));
+	}
+
+	if (!navRes.error) {
+		navItems = navRes.data.map((n) => ({ id: n.id, label: n.label, href: n.href }));
+	}
+} catch {
+	// API unreachable — render page shell without nav/languages
+}
+
+const pageTitle = translation?.title ?? slug;
+const content = translation?.publishedContent ?? null;
+---
+
+<WebLayout title={pageTitle} lang={lang}>
+  <Header
+    slot="header"
+    navItems={navItems}
+    languages={languages}
+    currentLang={lang}
+    currentSlug={slug}
+  />
+  <main class="container mx-auto max-w-4xl px-4 py-10">
+    <h1 class="text-4xl font-bold mb-8">{pageTitle}</h1>
+    {
+      content ? (
+        <article class="prose prose-neutral max-w-none">
+          <TipTapRenderer
+            node={content}
+            registry={defaultRegistry}
+          />
+        </article>
+      ) : (
+        <div class="hero min-h-[40vh]">
+          <div class="hero-content text-center">
+            <div class="max-w-md">
+              <p class="mt-4 opacity-40">No content published for this language yet.</p>
+            </div>
+          </div>
+        </div>
+      )
+    }
+  </main>
+</WebLayout>

@@ -1,0 +1,91 @@
+---
+import { Logo } from "@repo/ui";
+import LanguageSwitcher from "@features/language-switch/LanguageSwitcher.astro";
+
+interface NavItem {
+	id: string;
+	label: Record<string, string>;
+	href: string;
+}
+
+interface Language {
+	code: string;
+	label: string;
+}
+
+interface Props {
+	navItems: NavItem[];
+	languages: Language[];
+	currentLang: string;
+	currentSlug: string;
+}
+
+const { navItems, languages, currentLang, currentSlug } = Astro.props;
+---
+
+<header>
+  <nav class="navbar bg-base-100 border-b border-base-200 px-4">
+    <div class="navbar-start">
+      <div class="dropdown">
+        <div
+          tabindex="0"
+          role="button"
+          class="btn btn-ghost lg:hidden"
+          aria-label="Open navigation menu"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h8m-8 6h16"
+            />
+          </svg>
+        </div>
+        <ul
+          tabindex="0"
+          class="menu menu-sm dropdown-content bg-base-100 rounded-box z-10 mt-3 w-52 p-2 shadow"
+        >
+          {
+            navItems.map((item) => (
+              <li>
+                <a href={item.href}>
+                  {item.label[currentLang] ?? item.label["en"] ?? item.href}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <a href={`/${currentLang}`} class="shrink-0">
+        <Logo />
+      </a>
+    </div>
+    <div class="navbar-center hidden lg:flex">
+      <ul class="menu menu-horizontal px-1">
+        {
+          navItems.map((item) => (
+            <li>
+              <a href={item.href} class="btn btn-ghost btn-sm">
+                {item.label[currentLang] ?? item.label["en"] ?? item.href}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+    <div class="navbar-end gap-2">
+      <LanguageSwitcher
+        languages={languages}
+        currentLang={currentLang}
+        currentSlug={currentSlug}
+      />
+    </div>
+  </nav>
+</header>

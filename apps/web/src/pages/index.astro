@@ -1,11 +1,57 @@
 ---
-import Welcome from "../components/Welcome.astro";
-import Layout from "../layouts/Layout.astro";
+// SSR — this page is never prerendered, only runs at request time.
+export const prerender = false;
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import { api } from "@shared/api/client";
+
+// 1. Parse Accept-Language header into ordered lang codes
+// e.g. "uk-UA,uk;q=0.9,en;q=0.8" → ["uk", "en"]
+function parseAcceptLanguage(header: string | null): string[] {
+	if (!header) return [];
+	return header
+		.split(",")
+		.map((part) => {
+			const [lang, q] = part.trim().split(";q=");
+			return { code: lang.trim().split("-")[0].toLowerCase(), q: q ? parseFloat(q) : 1 };
+		})
+		.sort((a, b) => b.q - a.q)
+		.map((x) => x.code);
+}
+
+// 2. Fetch active languages + homepage slug
+let targetLang = "en";
+let targetSlug = "";
+
+try {
+	const [langsRes, pagesRes] = await Promise.all([
+		api.languages.get(),
+		api.pages.get(),
+	]);
+
+	if (!langsRes.error && !pagesRes.error) {
+		const activeLangs = langsRes.data.filter((l) => l.isActive);
+
+		// Match browser preference to an active language
+		const preferred = parseAcceptLanguage(
+			Astro.request.headers.get("accept-language"),
+		);
+		const matched = preferred.find((code) =>
+			activeLangs.some((l) => l.code === code),
+		);
+		targetLang = matched ?? activeLangs[0]?.code ?? "en";
+
+		// Find homepage page slug
+		const homepage = pagesRes.data.find((p) => p.isHomepage && p.status === "published");
+
+		targetSlug = homepage?.slug ?? "";
+	}
+} catch {
+	// API unreachable — fall back to /en/
+}
+
+// 3. Redirect
+return Astro.redirect(
+	targetSlug ? `/${targetLang}/${targetSlug}` : `/${targetLang}`,
+	302,
+);
 ---
-
-<Layout>
-	<Welcome />
-</Layout>

@@ -119,4 +119,100 @@
 - [ ] Set up Turborepo remote caching (if applicable)
 
 ## Phase 5: Feature Implementation
-- [ ] Implement core CMS entities (Content, Schema, User)
+
+## Phase 6: Shared TipTap renderer (`packages/ui`)
+
+> **Why here**: TipTap node components are plain Preact TSX. In Astro they render as static HTML (no `client:*` directive = zero JS). Moving them to `packages/ui` now means `apps/admin` can import the same components later for a live page preview — no code duplication.
+
+> **Flexibility principle**: adding a custom content block = (1) create one `.tsx` file in `packages/ui/src/tiptap/nodes/`, (2) add one line to `defaultRegistry`. Nothing else changes in either app.
+
+> **Styling**: all node components use **Tailwind CSS** utility classes. `packages/ui` does not bundle Tailwind itself — classes are resolved by whichever app consumes the components (`apps/web`, `apps/admin`). Use semantic prose classes where possible (`prose` plugin if added, or explicit `text-base`, `font-bold`, `italic`, etc.).
+
+> **Agent rule**: complete one step, then **stop and ask the user to review** before proceeding to the next.
+
+### Step 1 — TipTap renderer in `packages/ui`
+- [x] Add `astro` as a dev dependency in `packages/ui` (needed only for type compat with Astro imports; no integration required)
+- [x] Create `packages/ui/src/tiptap/types.ts` — `TipTapNode` interface and `NodeRegistry` type (`Record<string, ComponentType<{ node: TipTapNode }>>`)
+- [x] Create node renderer components in `packages/ui/src/tiptap/nodes/`:
+  - `DocNode.tsx` — renders `node.content` children recursively
+  - `ParagraphNode.tsx` — `<p class="mb-4">`
+  - `HeadingNode.tsx` — `<h1>`–`<h6>` based on `node.attrs.level`; apply `text-3xl font-bold` … `text-lg font-semibold` via level map
+  - `TextNode.tsx` — raw text with marks applied (`bold` → `<strong class="font-bold">`, `italic` → `<em class="italic">`, `underline` → `<u>`, `strike` → `<s>`, `code` → `<code class="bg-base-200 px-1 rounded text-sm font-mono">`, `link` → `<a class="link link-primary" href>`); use **DaisyUI** `link` class for links
+  - `BulletListNode.tsx` — `<ul class="list-disc pl-6 mb-4">`
+  - `OrderedListNode.tsx` — `<ol class="list-decimal pl-6 mb-4">`
+  - `ListItemNode.tsx` — `<li class="mb-1">`
+  - `BlockquoteNode.tsx` — `<blockquote class="border-l-4 border-base-300 pl-4 italic text-base-content/70">`
+  - `CodeBlockNode.tsx` — `<pre class="bg-base-200 rounded p-4 overflow-x-auto text-sm font-mono"><code>`
+  - `HardBreakNode.tsx` — `<br />`
+  - `HorizontalRuleNode.tsx` — `<hr class="divider" />` (DaisyUI `divider`)
+  - `ImageNode.tsx` — `<img class="rounded-box max-w-full" src alt>` from `node.attrs`
+  - `YoutubeNode.tsx` — `<div class="aspect-video"><iframe class="w-full h-full" ...>` from `node.attrs`
+- [x] Create `packages/ui/src/tiptap/TipTapRenderer.tsx` — accepts `node: TipTapNode` and `registry: NodeRegistry`; recursively maps `node.content[]` through registry; falls back to `<span data-unknown-node={type} />` for unregistered types
+- [x] Create `packages/ui/src/tiptap/registry.ts` — `defaultRegistry` mapping all standard node types to their components above
+- [x] Create `packages/ui/src/tiptap/index.ts` barrel — export `TipTapRenderer`, `defaultRegistry`, `NodeRegistry`, `TipTapNode`
+- [x] Re-export from `packages/ui/src/index.ts`
+
+> ⛔ Stop here. Ask user to review the renderer and registry before wiring to any app.
+
+## Phase 7: Public Web Client (`apps/web`)
+
+> **Architecture**: mirrors `apps/admin` exactly — same FSD layers, same path alias set, same Eden Treaty client pattern, same Tailwind + DaisyUI. `apps/web` is Astro **hybrid** mode: content pages are prerendered (SSG), root `/` and `/api/revalidate` are SSR.
+
+> **UI rule**: use components from `@repo/ui` (`Button`, `Card`, `Input`, `Toggle`, `Logo`) wherever applicable. All markup must use **Tailwind CSS** utility classes + **DaisyUI** component classes — no inline styles, no custom CSS unless there is no Tailwind equivalent.
+
+> **Agent rule**: complete one step, then **stop and ask the user to review** before proceeding to the next.
+
+### Step 1 — Foundation & Config
+- [x] Switch `output` to `static` (Astro v5+ removed `hybrid`; same behaviour — individual pages use `export const prerender = false`) in `apps/web/astro.config.mjs`
+- [x] Install Tailwind CSS v4 + `@tailwindcss/vite` in `apps/web` (same versions as `apps/admin`)
+- [x] Install DaisyUI in `apps/web` + add custom theme from design tokens in `prototype/index.html` (same as `apps/admin`)
+- [x] Mirror `apps/admin/tsconfig.json` path aliases in `apps/web/tsconfig.json`: `@app/*`, `@layouts`, `@widgets/*`, `@features/*`, `@entities/*`, `@shared/*`, `@repo/types`, `@repo/server/client`, `@repo/ui`, `@api-shared/*`
+- [x] Create FSD folder skeleton: `src/app/styles/`, `src/widgets/`, `src/features/`, `src/entities/`, `src/shared/ui/`, `src/shared/api/`, `src/shared/config/`
+- [x] Create `src/shared/api/client.ts` — Eden Treaty client using `PUBLIC_API_URL` env var (mirror `apps/admin/src/shared/api/client.ts`)
+- [x] Create `src/layouts/WebLayout.astro` — HTML shell: `<head>` with title/description slots, `<body class="bg-base-100 text-base-content">` with `<Header>` slot + `<slot />`; accepts `title`, `description`, `lang` props; sets `<html lang={lang} data-theme="...">`; import Tailwind global CSS from `@app/styles`
+- [x] Create `src/layouts/index.ts` barrel
+
+> ⛔ Stop here. Ask user to review the foundation before continuing.
+
+### Step 2 — Header widget
+- [x] Create `src/widgets/header/Header.astro` — accepts `navItems`, `languages`, `currentLang`, `currentSlug` as props (data fetched by the page, not inside the widget); use `<Logo />` from `@repo/ui`; use DaisyUI `navbar`, `menu`, `btn` classes for layout and nav links
+- [x] Create `src/features/language-switch/LanguageSwitcher.astro` — renders `<a class="btn btn-ghost btn-xs">` links for each active language; active lang gets `btn-active`; zero JS
+- [x] Create `src/widgets/header/index.ts` barrel
+
+> ⛔ Stop here. Ask user to verify the header renders nav and language switcher correctly.
+
+### Step 3 — SSG page generation
+- [x] Create `src/entities/page/getAllPublishedPages.ts` — calls `GET /languages` + `GET /pages`, returns `{ lang, page }[]` pairs for all published pages × active languages
+- [x] Create `src/entities/page/getPageTranslation.ts` — calls `GET /pages/:id`, returns the translation for a given language
+- [x] Create `src/entities/page/index.ts` barrel
+- [x] Create `src/pages/[lang]/[...slug].astro`:
+  - `export const prerender = true`
+  - `getStaticPaths()` uses `getAllPublishedPages()` to emit all `{ params, props }` pairs
+  - Fetches translation via `getPageTranslation()`
+  - Renders `<WebLayout>` + `<Header>` + `<TipTapRenderer node={translation.published_content} registry={defaultRegistry} />` (imported from `@repo/ui`)
+
+> ⛔ Stop here. Ask user to run `bun run build --cwd apps/web` and verify static pages are generated.
+
+### Step 4 — Root redirect (SSR)
+- [x] Replace placeholder `src/pages/index.astro`:
+  - Read `Accept-Language` header → parse language codes
+  - Fetch active languages from API
+  - Match to active languages; fall back to first active
+  - Fetch homepage slug (`is_homepage: true`)
+  - `return Astro.redirect(\`/\${lang}/\${slug}\`, 302)`
+- [x] Fix `src/middleware.ts` — skip caching for non-200 responses (currently missing this guard)
+
+> ⛔ Stop here. Ask user to verify root `/` redirects correctly.
+
+### Step 5 — Revalidate webhook (SSR)
+- [x] Implement `src/pages/api/revalidate.ts` (`export const prerender = false`):
+  - Verify `x-revalidate-secret` with `crypto.timingSafeEqual` against `REVALIDATE_SECRET` env var
+  - On valid: POST to `DEPLOY_HOOK_URL` if set, otherwise return `{ ok: true }`
+  - On invalid: return `401`
+
+> ⛔ Stop here. Ask user to test revalidation end-to-end.
+
+### Step 6 — 404 page & polish
+- [x] Create `src/pages/404.astro` using `WebLayout`; use DaisyUI `hero` class for the not-found message layout; use `<Button>` from `@repo/ui` for the "go home" link
+- [x] Add `PUBLIC_API_URL`, `REVALIDATE_SECRET`, `DEPLOY_HOOK_URL` to `.env.example`
+- [x] Update `docs/web.md` with final structure and custom block guide

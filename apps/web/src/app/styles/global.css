@@ -1,0 +1,98 @@
+@import "tailwindcss";
+@source "../../../../../packages/ui";
+@plugin "daisyui" {
+  themes: false;
+}
+
+/* ── Design tokens (dark, default) ──────────────────── */
+:root {
+  --bg0: #090909;
+  --bg1: #0f0f0f;
+  --bg2: #171717;
+  --bg3: #1f1f1f;
+  --bg4: #272727;
+  --border: #2a2a2a;
+  --border-hover: #3a3a3a;
+  --text0: #e0e0e0;
+  --text1: #777777;
+  --text2: #3f3f3f;
+  --accent: #6b5ce7;
+  --accent-hover: #7b6cf0;
+  --accent-faint: rgba(107, 92, 231, 0.12);
+  --accent-dark: #1e1b3a;
+  --green: #2ecc71;
+  --green-faint: rgba(46, 204, 113, 0.12);
+  --amber: #f5a623;
+  --amber-faint: rgba(245, 166, 35, 0.12);
+  --coral: #f06b6b;
+  --coral-faint: rgba(240, 107, 107, 0.12);
+}
+
+/* ── Light theme ─────────────────────────────────────── */
+:root.light {
+  --bg0: #f7f7f7;
+  --bg1: #f0f0f0;
+  --bg2: #e9e9e9;
+  --bg3: #e0e0e0;
+  --bg4: #d4d4d4;
+  --border: #cccccc;
+  --border-hover: #aaaaaa;
+  --text0: #111111;
+  --text1: #555555;
+  --text2: #999999;
+}
+
+/* ── Tailwind token mapping ──────────────────────────── */
+@theme inline {
+  --color-bg0: var(--bg0);
+  --color-bg1: var(--bg1);
+  --color-bg2: var(--bg2);
+  --color-bg3: var(--bg3);
+  --color-bg4: var(--bg4);
+  --color-ui-border: var(--border);
+  --color-ui-border-hover: var(--border-hover);
+  --color-text0: var(--text0);
+  --color-text1: var(--text1);
+  --color-text2: var(--text2);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-faint: var(--accent-faint);
+  --color-green: var(--green);
+  --color-green-faint: var(--green-faint);
+  --color-amber: var(--amber);
+  --color-amber-faint: var(--amber-faint);
+  --color-coral: var(--coral);
+  --color-coral-faint: var(--coral-faint);
+
+  --font-mono: "Geist Mono", monospace;
+  --font-serif: "Instrument Serif", serif;
+}
+
+/* ── Base reset ──────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  background: var(--bg0);
+  color: var(--text0);
+  font-family: "Geist Mono", monospace;
+  font-size: 14px;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg1);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--bg3);
+  border-radius: 2px;
+}

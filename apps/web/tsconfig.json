@@ -1,5 +1,29 @@
 {
 	"extends": "astro/tsconfigs/strict",
+	"compilerOptions": {
+		"jsxImportSource": "preact",
+		"paths": {
+			"@app/*": ["./src/app/*"],
+			"@layouts": ["./src/layouts/index.ts"],
+			"@widgets/*": ["./src/widgets/*"],
+			"@features/*": ["./src/features/*"],
+			"@entities/*": ["./src/entities/*"],
+			"@shared/*": ["./src/shared/*"],
+			"@repo/types": ["../../packages/types/src"],
+			"@repo/ui": ["../../packages/ui/src"],
+			"@repo/server": ["../../apps/api/src/index.ts"],
+			"@repo/server/client": ["../../apps/api/src/client.ts"],
+			"@api-shared/*": ["../../apps/api/src/shared/*"],
+			"@api/*": ["../../apps/api/src/shared/*"],
+			"@core/*": ["../../apps/api/src/core/*"],
+			"@modules/*": ["../../apps/api/src/modules/*"],
+			"@repository/*": ["../../apps/api/src/db/repository/*"],
+			"@schema/*": ["../../apps/api/src/db/schema/*"],
+			"@db/*": ["../../apps/api/src/db/*"],
+			"elysia": ["../../apps/api/node_modules/elysia"],
+			"elysia/*": ["../../apps/api/node_modules/elysia/*"]
+		}
+	},
 	"include": [".astro/types.d.ts", "**/*"],
 	"exclude": ["dist"]
 }

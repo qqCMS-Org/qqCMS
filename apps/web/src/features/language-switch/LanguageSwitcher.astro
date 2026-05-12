@@ -1,0 +1,27 @@
+---
+interface Language {
+	code: string;
+	label: string;
+}
+
+interface Props {
+	languages: Language[];
+	currentLang: string;
+	currentSlug: string;
+}
+
+const { languages, currentLang, currentSlug } = Astro.props;
+---
+
+<div class="flex items-center gap-1">
+  {
+    languages.map((lang) => (
+      <a
+        href={`/${lang.code}/${currentSlug}`}
+        class={`btn btn-ghost btn-xs${lang.code === currentLang ? " btn-active" : ""}`}
+      >
+        {lang.label}
+      </a>
+    ))
+  }
+</div>
