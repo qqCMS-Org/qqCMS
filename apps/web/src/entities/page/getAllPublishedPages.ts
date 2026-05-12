@@ -32,16 +32,9 @@ export const getAllPublishedPages = async (): Promise<PublishedPageEntry[]> => {
 		return [];
 	}
 
-	const activeLangs = (langsRes.data as Array<{ code: string; isActive: boolean }>).filter((l) => l.isActive);
+	const activeLangs = langsRes.data.filter((l) => l.isActive);
 
-	const publishedPages = (
-		pagesRes.data as Array<{
-			id: string;
-			slug: string;
-			status: string;
-			isHomepage: boolean;
-		}>
-	).filter((p) => p.status === "published");
+	const publishedPages = pagesRes.data.filter((p) => p.status === "published");
 
 	const entries: PublishedPageEntry[] = [];
 

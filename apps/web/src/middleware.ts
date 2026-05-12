@@ -4,7 +4,7 @@ import { getCache, setCache } from "./lib/cache";
 export const onRequest = defineMiddleware(async (context, next) => {
 	if (context.request.method !== "GET") return next();
 
-	// не кешируем API-роуты самого web-приложения
+	// Skip caching for the web app's own API routes
 	if (context.url.pathname.startsWith("/api/")) return next();
 
 	const cached = getCache(context.url.pathname);
@@ -16,7 +16,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
 	const response = await next();
 
-	// Кешируем только успешные HTML-ответы; пропускаем редиректы и ошибки
+	// Cache only successful HTML responses; skip redirects and errors
 	if (response.status === 200) {
 		const ct = response.headers.get("content-type") ?? "";
 		if (ct.includes("text/html")) {

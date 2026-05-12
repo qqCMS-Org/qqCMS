@@ -11,7 +11,11 @@ const HEADING_CLASSES: Record<number, string> = {
 };
 
 export function HeadingNode({ node }: { node: TipTapNode }) {
-	const level = (node.attrs?.level as number) ?? 1;
+	const rawLevel = node.attrs?.level;
+	const level =
+		typeof rawLevel === "number" && rawLevel >= 1 && rawLevel <= 6
+			? rawLevel
+			: 1;
 	const className = HEADING_CLASSES[level] ?? HEADING_CLASSES[1];
 
 	const children = node.content?.map((child, index) => (

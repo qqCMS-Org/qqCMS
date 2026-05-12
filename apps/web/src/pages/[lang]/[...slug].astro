@@ -1,6 +1,5 @@
 ---
 import { defaultRegistry, TipTapRenderer } from "@repo/ui";
-import type { TipTapNode } from "@repo/ui";
 import { WebLayout } from "@layouts";
 import { Header } from "@widgets/header";
 import { getAllPublishedPages, getPageTranslation } from "@entities/page";
@@ -42,21 +41,13 @@ try {
 	translation = t;
 
 	if (!langsRes.error) {
-		languages = (
-			langsRes.data as Array<{ code: string; label: string; isActive: boolean }>
-		)
+		languages = langsRes.data
 			.filter((l) => l.isActive)
 			.map((l) => ({ code: l.code, label: l.label }));
 	}
 
 	if (!navRes.error) {
-		navItems = (
-			navRes.data as Array<{
-				id: string;
-				label: Record<string, string>;
-				href: string;
-			}>
-		).map((n) => ({ id: n.id, label: n.label, href: n.href }));
+		navItems = navRes.data.map((n) => ({ id: n.id, label: n.label, href: n.href }));
 	}
 } catch {
 	// API unreachable — render page shell without nav/languages
@@ -80,7 +71,7 @@ const content = translation?.publishedContent ?? null;
       content ? (
         <article class="prose prose-neutral max-w-none">
           <TipTapRenderer
-            node={content as unknown as TipTapNode}
+            node={content}
             registry={defaultRegistry}
           />
         </article>

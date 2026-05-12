@@ -1,3 +1,4 @@
+import { timingSafeEqual } from "node:crypto";
 import type { APIRoute } from "astro";
 
 export const prerender = false;
@@ -15,19 +16,11 @@ export const POST: APIRoute = async ({ request }) => {
 
 	const incomingSecret = request.headers.get("x-revalidate-secret") ?? "";
 
-	// Timing-safe comparison to prevent timing attacks
 	const enc = new TextEncoder();
 	const expected = enc.encode(expectedSecret);
 	const incoming = enc.encode(incomingSecret);
 
-	// Pad/truncate incoming to the same byte length so timingSafeEqual doesn't throw
-	const paddedIncoming = new Uint8Array(expected.byteLength);
-	paddedIncoming.set(incoming.subarray(0, expected.byteLength));
-
-	const isValid =
-		incoming.byteLength === expected.byteLength && crypto.subtle
-			? await isTimingSafeEqual(expected, paddedIncoming)
-			: incomingSecret === expectedSecret; // fallback (edge environments without subtle)
+	const isValid = expected.byteLength === incoming.byteLength && timingSafeEqual(expected, incoming);
 
 	if (!isValid) {
 		return new Response(JSON.stringify({ error: "Unauthorized" }), {
@@ -68,29 +61,3 @@ export const POST: APIRoute = async ({ request }) => {
 		headers: { "Content-Type": "application/json" },
 	});
 };
-
-/** Constant-time byte comparison using SubtleCrypto HMAC trick */
-async function isTimingSafeEqual(a: Uint8Array, b: Uint8Array): Promise<boolean> {
-	// Import a throwaway HMAC key and sign both values — equal inputs produce equal MACs.
-	const key = await crypto.subtle.importKey(
-		"raw",
-		crypto.getRandomValues(new Uint8Array(32)),
-		{ name: "HMAC", hash: "SHA-256" },
-		false,
-		["sign"],
-	);
-
-	const [macA, macB] = await Promise.all([
-		crypto.subtle.sign("HMAC", key, a.buffer as ArrayBuffer),
-		crypto.subtle.sign("HMAC", key, b.buffer as ArrayBuffer),
-	]);
-
-	// Compare MACs byte-by-byte (constant-time is maintained because we compare MACs, not secrets)
-	const viewA = new Uint8Array(macA);
-	const viewB = new Uint8Array(macB);
-	let diff = 0;
-	for (let i = 0; i < viewA.length; i++) {
-		diff |= viewA[i] ^ viewB[i];
-	}
-	return diff === 0;
-}

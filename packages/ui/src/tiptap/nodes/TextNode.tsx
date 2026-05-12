@@ -1,6 +1,17 @@
 import type { JSX } from "preact";
 import type { TipTapMark, TipTapNode } from "../types";
 
+const ALLOWED_URL_SCHEMES = ["http:", "https:", "mailto:", "tel:"];
+
+function isSafeUrl(url: string): boolean {
+	try {
+		const parsed = new URL(url);
+		return ALLOWED_URL_SCHEMES.includes(parsed.protocol);
+	} catch {
+		return url.startsWith("/") || url.startsWith("#");
+	}
+}
+
 function applyMark(content: JSX.Element, mark: TipTapMark): JSX.Element {
 	switch (mark.type) {
 		case "bold":
@@ -18,9 +29,17 @@ function applyMark(content: JSX.Element, mark: TipTapMark): JSX.Element {
 				</code>
 			);
 		case "link": {
-			const href = typeof mark.attrs?.href === "string" ? mark.attrs.href : "#";
+			const rawHref =
+				typeof mark.attrs?.href === "string" ? mark.attrs.href : "#";
+			const href = isSafeUrl(rawHref) ? rawHref : "#";
+			const isExternal =
+				href.startsWith("http://") || href.startsWith("https://");
 			return (
-				<a class="link link-primary" href={href}>
+				<a
+					class="link link-primary"
+					href={href}
+					rel={isExternal ? "noopener noreferrer" : undefined}
+				>
 					{content}
 				</a>
 			);

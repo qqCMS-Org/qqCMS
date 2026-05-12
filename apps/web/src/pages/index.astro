@@ -29,9 +29,7 @@ try {
 	]);
 
 	if (!langsRes.error && !pagesRes.error) {
-		const activeLangs = (
-			langsRes.data as Array<{ code: string; isActive: boolean }>
-		).filter((l) => l.isActive);
+		const activeLangs = langsRes.data.filter((l) => l.isActive);
 
 		// Match browser preference to an active language
 		const preferred = parseAcceptLanguage(
@@ -43,13 +41,7 @@ try {
 		targetLang = matched ?? activeLangs[0]?.code ?? "en";
 
 		// Find homepage page slug
-		const homepage = (
-			pagesRes.data as Array<{
-				slug: string;
-				status: string;
-				isHomepage: boolean;
-			}>
-		).find((p) => p.isHomepage && p.status === "published");
+		const homepage = pagesRes.data.find((p) => p.isHomepage && p.status === "published");
 
 		targetSlug = homepage?.slug ?? "";
 	}

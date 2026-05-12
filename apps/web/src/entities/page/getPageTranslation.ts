@@ -1,8 +1,9 @@
+import type { TipTapNode } from "@repo/ui";
 import { api } from "@shared/api/client";
 
 export interface PageTranslation {
 	title: string;
-	publishedContent: Record<string, unknown> | null;
+	publishedContent: TipTapNode | null;
 	languageCode: string;
 }
 
@@ -15,7 +16,7 @@ export const getPageTranslation = async (pageId: string, lang: string): Promise<
 		translations: Array<{
 			languageCode: string;
 			title: string;
-			publishedContent: Record<string, unknown> | null;
+			publishedContent: TipTapNode | null;
 		}>;
 	};
 
