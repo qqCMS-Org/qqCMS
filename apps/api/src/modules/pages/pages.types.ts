@@ -10,6 +10,10 @@ export const UpdatePageSchema = t.Object({
 	isHomepage: t.Optional(t.Boolean()),
 });
 
+export const UpdatePageStatusSchema = t.Object({
+	status: t.Union([t.Literal("published"), t.Literal("unpublished")]),
+});
+
 export const UpsertTranslationSchema = t.Object({
 	title: t.String({ minLength: 1 }),
 	content: t.Optional(t.Record(t.String(), t.Unknown())),
@@ -17,4 +21,5 @@ export const UpsertTranslationSchema = t.Object({
 
 export type CreatePageInput = Static<typeof CreatePageSchema>;
 export type UpdatePageInput = Static<typeof UpdatePageSchema>;
+export type UpdatePageStatusInput = Static<typeof UpdatePageStatusSchema>;
 export type UpsertTranslationInput = Static<typeof UpsertTranslationSchema>;

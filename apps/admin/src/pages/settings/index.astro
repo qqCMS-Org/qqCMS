@@ -1,0 +1,17 @@
+---
+import { AdminLayout } from "@layouts";
+import { SettingsForm } from "@widgets/settings";
+import { COOKIE_NAME, DEFAULT_API_URL } from "@shared/constants";
+import type { SettingRow } from "@widgets/settings";
+
+const API_URL = import.meta.env.PUBLIC_API_URL ?? DEFAULT_API_URL;
+const token = Astro.cookies.get(COOKIE_NAME)?.value;
+const authHeaders: Record<string, string> = token ? { Cookie: `${COOKIE_NAME}=${token}` } : {};
+
+const response = await fetch(`${API_URL}/settings`, { headers: authHeaders }).catch(() => null);
+const settings: SettingRow[] = response?.ok ? await response.json().catch(() => []) : [];
+---
+
+<AdminLayout title="Settings" activePage="settings">
+  <SettingsForm initialSettings={settings} client:load />
+</AdminLayout>

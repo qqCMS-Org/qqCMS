@@ -14,6 +14,7 @@ CMD ["bun", "run", "src/index.ts"]
 
 # ── admin builder ─────────────────────────────────────────────────────────────
 FROM base AS admin-builder
+COPY apps/api/ ./apps/api/
 COPY apps/admin/ ./apps/admin/
 RUN bun install
 RUN cd apps/admin && bun run build

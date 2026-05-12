@@ -1,6 +1,6 @@
 import { defineConfig } from "drizzle-kit";
 
-const databaseUrl = Bun.env["DATABASE_URL"];
+const databaseUrl = process.env["DATABASE_URL"];
 
 export default databaseUrl
 	? defineConfig({

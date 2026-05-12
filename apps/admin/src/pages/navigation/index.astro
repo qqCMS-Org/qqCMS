@@ -1,0 +1,17 @@
+---
+import { AdminLayout } from "@layouts";
+import { NavigationEditor } from "@widgets/navigation";
+import type { NavigationItemRow } from "@widgets/navigation";
+import { COOKIE_NAME, DEFAULT_API_URL } from "@shared/constants";
+
+const API_URL = import.meta.env.PUBLIC_API_URL ?? DEFAULT_API_URL;
+const token = Astro.cookies.get(COOKIE_NAME)?.value;
+const authHeaders: Record<string, string> = token ? { Cookie: `${COOKIE_NAME}=${token}` } : {};
+
+const res = await fetch(`${API_URL}/navigation`, { headers: authHeaders }).catch(() => null);
+const navItems: NavigationItemRow[] = res?.ok ? await res.json().catch(() => []) : [];
+---
+
+<AdminLayout title="Navigation" activePage="navigation">
+  <NavigationEditor initialItems={navItems} client:load />
+</AdminLayout>

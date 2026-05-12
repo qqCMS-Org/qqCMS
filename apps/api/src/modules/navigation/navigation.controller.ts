@@ -1,4 +1,4 @@
-import { authPlugin } from "@shared/middleware/auth.middleware";
+import { authPlugin } from "@api/middleware/auth.middleware";
 import { Elysia } from "elysia";
 import {
 	createNavigationItem,

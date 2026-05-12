@@ -1,0 +1,125 @@
+---
+import { Layout } from "@layouts";
+import { SidebarNav } from "@widgets/sidebar";
+import type { NavItemId } from "@widgets/sidebar";
+
+interface Props {
+	title: string;
+	activePage: NavItemId;
+	noPadding?: boolean;
+	noTopbar?: boolean;
+}
+
+const { title, activePage, noPadding = false, noTopbar = false } = Astro.props;
+---
+
+<Layout title={`${title} — qqCMS`}>
+  <div class="admin-shell">
+    <SidebarNav activePage={activePage} client:load />
+    <div class="admin-main">
+      {!noTopbar && (
+        <header class="admin-topbar">
+          <slot name="topbar">
+            <span class="topbar-title">{title}</span>
+          </slot>
+          <div class="topbar-actions">
+            <slot name="topbar-actions" />
+          </div>
+        </header>
+      )}
+      <main class={`admin-content${noPadding ? ' no-padding' : ''}`}>
+        <slot />
+      </main>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .admin-shell {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .admin-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-width: 0;
+  }
+
+  .admin-topbar {
+    height: 44px;
+    background: var(--bg0);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 18px;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .topbar-title {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 20px;
+    color: var(--text0);
+    line-height: 1;
+  }
+
+  .topbar-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .admin-content {
+    flex: 1;
+    overflow-y: auto;
+    background: var(--bg1);
+    padding: 24px;
+  }
+
+  .admin-content.no-padding {
+    padding: 0;
+    overflow: hidden;
+  }
+
+  /* Sidebar responsive: CSS controls which layout is visible — no JS needed */
+  :global(.sidebar-desktop) {
+    width: 180px;
+    min-height: 100vh;
+    background: var(--bg0);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+  }
+
+  :global(.sidebar-mobile) {
+    display: none;
+  }
+
+  @media (max-width: 640px) {
+    :global(.sidebar-desktop) {
+      display: none;
+    }
+
+    :global(.sidebar-mobile) {
+      display: block;
+    }
+
+    .admin-shell {
+      padding-bottom: 56px;
+    }
+    .admin-content {
+      padding: 14px 12px;
+    }
+    .admin-topbar {
+      padding: 0 12px;
+      gap: 6px;
+    }
+  }
+</style>

@@ -1,6 +1,6 @@
 # Media
 
-> **Status: NOT IMPLEMENTED** — Media upload module is not yet created in `apps/api`. `uploads/` directory does not exist.
+> **Status: IMPLEMENTED** — Media upload module is live in `apps/api/src/modules/media/`.
 
 ## Storage
 
@@ -42,19 +42,19 @@ Return { id, url, filename, original_name, mime_type, size }
 
 | Rule | Value |
 |---|---|
-| Allowed MIME types | `image/jpeg`, `image/png`, `image/gif`, `image/webp` |
+| Allowed MIME types | `image/jpeg`, `image/png`, `image/gif`, `image/webp`, `image/svg+xml`, `application/pdf`, `video/mp4`, `video/webm`, `audio/mpeg`, `audio/wav` |
 | Max file size | 10 MB |
 | Filename on disk | UUID v4 + original extension |
 
 Requests with disallowed MIME types or oversized files are rejected with `400 Bad Request`.
 
-## API Endpoints (planned)
+## API Endpoints
 
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/media` | List all uploaded files |
-| `POST` | `/media` | Upload a new file (multipart/form-data) |
-| `DELETE` | `/media/:id` | Delete a file (removes from disk and DB) |
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| `GET` | `/media` | Yes | List all uploaded files |
+| `POST` | `/media` | Yes | Upload a new file (multipart/form-data) |
+| `DELETE` | `/media/:id` | Yes | Delete a file (removes from disk and DB) |
 
 ## Public URL
 

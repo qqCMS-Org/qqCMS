@@ -1,6 +1,6 @@
 # API Overview
 
-> **Status: NOT IMPLEMENTED** — `apps/api` is empty. All endpoints listed here are planned.
+> **Status: IMPLEMENTED** — All endpoints are live in `apps/api`.
 
 ## Backend Server
 
@@ -28,6 +28,7 @@ apps/api/src/modules/
 
 | Method | Path | Auth | Description |
 |---|---|---|---|
+| `GET` | `/auth/me` | Yes | Verify session (returns `{ ok: true }`) |
 | `POST` | `/auth/login` | No | Login with login + password |
 | `POST` | `/auth/logout` | Yes | Clear JWT cookie |
 
@@ -35,12 +36,14 @@ apps/api/src/modules/
 
 | Method | Path | Auth | Description |
 |---|---|---|---|
-| `GET` | `/pages` | No | List all pages |
-| `GET` | `/pages/:id` | No | Get page with all translations |
-| `POST` | `/pages` | Yes | Create a new page |
-| `PATCH` | `/pages/:id` | Yes | Update page (slug, is_homepage) |
-| `DELETE` | `/pages/:id` | Yes | Delete page and translations |
-| `PUT` | `/pages/:id/translations/:lang` | Yes | Upsert translation for a language |
+| `GET` | `/pages` | No | List all pages (slug, status, hasDraft, isHomepage, first translation title) |
+| `GET` | `/pages/:id` | No | Get page with all translations (including draft and published content) |
+| `POST` | `/pages` | Yes | Create a new page (status defaults to `draft`) |
+| `PATCH` | `/pages/:id` | Yes | Update page (slug, isHomepage) |
+| `DELETE` | `/pages/:id` | Yes | Delete page and all translations |
+| `PATCH` | `/pages/:id/status` | Yes | Publish (`published`) or unpublish (`unpublished`) a page — promotes draft content |
+| `DELETE` | `/pages/:id/draft` | Yes | Discard draft — reverts translations to last published content |
+| `PUT` | `/pages/:id/translations/:lang` | Yes | Upsert translation (title + TipTap JSON content) for a language |
 
 ### Navigation
 
@@ -81,11 +84,15 @@ apps/api/src/modules/
 The `App` type is exported from `apps/api/src/index.ts` and imported in `apps/admin`:
 
 ```ts
-// apps/admin/src/shared/api/client.ts (planned)
-import { treaty } from "@elysiajs/eden"
-import type { App } from "@repo/server"
+// apps/api/src/client.ts
+export const createApiClient = (url: string) => treaty<App>(url);
+export type ApiClient = ReturnType<typeof createApiClient>;
 
-export const api = treaty<App>(import.meta.env.PUBLIC_API_URL)
+// apps/admin/src/shared/api/client.ts
+import { createApiClient } from "@repo/server/client";
+
+const API_URL = import.meta.env.PUBLIC_API_URL ?? "http://localhost:3000";
+export const api = createApiClient(API_URL);
 ```
 
 ## Middleware

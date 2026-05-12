@@ -19,8 +19,9 @@
 			"@modules/*": ["./src/modules/*"],
 			"@repository/*": ["./src/db/repository/*"],
 			"@schema/*": ["./src/db/schema/*"],
-			"@shared/*": ["./src/shared/*"],
-			"@db/*": ["./src/db/*"]
+			"@api/*": ["./src/shared/*"],
+			"@db/*": ["./src/db/*"],
+			"@repo/types": ["../../packages/types/src"]
 		}
 	},
 	"include": ["src/**/*", "drizzle.config.ts"],

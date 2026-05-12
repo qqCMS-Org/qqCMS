@@ -48,7 +48,7 @@ export const UserCard = ({ user, onSelect }: UserCardProps) => {
 
 ## UI libraries
 
-If the project includes a UI library (HeroUI, shadcn/ui, etc.) — always use its components first before writing custom ones:
+If the project includes a UI library (HeroUI, DaisyUI, etc.) — always use its components first before writing custom ones:
 
 ```tsx
 // ✅ use library component
@@ -75,7 +75,7 @@ Choose one of the two patterns per project. Do not mix.
 ```
 src/
 ├── components/
-│   ├── ui/        # components from UI libraries (HeroUI, shadcn/ui)
+│   ├── ui/        # components from UI libraries (HeroUI, DaisyUI)
 │   ├── atoms/     # basic building blocks: Button, Input, Badge
 │   ├── molecules/ # combinations of atoms: SearchField, UserAvatar
 │   ├── organisms/ # complex sections: Header, UserTable, AuthForm
@@ -84,7 +84,7 @@ src/
 └── app/           # routing
 ```
 
-Components from UI libraries (HeroUI, shadcn/ui) go into `components/ui/`, not into `atoms/`:
+Components from UI libraries (HeroUI, DaisyUI) go into `components/ui/`, not into `atoms/`:
 
 ```tsx
 // ✅ src/components/ui/button.tsx  — re-export or wrap library component
@@ -309,3 +309,65 @@ import { UserCard } from "@entities/user"
 // ❌
 import { UserCard } from "@entities/user/ui/UserCard"
 ```
+
+---
+
+## Styling
+
+### Tailwind over inline styles
+
+Always use Tailwind utility classes for styling. Never use `style={{}}` inline objects unless the value is **truly dynamic** (e.g. a color computed at runtime that cannot be expressed as a Tailwind class).
+
+```tsx
+// ❌ inline styles
+<div style={{ padding: "10px 14px", color: "var(--text0)", fontWeight: 500 }}>
+
+// ✅ Tailwind classes with design tokens
+<div class="py-2.5 px-3.5 text-text0 font-medium">
+```
+
+The design token CSS variables are mapped to Tailwind colors via `@theme inline` in `global.css`. Use the mapped class names:
+
+| CSS variable | Tailwind class |
+|---|---|
+| `var(--bg0)` | `bg-bg0` / `text-bg0` |
+| `var(--bg1)` … `var(--bg4)` | `bg-bg1` … `bg-bg4` |
+| `var(--border)` | `border-ui-border` |
+| `var(--border-hover)` | `border-ui-border-hover` |
+| `var(--text0)` … `var(--text2)` | `text-text0` … `text-text2` |
+| `var(--accent)` | `bg-accent` / `text-accent` |
+| `var(--accent-hover)` | `bg-accent-hover` |
+| `var(--green)` | `text-green` / `bg-green` |
+| `var(--amber)` | `text-amber` / `bg-amber` |
+| `var(--coral)` | `text-coral` / `bg-coral` |
+
+---
+
+### @repo/ui — shared component library
+
+This project ships a shared UI library at `packages/ui` (`@repo/ui`). **Always use it before writing custom elements.**
+
+Available components and import paths:
+
+```ts
+import { Button } from "@repo/ui/Button"   // variants: "primary" | "default" | "danger"; sizes: "sm" | "md" | "lg"
+import { Input }  from "@repo/ui/Input"
+import { Card }   from "@repo/ui/Card"
+import { Logo }   from "@repo/ui/Logo"
+```
+
+```tsx
+// ❌ raw <button> with inline styles or ad-hoc classes
+<button style={{ background: "var(--accent)", borderRadius: 4, padding: "3px 8px" }}>
+  Delete
+</button>
+
+// ✅ use Button from @repo/ui
+import { Button } from "@repo/ui/Button"
+
+<Button variant="danger" size="sm" loading={loading} onClick={handleDelete}>
+  Delete
+</Button>
+```
+
+If a needed variant or prop does not exist in the library component, **extend the component in `packages/ui`** rather than bypassing it with a raw element.

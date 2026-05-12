@@ -64,25 +64,34 @@ Do not use `useEffect` + `useState` for data fetching — always use TanStack Qu
 
 ## Global client state
 
-Use [Zustand](https://zustand.dev/) for global UI state that is not server data (modals, sidebar, user preferences, etc.):
+Use [Preact Signals](https://preactjs.com/guide/v10/signals/) for global UI state that is not server data (modals, sidebar, user preferences, etc.). Define signals as module-level stores in `src/stores/`:
+
+```ts
+// src/stores/ui.store.ts
+import { signal, computed } from "@preact/signals"
+
+export const sidebarOpen = signal(false)
+export const toggleSidebar = () => {
+  sidebarOpen.value = !sidebarOpen.value
+}
+```
 
 ```tsx
-import { create } from "zustand"
+// Usage in component
+import { sidebarOpen, toggleSidebar } from "@stores/ui.store"
 
-interface UIStore {
-  sidebarOpen: boolean
-  toggleSidebar: () => void
-}
-
-export const useUIStore = create<UIStore>((set) => ({
-  sidebarOpen: false,
-  toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
-}))
+export const Sidebar = () => (
+  <aside style={{ display: sidebarOpen.value ? "block" : "none" }}>
+    <button onClick={toggleSidebar}>Close</button>
+  </aside>
+)
 ```
 
 Keep stores small and focused. One store per domain, not one global store for everything.
 
-Do not put server data into Zustand — that is TanStack Query's job.
+Signals stores are **page-scoped** in an Astro MPA — they re-initialize on each navigation. For cross-page state (e.g. current user identity), rely on SSR data passed from Astro frontmatter, not in-memory signals.
+
+Do not put server data into signals — that is TanStack Query's job.
 
 ---
 
@@ -141,5 +150,5 @@ export const LoginForm = () => {
 |---|---|
 | Component-local UI state | `useState` / `useReducer` |
 | Server data (fetch, cache, sync) | TanStack Query |
-| Global UI state (modals, prefs) | Zustand |
+| Global UI state (modals, prefs) | Preact Signals |
 | Form state | TanStack Form + TypeBox |

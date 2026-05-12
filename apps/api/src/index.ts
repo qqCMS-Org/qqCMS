@@ -1,19 +1,25 @@
+import { config } from "@api/config";
+import { BadRequestError, ConflictError, NotFoundError, UnauthorizedError } from "@api/errors";
+import { corsMiddleware } from "@api/middleware/cors.middleware";
+import { rateLimitMiddleware } from "@api/middleware/rateLimit.middleware";
+import { runMigrations } from "@core/Database";
 import { Logger } from "@core/Logger";
 import staticPlugin from "@elysiajs/static";
 import { authModule } from "@modules/auth";
+import { collectionsModule } from "@modules/collections";
 import { languagesModule } from "@modules/languages";
 import { mediaModule } from "@modules/media";
 import { ensureUploadDir } from "@modules/media/media.service";
 import { navigationModule } from "@modules/navigation";
 import { pagesModule } from "@modules/pages";
 import { settingsModule } from "@modules/settings";
-import { config } from "@shared/config";
-import { ConflictError, NotFoundError, UnauthorizedError } from "@shared/errors";
-import { corsMiddleware } from "@shared/middleware/cors.middleware";
-import { rateLimitMiddleware } from "@shared/middleware/rateLimit.middleware";
 import { Elysia } from "elysia";
 
 await ensureUploadDir();
+
+if (process.env.RUN_MIGRATIONS_ON_STARTUP === "true") {
+	await runMigrations();
+}
 
 const app = new Elysia()
 	.use(corsMiddleware)
@@ -25,7 +31,12 @@ const app = new Elysia()
 		}),
 	)
 	.onError(({ code, error, set }) => {
-		if (error instanceof NotFoundError || error instanceof ConflictError || error instanceof UnauthorizedError) {
+		if (
+			error instanceof NotFoundError ||
+			error instanceof ConflictError ||
+			error instanceof UnauthorizedError ||
+			error instanceof BadRequestError
+		) {
 			set.status = error.status;
 			return { error: error.message, code: error.code };
 		}
@@ -40,7 +51,10 @@ const app = new Elysia()
 			return { error: "Route not found", code: "NOT_FOUND" };
 		}
 
-		Logger.error(`Unhandled error: ${error instanceof Error ? error.message : String(error)}`);
+		Logger.error(
+			`Unhandled error: ${error instanceof Error ? error.message : String(error)}`,
+			error instanceof Error && error.cause ? { cause: String(error.cause) } : undefined,
+		);
 		set.status = 500;
 		return { error: "Internal server error", code: "INTERNAL_ERROR" };
 	})
@@ -50,6 +64,7 @@ const app = new Elysia()
 	.use(mediaModule)
 	.use(languagesModule)
 	.use(settingsModule)
+	.use(collectionsModule)
 	.listen(config.port);
 
 Logger.info(`Elysia is running at ${app.server?.hostname}:${app.server?.port}`);

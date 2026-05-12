@@ -1,0 +1,66 @@
+---
+import { AdminLayout } from "@layouts";
+import { PageEditor } from "@widgets/page-editor";
+import type { PageLanguage, PageTranslationData } from "@widgets/page-editor";
+import { COOKIE_NAME, DEFAULT_API_URL } from "@shared/constants";
+
+interface PageWithTranslations {
+	id: string;
+	slug: string;
+	status: "draft" | "published" | "unpublished";
+	hasDraft: boolean;
+	isHomepage: boolean;
+	translations: PageTranslationData[];
+}
+
+const PAGE_STATUSES = ["draft", "published", "unpublished"] as const;
+
+function isPageWithTranslations(data: unknown): data is PageWithTranslations {
+	if (!data || typeof data !== "object") return false;
+	const obj = data as Record<string, unknown>;
+	return (
+		typeof obj.id === "string" &&
+		typeof obj.slug === "string" &&
+		typeof obj.status === "string" &&
+		(PAGE_STATUSES as readonly string[]).includes(obj.status) &&
+		typeof obj.hasDraft === "boolean" &&
+		typeof obj.isHomepage === "boolean" &&
+		Array.isArray(obj.translations)
+	);
+}
+
+const { id } = Astro.params;
+const API_URL = import.meta.env.PUBLIC_API_URL ?? DEFAULT_API_URL;
+const token = Astro.cookies.get(COOKIE_NAME)?.value;
+const authHeaders: Record<string, string> = token ? { Cookie: `${COOKIE_NAME}=${token}` } : {};
+
+const [pageRes, langsRes] = await Promise.all([
+	fetch(`${API_URL}/pages/${id}`, { headers: authHeaders }).catch(() => null),
+	fetch(`${API_URL}/languages`, { headers: authHeaders }).catch(() => null),
+]);
+
+if (!pageRes?.ok) {
+	return Astro.redirect("/pages");
+}
+
+const pageData: unknown = await pageRes.json();
+if (!isPageWithTranslations(pageData)) {
+	return Astro.redirect("/pages");
+}
+const page = pageData;
+const allLanguages: PageLanguage[] = langsRes?.ok ? await langsRes.json().catch(() => []) : [];
+const languages = allLanguages.filter((lang) => lang.isActive);
+---
+
+<AdminLayout title={`Edit — ${page.slug}`} activePage="pages" noPadding noTopbar>
+  <PageEditor
+    pageId={page.id}
+    initialSlug={page.slug}
+    initialIsHomepage={page.isHomepage}
+    initialStatus={page.status}
+    initialHasDraft={page.hasDraft}
+    initialTranslations={page.translations}
+    languages={languages}
+    client:only="preact"
+  />
+</AdminLayout>

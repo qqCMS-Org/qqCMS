@@ -1,11 +1,30 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import { AdminLayout } from "@layouts";
+import { StatsBar } from "@widgets/dashboard";
+import { LogoutButton } from "@features/auth";
+import { COOKIE_NAME, DEFAULT_API_URL } from "@shared/constants";
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const API_URL = import.meta.env.PUBLIC_API_URL ?? DEFAULT_API_URL;
+const token = Astro.cookies.get(COOKIE_NAME)?.value;
+const authHeaders: Record<string, string> = token ? { Cookie: `${COOKIE_NAME}=${token}` } : {};
+
+const fetchCount = async (path: string): Promise<number> => {
+	const response = await fetch(`${API_URL}${path}`, { headers: authHeaders }).catch(() => null);
+	if (!response?.ok) return 0;
+	const data: unknown = await response.json().catch(() => null);
+	return Array.isArray(data) ? data.length : 0;
+};
+
+const [pagesCount, languagesCount, mediaCount] = await Promise.all([
+	fetchCount("/pages"),
+	fetchCount("/languages"),
+	fetchCount("/media"),
+]);
 ---
 
-<Layout>
-	<Welcome />
-</Layout>
+<AdminLayout title="Dashboard" activePage="dashboard">
+  <Fragment slot="topbar-actions">
+    <LogoutButton client:load />
+  </Fragment>
+  <StatsBar pagesCount={pagesCount} languagesCount={languagesCount} mediaCount={mediaCount} />
+</AdminLayout>

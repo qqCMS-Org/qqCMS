@@ -2,10 +2,11 @@
 
 ## Monorepo Structure
 
-- **apps/admin**: Astro + React - Admin management interface.
-- **apps/web**: Astro + React - Public-facing website.
-- **apps/api**: Elysia - Backend server.
-- **packages/ui**: Shared React components.
+- **apps/admin**: Astro SSR + Preact Islands — Admin panel, MPA with file-based routing and View Transitions.
+- **apps/web**: Astro SSG + Preact Islands — Public-facing website.
+- **apps/api**: Elysia — Backend server.
+- **packages/types**: Shared TypeScript types, constants, and error classes used across all apps.
+- **packages/ui**: Shared Preact components used by both `apps/admin` and `apps/web`.
 - **packages/biome-config**: Unified linting and formatting.
 - **packages/typescript-config**: Shared TS compiler options.
 
@@ -24,8 +25,6 @@ The frontend applications (apps/admin, apps/web) and the shared UI package follo
 
 The backend uses Elysia for high-performance API routing and Drizzle ORM for database access. By default it uses **PGLite** (PostgreSQL compiled to WASM, runs in-process with a local file). In production, set `DATABASE_URL` to switch to a real PostgreSQL server — no code changes required.
 
-> **Status: NOT IMPLEMENTED** — `apps/api` is empty.
-
 ```
 apps/api/src/
 ├── modules/
@@ -34,21 +33,27 @@ apps/api/src/
 │   ├── navigation/
 │   ├── media/
 │   ├── settings/
-│   └── languages/
+│   ├── languages/
+│   └── rebuild/
 ├── db/
 │   ├── index.ts
 │   ├── schema/
+│   ├── repository/
 │   └── migrations/
-├── middleware/
-│   ├── auth.middleware.ts
-│   ├── cors.middleware.ts
-│   └── rateLimit.middleware.ts
-├── lib/
-│   ├── jwt.ts
-│   ├── password.ts
-│   ├── env.ts
-│   └── rebuild.ts
-├── app.ts
+├── shared/
+│   ├── config.ts
+│   ├── constants.ts
+│   ├── errors.ts
+│   ├── middleware/
+│   │   ├── auth.middleware.ts
+│   │   ├── cors.middleware.ts
+│   │   └── rateLimit.middleware.ts
+│   └── utils/
+├── core/
+│   ├── Database.ts
+│   ├── Logger.ts
+│   └── EventBus.ts
+├── client.ts
 └── index.ts
 ```
 

@@ -43,6 +43,9 @@ export const config = {
 	/** Public URL of the Next.js front-end (used for rebuild webhook) */
 	publicClientUrl: optionalEnv("PUBLIC_CLIENT_URL", "http://localhost:3001"),
 
+	/** Secret token expected by the front-end revalidate endpoint */
+	revalidateSecret: optionalEnv("REVALIDATE_SECRET", ""),
+
 	/** HTTP port to listen on */
 	port: parseInt(optionalEnv("PORT", "3000"), 10),
 } as const;

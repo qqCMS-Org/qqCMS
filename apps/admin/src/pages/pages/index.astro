@@ -1,0 +1,25 @@
+---
+import { AdminLayout } from "@layouts";
+import { PagesTable } from "@widgets/pages-list";
+import { COOKIE_NAME, DEFAULT_API_URL } from "@shared/constants";
+import type { PageRow } from "@widgets/pages-list";
+
+const API_URL = import.meta.env.PUBLIC_API_URL ?? DEFAULT_API_URL;
+const token = Astro.cookies.get(COOKIE_NAME)?.value;
+const authHeaders: Record<string, string> = token ? { Cookie: `${COOKIE_NAME}=${token}` } : {};
+
+const response = await fetch(`${API_URL}/pages`, { headers: authHeaders }).catch(() => null);
+const pages: PageRow[] = response?.ok ? await response.json().catch(() => []) : [];
+---
+
+<AdminLayout title="Pages" activePage="pages">
+  <Fragment slot="topbar-actions">
+    <a
+      href="/pages/new"
+      class="bg-accent text-white rounded text-[11px] px-3 py-1 no-underline hover:bg-accent-hover"
+    >
+      New page
+    </a>
+  </Fragment>
+  <PagesTable initialPages={pages} client:load />
+</AdminLayout>

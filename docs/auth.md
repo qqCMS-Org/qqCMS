@@ -1,7 +1,5 @@
 # Authentication
 
-> **Status: NOT IMPLEMENTED** — Auth module does not exist yet. `apps/api` is empty.
-
 ## Overview
 
 The system supports a single administrator role. There is no registration flow. Credentials are set via environment variables and never stored in the database.
@@ -50,10 +48,7 @@ All API routes except `POST /auth/login` require a valid JWT.
 
 The auth middleware reads the `token` cookie, verifies it with `JWT_SECRET`, and rejects with `401 Unauthorized` if invalid or missing.
 
-```ts
-// middleware/auth.middleware.ts (not implemented)
-// Reads JWT from cookie, verifies, attaches admin context to request
-```
+The JWT middleware lives in `apps/api/src/shared/middleware/`.
 
 ## Logout Flow
 

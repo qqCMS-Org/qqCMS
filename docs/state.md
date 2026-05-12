@@ -1,18 +1,19 @@
 # State Management
 
-> **Status: NOT IMPLEMENTED** — Admin panel interactive islands are not yet built.
+> **Status: PARTIALLY IMPLEMENTED** — `LoginForm` and `SidebarNav` are live Preact islands using Signals. Feature islands (pages editor, language manager, etc.) are not yet built.
 
 ## Frontend Strategy
 
 - **Server-side State**: Handled by Astro at build time (SSG for `apps/web`) or at request time (SSR for `apps/admin`).
-- **Client-side State**: Managed via **Preact Signals** in `apps/admin` interactive islands. Signals are defined as module-level stores in `apps/admin/src/stores/`.
+- **Navigation**: Both `apps/admin` and `apps/web` use Astro's file-based routing — standard `<a>` links with `<ViewTransitions />` for smooth page transitions. No client-side router.
+- **Client-side State**: Managed via **Preact Signals** in `apps/admin` interactive islands. Signals stores are **page-scoped** — they re-initialize on each navigation. Do not rely on in-memory signals for cross-page state.
+- **Cross-page State** (e.g. auth session): Carried via **HTTP-only cookies** set by the API, read by Astro SSR middleware.
 - **Form State**: Managed directly in Preact island components using Signals.
 
 ## Preact Signals Stores (planned)
 
 ```
 apps/admin/src/stores/
-├── auth.store.ts      # isAuthenticated signal
 ├── pages.store.ts     # pages list, selected page
 ├── editor.store.ts    # TipTap editor content per language
 └── languages.store.ts # active languages list

@@ -6,7 +6,7 @@ mock.module("bcryptjs", () => ({
 	compare: mockCompare,
 }));
 
-mock.module("@shared/config", () => ({
+mock.module("@api/config", () => ({
 	config: {
 		admin: {
 			login: "admin",

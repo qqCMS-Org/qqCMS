@@ -1,3 +1,4 @@
+import { NotFoundError } from "@api/errors";
 import { triggerRebuild } from "@modules/rebuild";
 import {
 	deleteNavigationItem as deleteNavigationItemInDb,
@@ -7,7 +8,6 @@ import {
 	reorderNavigationItems,
 	updateNavigationItem as updateNavigationItemInDb,
 } from "@repository/navigation-items";
-import { NotFoundError } from "@shared/errors";
 import type { CreateNavigationItemInput, ReorderInput, UpdateNavigationItemInput } from "./navigation.types";
 
 export const listNavigationItems = () => getNavigationItems();

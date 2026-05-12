@@ -1,0 +1,18 @@
+---
+import { AdminLayout } from "@layouts";
+import { PageEditor } from "@widgets/page-editor";
+import type { PageLanguage } from "@widgets/page-editor";
+import { COOKIE_NAME, DEFAULT_API_URL } from "@shared/constants";
+
+const API_URL = import.meta.env.PUBLIC_API_URL ?? DEFAULT_API_URL;
+const token = Astro.cookies.get(COOKIE_NAME)?.value;
+const authHeaders: Record<string, string> = token ? { Cookie: `${COOKIE_NAME}=${token}` } : {};
+
+const langsRes = await fetch(`${API_URL}/languages`, { headers: authHeaders }).catch(() => null);
+const allLanguages: PageLanguage[] = langsRes?.ok ? await langsRes.json().catch(() => []) : [];
+const languages = allLanguages.filter((lang) => lang.isActive);
+---
+
+<AdminLayout title="New page" activePage="pages" noPadding noTopbar>
+  <PageEditor languages={languages} client:only="preact" />
+</AdminLayout>

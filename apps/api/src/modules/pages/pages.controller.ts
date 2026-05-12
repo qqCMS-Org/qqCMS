@@ -1,7 +1,17 @@
-import { authPlugin } from "@shared/middleware/auth.middleware";
+import { authPlugin } from "@api/middleware/auth.middleware";
 import { Elysia } from "elysia";
-import { createPage, deletePage, getPage, listPages, updatePage, upsertTranslation } from "./pages.service";
-import { CreatePageSchema, UpdatePageSchema, UpsertTranslationSchema } from "./pages.types";
+import {
+	createPage,
+	deletePage,
+	discardDraft,
+	getPage,
+	listPages,
+	publishPage,
+	unpublishPage,
+	updatePage,
+	upsertTranslation,
+} from "./pages.service";
+import { CreatePageSchema, UpdatePageSchema, UpdatePageStatusSchema, UpsertTranslationSchema } from "./pages.types";
 
 export const pagesController = new Elysia({ prefix: "/pages" })
 	.use(authPlugin)
@@ -19,6 +29,19 @@ export const pagesController = new Elysia({ prefix: "/pages" })
 		"/:id",
 		async ({ params, set }) => {
 			await deletePage(params.id);
+			set.status = 204;
+		},
+		{ requireAuth: true },
+	)
+	.patch(
+		"/:id/status",
+		({ params, body }) => (body.status === "published" ? publishPage(params.id) : unpublishPage(params.id)),
+		{ body: UpdatePageStatusSchema, requireAuth: true },
+	)
+	.delete(
+		"/:id/draft",
+		async ({ params, set }) => {
+			await discardDraft(params.id);
 			set.status = 204;
 		},
 		{ requireAuth: true },

@@ -1,47 +1,98 @@
 # Design
 
-> **Status: IN PROGRESS** — Design is maintained in `qqCMS.pen` (Pencil tool). Design context is documented in `_designContext/`.
+> **Status: IN PROGRESS** — Design is implemented as HTML/JSX files in `prototype/` inside this repo.
 
 ## Source of Truth
 
-The visual design is defined in [`qqCMS.pen`](../qqCMS.pen).
+The visual design lives in [`prototype/`](../prototype/) — plain HTML + React (no build step, Babel transpiles JSX in the browser).
 
-Design references and rules:
-- [`_designContext/qqcms-design-rules.md`](../_designContext/qqcms-design-rules.md) — design system rules, colors, spacing, typography
-- [`_designContext/qqcms-design-progress.md`](../_designContext/qqcms-design-progress.md) — current design progress per screen
+Key files to read when implementing UI:
+- [`prototype/index.html`](../prototype/index.html) — CSS variables / design tokens (dark + light theme), fonts, scrollbar styles
+- [`prototype/shared.jsx`](../prototype/shared.jsx) — tokens object `T`, primitive components (Badge, Toggle, Sidebar, Topbar, icons, etc.)
+- [`prototype/pages.jsx`](../prototype/pages.jsx) — Pages and Collections screens
+- [`prototype/App.jsx`](../prototype/App.jsx) — Dashboard, Media Library, Settings, API Keys screens
 
-## Component Methodology
+> Screenshots and crops in `prototype/screenshots/` and `prototype/crops/` are for human reference only — read the JSX/HTML files instead.
 
-The admin panel UI is built using **Atomic Design**:
+## Component Structure
+
+Both `apps/admin` and `apps/web` follow **Feature-Sliced Design (FSD)**:
 
 ```
-apps/admin/src/components/
-├── atoms/        # Button, Input, Label, Badge, Spinner
-├── molecules/    # FormField, LanguageTabs, NavMenuItem
-├── organisms/    # PageEditor, NavigationEditor, MediaUploader, LoginForm
-└── templates/    # AdminLayout
+src/
+├── layouts/      # Astro layout components + index.ts barrel
+│   ├── Layout.astro
+│   ├── AdminLayout.astro
+│   └── index.ts  # barrel: export { Layout, AdminLayout }
+├── pages/        # Astro .astro page files (file-based routing)
+├── app/          # Global styles, middleware, app-level config
+├── widgets/      # Self-contained UI blocks: Sidebar, Header, PageEditorWidget
+├── features/     # User actions: auth, create-page, upload-media, change-language
+├── entities/     # Domain objects: page, language, media, navigation-item
+└── shared/
+    ├── ui/       # Re-exports from @repo/ui
+    ├── api/      # Eden Treaty client
+    └── config/   # Constants, env
 ```
 
-> **Not implemented** — `apps/admin/src/` currently contains only a placeholder `Welcome.astro`. FSD/Atomic Design structure is planned in Phase 2 of TODO.md.
+`packages/ui` contains **primitive Preact components** (Button, Input, Badge, etc.) shared across both apps. Complex, domain-aware components live in the respective app's FSD layers.
+
+## Path Aliases (`apps/admin`)
+
+All cross-layer imports **must** use path aliases — never use `../..` relative paths between layers.
+
+| Alias | Resolves to |
+|---|---|
+| `@layouts` | `src/layouts/index.ts` (barrel) |
+| `@app/*` | `src/app/*` |
+| `@widgets/*` | `src/widgets/*` |
+| `@features/*` | `src/features/*` |
+| `@entities/*` | `src/entities/*` |
+| `@shared/*` | `src/shared/*` |
+| `@api-shared/*` | `apps/api/src/shared/*` (server-side shared — use only for API type imports) |
+
+Each layer that has more than one export should expose a barrel `index.ts`. Example:
+
+```ts
+// src/layouts/index.ts
+export { default as Layout } from "./Layout.astro";
+export { default as AdminLayout } from "./AdminLayout.astro";
+
+// Usage in a page:
+import { Layout } from "@layouts";
+import { AdminLayout } from "@layouts";
+```
 
 ## UI Library
 
-Admin panel uses **Shadcn/ui** components (React-compatible, adapted for Preact via `@preact/compat`).
+Both `apps/admin` and `apps/web` share UI components from **`packages/ui`** (`@repo/ui`). Components in `packages/ui` are **Preact** components (Astro uses Preact for all interactive islands in both apps).
 
-Public client (`apps/web`) uses **Tailwind CSS** with minimal custom components.
+- Primitive components (Button, Input, Badge, etc.) live in `packages/ui/src/`
+- Both apps import them via the `@repo/ui` alias using the real, case-sensitive component path: `import { Button } from "@repo/ui/Button"`
+- Admin-specific complex components (PageEditor, NavigationEditor) live in `apps/admin/src/` and are not shared
+- Components in `packages/ui` use **DaisyUI** CSS classes for styling — no JS dependency, works natively with Preact
+- **Typing convention:** Primitive components should define props using explicit Preact HTML attributes interfaces (e.g., `ButtonHTMLAttributes<HTMLButtonElement>`, `InputHTMLAttributes<HTMLInputElement>`) instead of intersection types with `JSX.IntrinsicElements`.
 
-Shared components across both apps live in **`packages/ui`** — currently contains placeholder `button.tsx`, `card.tsx`, `code.tsx`.
+Example:
+```tsx
+import type { ButtonHTMLAttributes, ComponentChildren } from "preact";
+
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+	children: ComponentChildren;
+	variant?: "primary" | "default" | "danger";
+}
+```
 
 ## Styling
 
-- **Tailwind CSS** for all styling
-- Design tokens (colors, spacing) defined in `_designContext/qqcms-design-rules.md` should be reflected in `tailwind.config` of each app
+- **Tailwind CSS** + **DaisyUI** for all styling
+- Design tokens (CSS variables) defined in `prototype/index.html` are used as-is in each app's global stylesheet
 
 ## Screens to Design / Implement
 
 | Screen | Design Status | Implementation |
 |---|---|---|
-| Login | — | Not implemented |
+| Login | ✅ | ✅ Implemented |
 | Pages list | — | Not implemented |
 | Page editor | — | Not implemented |
 | Navigation editor | — | Not implemented |

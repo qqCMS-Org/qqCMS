@@ -1,0 +1,17 @@
+---
+import { AdminLayout } from "@layouts";
+import { LanguagesTable } from "@widgets/languages";
+import type { LanguageRow } from "@widgets/languages";
+import { COOKIE_NAME, DEFAULT_API_URL } from "@shared/constants";
+
+const API_URL = import.meta.env.PUBLIC_API_URL ?? DEFAULT_API_URL;
+const token = Astro.cookies.get(COOKIE_NAME)?.value;
+const authHeaders: Record<string, string> = token ? { Cookie: `${COOKIE_NAME}=${token}` } : {};
+
+const res = await fetch(`${API_URL}/languages`, { headers: authHeaders }).catch(() => null);
+const languages: LanguageRow[] = res?.ok ? await res.json().catch(() => []) : [];
+---
+
+<AdminLayout title="Languages" activePage="languages">
+  <LanguagesTable initialLanguages={languages} client:load />
+</AdminLayout>
