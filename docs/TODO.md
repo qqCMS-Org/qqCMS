@@ -182,10 +182,10 @@
 > ⛔ Stop here. Ask user to verify the header renders nav and language switcher correctly.
 
 ### Step 3 — SSG page generation
-- [ ] Create `src/entities/page/getAllPublishedPages.ts` — calls `GET /languages` + `GET /pages`, returns `{ lang, page }[]` pairs for all published pages × active languages
-- [ ] Create `src/entities/page/getPageTranslation.ts` — calls `GET /pages/:id`, returns the translation for a given language
-- [ ] Create `src/entities/page/index.ts` barrel
-- [ ] Create `src/pages/[lang]/[...slug].astro`:
+- [x] Create `src/entities/page/getAllPublishedPages.ts` — calls `GET /languages` + `GET /pages`, returns `{ lang, page }[]` pairs for all published pages × active languages
+- [x] Create `src/entities/page/getPageTranslation.ts` — calls `GET /pages/:id`, returns the translation for a given language
+- [x] Create `src/entities/page/index.ts` barrel
+- [x] Create `src/pages/[lang]/[...slug].astro`:
   - `export const prerender = true`
   - `getStaticPaths()` uses `getAllPublishedPages()` to emit all `{ params, props }` pairs
   - Fetches translation via `getPageTranslation()`
@@ -194,13 +194,13 @@
 > ⛔ Stop here. Ask user to run `bun run build --cwd apps/web` and verify static pages are generated.
 
 ### Step 4 — Root redirect (SSR)
-- [ ] Replace placeholder `src/pages/index.astro`:
+- [x] Replace placeholder `src/pages/index.astro`:
   - Read `Accept-Language` header → parse language codes
   - Fetch active languages from API
   - Match to active languages; fall back to first active
   - Fetch homepage slug (`is_homepage: true`)
   - `return Astro.redirect(\`/\${lang}/\${slug}\`, 302)`
-- [ ] Fix `src/middleware.ts` — skip caching for non-200 responses (currently missing this guard)
+- [x] Fix `src/middleware.ts` — skip caching for non-200 responses (currently missing this guard)
 
 > ⛔ Stop here. Ask user to verify root `/` redirects correctly.
 

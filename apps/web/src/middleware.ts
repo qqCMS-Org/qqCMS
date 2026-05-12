@@ -16,9 +16,13 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
 	const response = await next();
 
+	// Кешируем только успешные HTML-ответы; пропускаем редиректы и ошибки
 	if (response.status === 200) {
-		const html = await response.clone().text();
-		setCache(context.url.pathname, html);
+		const ct = response.headers.get("content-type") ?? "";
+		if (ct.includes("text/html")) {
+			const html = await response.clone().text();
+			setCache(context.url.pathname, html);
+		}
 	}
 
 	return response;

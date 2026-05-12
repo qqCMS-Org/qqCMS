@@ -13,6 +13,10 @@ const src = (/** @type {string} */ p) => path.resolve(__dirname, "src", p);
 export default defineConfig({
 	output: "static",
 	adapter: node({ mode: "standalone" }),
+	server: {
+		host: "localhost",
+		port: 4321,
+	},
 	integrations: [
 		preact({ compat: true, include: ["**/islands/**", "**/features/**", "**/widgets/**", "**/entities/**"] }),
 	],
@@ -30,3 +34,4 @@ export default defineConfig({
 		},
 	},
 });
+
