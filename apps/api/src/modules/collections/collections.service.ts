@@ -1,11 +1,11 @@
 import { ConflictError, NotFoundError } from "@api/errors";
+import { db } from "@core/Database";
 import {
 	deleteEntry,
 	getEntriesByCollection,
 	getEntry,
 	insertEntry,
 	nullifyEntryFieldKey,
-	renameEntryFieldKey,
 	updateEntry,
 } from "@repository/collection-entries";
 import {
@@ -13,10 +13,12 @@ import {
 	getCollectionField,
 	getFieldsByCollection,
 	insertCollectionField,
-	updateCollectionField,
 } from "@repository/collection-fields";
 import { deleteCollection, getCollection, getCollections, insertCollection } from "@repository/collections";
+import { collectionEntries } from "@schema/collection-entries";
 import type { FieldType } from "@schema/collection-fields";
+import { collectionFields } from "@schema/collection-fields";
+import { eq, sql } from "drizzle-orm";
 import type { AddFieldInput, CreateCollectionInput, UpdateFieldInput, UpsertEntryInput } from "./collections.types";
 
 export const listCollections = () => getCollections();
@@ -58,8 +60,11 @@ export const addField = async (collectionId: string, data: AddFieldInput) => {
 		isUnique: data.isUnique ?? false,
 		localised: data.localised ?? false,
 		sortOrder,
-	}).catch(() => {
-		throw new ConflictError("Field with this name already exists in the collection");
+	}).catch((error: unknown) => {
+		const isUniqueViolation =
+			typeof error === "object" && error !== null && "code" in error && (error as { code: string }).code === "23505";
+		if (isUniqueViolation) throw new ConflictError("Field with this name already exists in the collection");
+		throw error;
 	});
 
 	return field;
@@ -68,8 +73,11 @@ export const addField = async (collectionId: string, data: AddFieldInput) => {
 export const removeField = async (collectionId: string, fieldId: string) => {
 	const existing = await getCollection(collectionId);
 	if (!existing) throw new NotFoundError("Collection not found");
+
 	const field = await getCollectionField(fieldId);
-	if (field) await nullifyEntryFieldKey(collectionId, field.name);
+	if (!field || field.collectionId !== collectionId) throw new NotFoundError("Field not found");
+
+	await nullifyEntryFieldKey(collectionId, field.name);
 	await deleteCollectionField(fieldId);
 };
 
@@ -83,27 +91,50 @@ export const updateField = async (collectionId: string, fieldId: string, data: U
 	const nameChanging = data.name !== undefined && data.name !== field.name;
 	const typeChanging = data.type !== undefined && data.type !== field.type;
 
-	if (typeChanging) {
-		await nullifyEntryFieldKey(collectionId, field.name);
-	}
+	return db.transaction(async (tx) => {
+		const [updated] = await tx
+			.update(collectionFields)
+			.set({
+				name: data.name,
+				type: data.type as FieldType | undefined,
+				required: data.required,
+				isUnique: data.isUnique,
+				localised: data.localised,
+			})
+			.where(eq(collectionFields.id, fieldId))
+			.returning()
+			.catch((error: unknown) => {
+				const isUniqueViolation =
+					typeof error === "object" &&
+					error !== null &&
+					"code" in error &&
+					(error as { code: string }).code === "23505";
+				if (isUniqueViolation) throw new ConflictError("A field with this name already exists in the collection");
+				throw error;
+			});
 
-	if (nameChanging) {
-		const keyToRename = field.name;
-		const newKey = data.name as string;
-		await renameEntryFieldKey(collectionId, keyToRename, newKey);
-	}
+		if (typeChanging) {
+			await tx
+				.update(collectionEntries)
+				.set({
+					data: sql`jsonb_set(${collectionEntries.data}, ARRAY[${field.name}]::text[], 'null'::jsonb)`,
+					updatedAt: new Date(),
+				})
+				.where(eq(collectionEntries.collectionId, collectionId));
+		}
 
-	const [updated] = await updateCollectionField(fieldId, {
-		name: data.name,
-		type: data.type as FieldType | undefined,
-		required: data.required,
-		isUnique: data.isUnique,
-		localised: data.localised,
-	}).catch(() => {
-		throw new ConflictError("A field with this name already exists in the collection");
+		if (nameChanging) {
+			await tx
+				.update(collectionEntries)
+				.set({
+					data: sql`(${collectionEntries.data} - ${field.name}) || jsonb_build_object(${data.name}, ${collectionEntries.data}->${field.name})`,
+					updatedAt: new Date(),
+				})
+				.where(eq(collectionEntries.collectionId, collectionId));
+		}
+
+		return updated;
 	});
-
-	return updated;
 };
 
 export const listEntries = async (collectionId: string) => {

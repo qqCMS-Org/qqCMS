@@ -42,7 +42,7 @@ export function LoginForm() {
 		event.preventDefault();
 
 		if (!Value.Check(LoginSchema, formState.values)) {
-			setFormState((previous) => ({ ...previous, error: "Please enter a valid email and password." }));
+			setFormState((previous) => ({ ...previous, error: "Please enter your login and password." }));
 			return;
 		}
 

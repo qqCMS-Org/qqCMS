@@ -18,7 +18,7 @@ import { AddFieldSchema, CreateCollectionSchema, UpdateFieldSchema, UpsertEntryS
 export const collectionsController = new Elysia({ prefix: "/collections" })
 	.use(authPlugin)
 	// Collections
-	.get("/", () => listCollections())
+	.get("/", () => listCollections(), { requireAuth: true })
 	.post("/", ({ body }) => createCollection(body), {
 		body: CreateCollectionSchema,
 		requireAuth: true,
@@ -32,7 +32,7 @@ export const collectionsController = new Elysia({ prefix: "/collections" })
 		{ requireAuth: true },
 	)
 	// Fields
-	.get("/:id/fields", ({ params }) => listFields(params.id))
+	.get("/:id/fields", ({ params }) => listFields(params.id), { requireAuth: true })
 	.post("/:id/fields", ({ params, body }) => addField(params.id, body), {
 		body: AddFieldSchema,
 		requireAuth: true,
@@ -50,7 +50,7 @@ export const collectionsController = new Elysia({ prefix: "/collections" })
 		{ requireAuth: true },
 	)
 	// Entries
-	.get("/:id/entries", ({ params }) => listEntries(params.id))
+	.get("/:id/entries", ({ params }) => listEntries(params.id), { requireAuth: true })
 	.post("/:id/entries", ({ params, body }) => createEntry(params.id, body), {
 		body: UpsertEntrySchema,
 		requireAuth: true,
