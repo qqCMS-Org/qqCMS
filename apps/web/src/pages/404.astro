@@ -1,0 +1,39 @@
+---
+import { WebLayout } from "@layouts";
+import { Button } from "@repo/ui";
+---
+
+<WebLayout title="404 — Page Not Found" description="The page you are looking for does not exist.">
+  <main class="min-h-[80vh] flex items-center justify-center px-4">
+    <div class="hero">
+      <div class="hero-content text-center flex-col gap-8 max-w-lg">
+        <!-- Decorative number -->
+        <div class="select-none" aria-hidden="true">
+          <span
+            class="text-[8rem] sm:text-[10rem] font-extrabold leading-none tracking-tighter
+                   bg-gradient-to-br from-accent via-accent/60 to-accent/20
+                   bg-clip-text text-transparent"
+          >
+            404
+          </span>
+        </div>
+
+        <!-- Message -->
+        <div class="space-y-3">
+          <h1 class="text-3xl font-bold text-base-content">Page not found</h1>
+          <p class="text-base-content/60 text-base leading-relaxed">
+            The page you're looking for doesn't exist or has been moved.<br />
+            Let's get you back on track.
+          </p>
+        </div>
+
+        <!-- Action -->
+        <a href="/" class="inline-block">
+          <Button size="lg" variant="primary">
+            ← Go to homepage
+          </Button>
+        </a>
+      </div>
+    </div>
+  </main>
+</WebLayout>

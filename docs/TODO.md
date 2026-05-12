@@ -213,6 +213,6 @@
 > ⛔ Stop here. Ask user to test revalidation end-to-end.
 
 ### Step 6 — 404 page & polish
-- [ ] Create `src/pages/404.astro` using `WebLayout`; use DaisyUI `hero` class for the not-found message layout; use `<Button>` from `@repo/ui` for the "go home" link
-- [ ] Add `PUBLIC_API_URL`, `REVALIDATE_SECRET`, `DEPLOY_HOOK_URL` to `.env.example`
-- [ ] Update `docs/web.md` with final structure and custom block guide
+- [x] Create `src/pages/404.astro` using `WebLayout`; use DaisyUI `hero` class for the not-found message layout; use `<Button>` from `@repo/ui` for the "go home" link
+- [x] Add `PUBLIC_API_URL`, `REVALIDATE_SECRET`, `DEPLOY_HOOK_URL` to `.env.example`
+- [x] Update `docs/web.md` with final structure and custom block guide
