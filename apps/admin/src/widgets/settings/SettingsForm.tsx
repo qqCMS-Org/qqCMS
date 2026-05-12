@@ -47,7 +47,6 @@ export const SettingsForm = ({ initialSettings }: SettingsFormProps) => {
 			projectName: "",
 			adminUrl: "",
 			apiUrl: "",
-			contentApiKey: "",
 		};
 		initialSettings.forEach((s) => {
 			if (typeof s.value === "string") {
@@ -111,11 +110,7 @@ export const SettingsForm = ({ initialSettings }: SettingsFormProps) => {
 		<div class="max-w-[660px]">
 			<div class="flex justify-between items-center mb-5">
 				<h2 class="text-base text-text0 font-medium">Global Settings</h2>
-				<Button
-					variant="primary"
-					loading={isSaving}
-					onClick={() => handleSave(["projectName", "adminUrl", "apiUrl", "contentApiKey"])}
-				>
+				<Button variant="primary" loading={isSaving} onClick={() => handleSave(["projectName", "adminUrl", "apiUrl"])}>
 					Save all changes
 				</Button>
 			</div>
@@ -148,34 +143,27 @@ export const SettingsForm = ({ initialSettings }: SettingsFormProps) => {
 			</SettingsBlock>
 
 			<SettingsBlock id="api" title="API">
-				<FormRow label="API URL" hint="Public-facing base URL for the API.">
+				<FormRow
+					label="Public URL"
+					hint="Domain or host where the API is accessible (e.g. localhost:3000 or api.example.com)."
+				>
 					<Input
 						value={settingsMap.apiUrl || ""}
 						onChange={(e) => handleChange("apiUrl", e.currentTarget.value)}
-						placeholder="https://api.example.com"
+						placeholder="localhost:3000"
 					/>
-				</FormRow>
-				<FormRow label="Content API key" hint="Read-only key for public content access.">
-					<div class="flex gap-2">
-						<Input
-							value={settingsMap.contentApiKey || ""}
-							onChange={(e) => handleChange("contentApiKey", e.currentTarget.value)}
-							class="flex-1"
-						/>
-					</div>
 				</FormRow>
 			</SettingsBlock>
 
-			<SettingsBlock id="danger" title="Danger Zone" danger>
-				<div class="text-[11px] text-text1 mb-4 -mt-1">Irreversible and destructive actions.</div>
-				<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 py-3">
+			<SettingsBlock id="rebuild" title="Rebuild">
+				<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
 					<div>
 						<div class="text-xs text-text0 mb-1">Trigger site rebuild</div>
 						<div class="text-[11px] text-text1">
 							Manually calls the configured rebuild webhook to deploy the static frontend.
 						</div>
 					</div>
-					<Button variant="danger" loading={isRebuilding} onClick={handleRebuild} class="shrink-0">
+					<Button variant="primary" loading={isRebuilding} onClick={handleRebuild} class="shrink-0">
 						Rebuild site
 					</Button>
 				</div>

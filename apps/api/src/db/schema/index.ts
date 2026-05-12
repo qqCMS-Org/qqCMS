@@ -1,3 +1,6 @@
+export * from "./collection-entries";
+export * from "./collection-fields";
+export * from "./collections";
 export * from "./languages";
 export * from "./media";
 export * from "./navigation-items";

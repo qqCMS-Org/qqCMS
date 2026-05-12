@@ -1,7 +1,7 @@
 import { api } from "@shared/api/client";
 import type { JSX } from "preact";
 import { useState } from "preact/hooks";
-import { IcoBurger, IcoColl, IcoDash, IcoGear, IcoKey, IcoLang, IcoLogout, IcoMedia, IcoNav, IcoPage } from "./icons";
+import { IcoBurger, IcoColl, IcoDash, IcoGear, IcoLang, IcoLogout, IcoMedia, IcoNav, IcoPage } from "./icons";
 
 const NAV_ITEMS = [
 	{ id: "dashboard", label: "Dashboard", href: "/", Icon: IcoDash },
@@ -10,7 +10,6 @@ const NAV_ITEMS = [
 	{ id: "navigation", label: "Navigation", href: "/navigation", Icon: IcoNav },
 	{ id: "collections", label: "Collections", href: "/collections", Icon: IcoColl },
 	{ id: "media", label: "Media", href: "/media", Icon: IcoMedia },
-	{ id: "apikeys", label: "API Keys", href: "/api-keys", Icon: IcoKey },
 ] as const;
 
 type NavItemId = (typeof NAV_ITEMS)[number]["id"] | "settings";
