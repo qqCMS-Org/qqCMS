@@ -16,16 +16,9 @@ export function LogoutButton(): JSX.Element {
 			type="button"
 			onClick={handleLogout}
 			disabled={loading.value}
-			style={{
-				background: "transparent",
-				border: "1px solid var(--border)",
-				borderRadius: 5,
-				padding: "4px 10px",
-				color: "var(--text1)",
-				fontSize: 11,
-				cursor: loading.value ? "not-allowed" : "pointer",
-				opacity: loading.value ? 0.5 : 1,
-			}}
+			className={`rounded-[5px] border bg-transparent px-[10px] py-1 text-[11px] ${
+				loading.value ? "cursor-not-allowed opacity-50" : "cursor-pointer opacity-100"
+			}`}
 		>
 			{loading.value ? "..." : "Log out"}
 		</button>

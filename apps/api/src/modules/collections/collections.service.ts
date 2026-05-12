@@ -1,11 +1,11 @@
 import { ConflictError, NotFoundError } from "@api/errors";
+import { db } from "@core/Database";
 import {
 	deleteEntry,
 	getEntriesByCollection,
 	getEntry,
 	insertEntry,
 	nullifyEntryFieldKey,
-	renameEntryFieldKey,
 	updateEntry,
 } from "@repository/collection-entries";
 import {
@@ -13,10 +13,12 @@ import {
 	getCollectionField,
 	getFieldsByCollection,
 	insertCollectionField,
-	updateCollectionField,
 } from "@repository/collection-fields";
 import { deleteCollection, getCollection, getCollections, insertCollection } from "@repository/collections";
+import { collectionEntries } from "@schema/collection-entries";
 import type { FieldType } from "@schema/collection-fields";
+import { collectionFields } from "@schema/collection-fields";
+import { eq, sql } from "drizzle-orm";
 import type { AddFieldInput, CreateCollectionInput, UpdateFieldInput, UpsertEntryInput } from "./collections.types";
 
 export const listCollections = () => getCollections();
@@ -89,30 +91,50 @@ export const updateField = async (collectionId: string, fieldId: string, data: U
 	const nameChanging = data.name !== undefined && data.name !== field.name;
 	const typeChanging = data.type !== undefined && data.type !== field.type;
 
-	// Update the field row first so a constraint failure (e.g. duplicate name)
-	// aborts before any entry data is mutated.
-	const [updated] = await updateCollectionField(fieldId, {
-		name: data.name,
-		type: data.type as FieldType | undefined,
-		required: data.required,
-		isUnique: data.isUnique,
-		localised: data.localised,
-	}).catch((error: unknown) => {
-		const isUniqueViolation =
-			typeof error === "object" && error !== null && "code" in error && (error as { code: string }).code === "23505";
-		if (isUniqueViolation) throw new ConflictError("A field with this name already exists in the collection");
-		throw error;
+	return db.transaction(async (tx) => {
+		const [updated] = await tx
+			.update(collectionFields)
+			.set({
+				name: data.name,
+				type: data.type as FieldType | undefined,
+				required: data.required,
+				isUnique: data.isUnique,
+				localised: data.localised,
+			})
+			.where(eq(collectionFields.id, fieldId))
+			.returning()
+			.catch((error: unknown) => {
+				const isUniqueViolation =
+					typeof error === "object" &&
+					error !== null &&
+					"code" in error &&
+					(error as { code: string }).code === "23505";
+				if (isUniqueViolation) throw new ConflictError("A field with this name already exists in the collection");
+				throw error;
+			});
+
+		if (typeChanging) {
+			await tx
+				.update(collectionEntries)
+				.set({
+					data: sql`jsonb_set(${collectionEntries.data}, ARRAY[${field.name}]::text[], 'null'::jsonb)`,
+					updatedAt: new Date(),
+				})
+				.where(eq(collectionEntries.collectionId, collectionId));
+		}
+
+		if (nameChanging) {
+			await tx
+				.update(collectionEntries)
+				.set({
+					data: sql`(${collectionEntries.data} - ${field.name}) || jsonb_build_object(${data.name}, ${collectionEntries.data}->${field.name})`,
+					updatedAt: new Date(),
+				})
+				.where(eq(collectionEntries.collectionId, collectionId));
+		}
+
+		return updated;
 	});
-
-	if (typeChanging) {
-		await nullifyEntryFieldKey(collectionId, field.name);
-	}
-
-	if (nameChanging) {
-		await renameEntryFieldKey(collectionId, field.name, data.name as string);
-	}
-
-	return updated;
 };
 
 export const listEntries = async (collectionId: string) => {

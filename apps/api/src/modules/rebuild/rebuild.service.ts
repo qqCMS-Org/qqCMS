@@ -12,7 +12,7 @@ export const triggerRebuild = async (): Promise<boolean> => {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
-			[REBUILD_SECRET_HEADER]: config.jwtSecret,
+			[REBUILD_SECRET_HEADER]: config.revalidateSecret,
 		},
 	}).catch((error: unknown) => {
 		Logger.error(`Rebuild webhook failed: ${error}`);

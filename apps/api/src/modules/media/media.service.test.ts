@@ -33,7 +33,7 @@ mock.module("node:fs/promises", () => ({
 	unlink: mockUnlink,
 }));
 
-mock.module("@shared/config", () => ({
+mock.module("@api/config", () => ({
 	config: {
 		uploadDir: "/tmp/test-uploads",
 		publicClientUrl: "",

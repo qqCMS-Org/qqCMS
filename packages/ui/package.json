@@ -13,6 +13,9 @@
 		"generate:component": "turbo gen preact-component",
 		"typecheck": "tsc --noEmit"
 	},
+	"peerDependencies": {
+		"preact": "^10"
+	},
 	"devDependencies": {
 		"@repo/biome-config": "^",
 		"@repo/typescript-config": "*",
