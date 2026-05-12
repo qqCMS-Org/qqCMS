@@ -1,7 +1,7 @@
 import { db } from "@core/Database";
 import type { NewCollectionEntry } from "@schema/collection-entries";
 import { collectionEntries } from "@schema/collection-entries";
-import { asc, eq } from "drizzle-orm";
+import { asc, eq, sql } from "drizzle-orm";
 
 export const getEntriesByCollection = (collectionId: string) =>
 	db
@@ -32,3 +32,21 @@ export const updateEntry = (
 		.returning();
 
 export const deleteEntry = (id: string) => db.delete(collectionEntries).where(eq(collectionEntries.id, id));
+
+export const nullifyEntryFieldKey = (collectionId: string, key: string) =>
+	db
+		.update(collectionEntries)
+		.set({
+			data: sql`jsonb_set(${collectionEntries.data}, ${sql.raw(`'{${key}}'`)}, 'null'::jsonb)`,
+			updatedAt: new Date(),
+		})
+		.where(eq(collectionEntries.collectionId, collectionId));
+
+export const renameEntryFieldKey = (collectionId: string, oldKey: string, newKey: string) =>
+	db
+		.update(collectionEntries)
+		.set({
+			data: sql`(${collectionEntries.data} - ${oldKey}) || jsonb_build_object(${newKey}, ${collectionEntries.data}->>${oldKey})`,
+			updatedAt: new Date(),
+		})
+		.where(eq(collectionEntries.collectionId, collectionId));

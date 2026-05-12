@@ -122,6 +122,15 @@ export function CollectionsManager({ initialCollections }: CollectionsManagerPro
 	const addFieldError = useSignal<string | null>(null);
 	const addFieldSaving = useSignal(false);
 
+	const editFieldModal = useSignal<FieldRow | null>(null);
+	const editFieldName = useSignal("");
+	const editFieldType = useSignal<FieldType>("Text");
+	const editFieldRequired = useSignal(false);
+	const editFieldUnique = useSignal(false);
+	const editFieldLocalised = useSignal(false);
+	const editFieldError = useSignal<string | null>(null);
+	const editFieldSaving = useSignal(false);
+
 	const entryModal = useSignal<"add" | "edit" | null>(null);
 	const editingEntry = useSignal<EntryRow | null>(null);
 	const entryFormData = useSignal<Record<string, string>>({});
@@ -232,6 +241,49 @@ export function CollectionsManager({ initialCollections }: CollectionsManagerPro
 		fieldRequired.value = false;
 		fieldUnique.value = false;
 		fieldLocalised.value = false;
+	};
+
+	const openEditField = (field: FieldRow): void => {
+		editFieldName.value = field.name;
+		editFieldType.value = field.type;
+		editFieldRequired.value = field.required;
+		editFieldUnique.value = field.isUnique;
+		editFieldLocalised.value = field.localised;
+		editFieldError.value = null;
+		editFieldModal.value = field;
+	};
+
+	const handleEditField = async (): Promise<void> => {
+		const field = editFieldModal.value;
+		const id = selectedId.value;
+		if (!field || !id) return;
+
+		editFieldSaving.value = true;
+		editFieldError.value = null;
+
+		const { data: updated, error } = await api
+			.collections({ id })
+			.fields({ fieldId: field.id })
+			.patch({
+				name: editFieldName.value.trim() || undefined,
+				type: editFieldType.value,
+				required: editFieldRequired.value,
+				isUnique: editFieldUnique.value,
+				localised: editFieldLocalised.value,
+			});
+
+		editFieldSaving.value = false;
+
+		if (error || !updated) {
+			editFieldError.value = error ? (extractApiError(error) ?? "Failed to save") : "Failed to save";
+			return;
+		}
+
+		fieldsCache.value = {
+			...fieldsCache.value,
+			[id]: (fieldsCache.value[id] ?? []).map((f) => (f.id === field.id ? updated : f)),
+		};
+		editFieldModal.value = null;
 	};
 
 	const handleDeleteField = async (fieldId: string): Promise<void> => {
@@ -534,7 +586,15 @@ export function CollectionsManager({ initialCollections }: CollectionsManagerPro
 											)}
 											<button
 												type="button"
-												class="bg-transparent border-none text-coral cursor-pointer text-xs"
+												class="bg-transparent border-none text-text1 hover:text-text0 cursor-pointer text-sm leading-none px-1"
+												onClick={() => openEditField(field)}
+												aria-label="Edit field"
+											>
+												✎
+											</button>
+											<button
+												type="button"
+												class="bg-transparent border-none text-coral cursor-pointer text-base leading-none px-1"
 												onClick={() => void handleDeleteField(field.id)}
 											>
 												⊗
@@ -718,6 +778,98 @@ export function CollectionsManager({ initialCollections }: CollectionsManagerPro
 								onClick={() => void handleAddField()}
 							>
 								{addFieldSaving.value ? "Adding…" : "Add field"}
+							</Button>
+						</div>
+					</div>
+				</ModalShell>
+			)}
+
+			{/* Edit field modal */}
+			{editFieldModal.value && (
+				<ModalShell
+					title="Edit field"
+					onClose={() => {
+						editFieldModal.value = null;
+					}}
+					width="w-96"
+				>
+					<div class="flex flex-col gap-4">
+						<Input
+							label="Field name"
+							placeholder="e.g. title"
+							value={editFieldName.value}
+							onInput={(e) => {
+								editFieldName.value = e.currentTarget.value;
+							}}
+						/>
+						<div>
+							<div class="text-[10px] text-text1 mb-2">Field type</div>
+							<div class="grid grid-cols-3 gap-1.5">
+								{FIELD_TYPES.map((type) => {
+									const active = editFieldType.value === type;
+									return (
+										<button
+											key={type}
+											type="button"
+											onClick={() => {
+												editFieldType.value = type;
+											}}
+											class={`flex flex-col items-center gap-1.5 py-2.5 px-1.5 rounded border cursor-pointer transition-colors ${
+												active
+													? "bg-accent-faint border-accent text-accent"
+													: "bg-bg3 border-ui-border text-text1 hover:text-text0"
+											}`}
+										>
+											<span class="text-lg">{FIELD_ICONS[type]}</span>
+											<span class="text-[10px]">{type}</span>
+										</button>
+									);
+								})}
+							</div>
+						</div>
+						<div class="flex gap-4">
+							{(["required", "isUnique", "localised"] as const).map((key) => {
+								const labels = { required: "Required", isUnique: "Unique", localised: "Localised" };
+								const signals = {
+									required: editFieldRequired,
+									isUnique: editFieldUnique,
+									localised: editFieldLocalised,
+								};
+								const signal = signals[key];
+								return (
+									<label key={key} class="flex items-center gap-1.5 cursor-pointer text-[11px] text-text1">
+										<input
+											type="checkbox"
+											checked={signal.value}
+											onChange={(e) => {
+												signal.value = e.currentTarget.checked;
+											}}
+											style="accent-color: var(--accent)"
+										/>
+										{labels[key]}
+									</label>
+								);
+							})}
+						</div>
+						{editFieldError.value && <div class="text-xs text-coral">{editFieldError.value}</div>}
+						<p class="text-[10px] text-text2">Changing the field type will clear all existing values for this field.</p>
+						<div class="flex justify-end gap-2 pt-2 border-t border-ui-border">
+							<Button
+								variant="default"
+								size="sm"
+								onClick={() => {
+									editFieldModal.value = null;
+								}}
+							>
+								Cancel
+							</Button>
+							<Button
+								variant="primary"
+								size="sm"
+								disabled={editFieldSaving.value}
+								onClick={() => void handleEditField()}
+							>
+								{editFieldSaving.value ? "Saving…" : "Save"}
 							</Button>
 						</div>
 					</div>

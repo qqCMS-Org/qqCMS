@@ -11,8 +11,9 @@ import {
 	removeEntry,
 	removeField,
 	updateEntryData,
+	updateField,
 } from "./collections.service";
-import { AddFieldSchema, CreateCollectionSchema, UpsertEntrySchema } from "./collections.types";
+import { AddFieldSchema, CreateCollectionSchema, UpdateFieldSchema, UpsertEntrySchema } from "./collections.types";
 
 export const collectionsController = new Elysia({ prefix: "/collections" })
 	.use(authPlugin)
@@ -34,6 +35,10 @@ export const collectionsController = new Elysia({ prefix: "/collections" })
 	.get("/:id/fields", ({ params }) => listFields(params.id))
 	.post("/:id/fields", ({ params, body }) => addField(params.id, body), {
 		body: AddFieldSchema,
+		requireAuth: true,
+	})
+	.patch("/:id/fields/:fieldId", ({ params, body }) => updateField(params.id, params.fieldId, body), {
+		body: UpdateFieldSchema,
 		requireAuth: true,
 	})
 	.delete(

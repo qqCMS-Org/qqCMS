@@ -4,18 +4,29 @@ import {
 	getEntriesByCollection,
 	getEntry,
 	insertEntry,
+	nullifyEntryFieldKey,
+	renameEntryFieldKey,
 	updateEntry,
 } from "@repository/collection-entries";
-import { deleteCollectionField, getFieldsByCollection, insertCollectionField } from "@repository/collection-fields";
+import {
+	deleteCollectionField,
+	getCollectionField,
+	getFieldsByCollection,
+	insertCollectionField,
+	updateCollectionField,
+} from "@repository/collection-fields";
 import { deleteCollection, getCollection, getCollections, insertCollection } from "@repository/collections";
 import type { FieldType } from "@schema/collection-fields";
-import type { AddFieldInput, CreateCollectionInput, UpsertEntryInput } from "./collections.types";
+import type { AddFieldInput, CreateCollectionInput, UpdateFieldInput, UpsertEntryInput } from "./collections.types";
 
 export const listCollections = () => getCollections();
 
 export const createCollection = async (data: CreateCollectionInput) => {
-	const [created] = await insertCollection({ name: data.name }).catch(() => {
-		throw new ConflictError("Collection with this name already exists");
+	const [created] = await insertCollection({ name: data.name }).catch((error: unknown) => {
+		const isUniqueViolation =
+			typeof error === "object" && error !== null && "code" in error && (error as { code: string }).code === "23505";
+		if (isUniqueViolation) throw new ConflictError("Collection with this name already exists");
+		throw error;
 	});
 	return created;
 };
@@ -57,7 +68,42 @@ export const addField = async (collectionId: string, data: AddFieldInput) => {
 export const removeField = async (collectionId: string, fieldId: string) => {
 	const existing = await getCollection(collectionId);
 	if (!existing) throw new NotFoundError("Collection not found");
+	const field = await getCollectionField(fieldId);
+	if (field) await nullifyEntryFieldKey(collectionId, field.name);
 	await deleteCollectionField(fieldId);
+};
+
+export const updateField = async (collectionId: string, fieldId: string, data: UpdateFieldInput) => {
+	const existing = await getCollection(collectionId);
+	if (!existing) throw new NotFoundError("Collection not found");
+
+	const field = await getCollectionField(fieldId);
+	if (!field || field.collectionId !== collectionId) throw new NotFoundError("Field not found");
+
+	const nameChanging = data.name !== undefined && data.name !== field.name;
+	const typeChanging = data.type !== undefined && data.type !== field.type;
+
+	if (typeChanging) {
+		await nullifyEntryFieldKey(collectionId, field.name);
+	}
+
+	if (nameChanging) {
+		const keyToRename = field.name;
+		const newKey = data.name as string;
+		await renameEntryFieldKey(collectionId, keyToRename, newKey);
+	}
+
+	const [updated] = await updateCollectionField(fieldId, {
+		name: data.name,
+		type: data.type as FieldType | undefined,
+		required: data.required,
+		isUnique: data.isUnique,
+		localised: data.localised,
+	}).catch(() => {
+		throw new ConflictError("A field with this name already exists in the collection");
+	});
+
+	return updated;
 };
 
 export const listEntries = async (collectionId: string) => {
