@@ -1,23 +1,25 @@
 services:
-  postgres:
-    image: postgres:17-alpine
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: qqcms
-      POSTGRES_PASSWORD: qqcms
-      POSTGRES_DB: qqcms
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - dokploy-network
-
   api:
     build:
       context: .
       target: api
     restart: unless-stopped
+    environment:
+      # Required vars are validated in apps/api/src/shared/config.ts: ADMIN_LOGIN, ADMIN_PASSWORD_HASH, JWT_SECRET, CORS_ORIGINS
+      - ADMIN_LOGIN
+      - ADMIN_PASSWORD_HASH
+      - JWT_SECRET
+      - CORS_ORIGINS
+      # Optional vars
+      - DEBUG
+      - DATABASE_URL
+      - UPLOAD_DIR
+      - PUBLIC_CLIENT_URL
+      - RUN_MIGRATIONS_ON_STARTUP
+      - PORT
+    volumes:
+      # Matches apps/api/src/db/index.ts -> new PGlite("./data/qqcms.db") in container workdir /app/apps/api
+      - pglite_data:/app/apps/api/data
     networks:
       - dokploy-network
 
@@ -37,7 +39,7 @@ services:
     environment:
       - HOST=0.0.0.0
       - PORT=3002
-      - REVALIDATE_SECRET=${REVALIDATE_SECRET}
+      - REVALIDATE_SECRET
     networks:
       - dokploy-network
 
@@ -46,4 +48,4 @@ networks:
     external: true
 
 volumes:
-  postgres_data:
+  pglite_data:

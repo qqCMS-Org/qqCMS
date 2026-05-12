@@ -1,6 +1,49 @@
 # Deployment
 
-> **Status: NOT IMPLEMENTED** — `Dockerfile` and `docker-compose.yml` exist in the repo root but are not yet configured for the actual apps. Multi-app Docker setup is not done.
+> **Status: IMPLEMENTED** — root `Dockerfile` and `docker-compose.yml` support `api`, `admin`, and `web` targets.
+
+## Dokploy (PGLite path)
+
+Use Dokploy **Compose Application** with:
+
+- Repository: `qqCMS-Org/qqCMS`
+- Branch: `feat/admin-panel` (or your deployment branch with the same compose setup)
+- Compose path: `docker-compose.yml`
+
+`docker-compose.yml` is configured for the default **PGLite** mode:
+
+- `api` mounts `pglite_data` to `/app/apps/api/data`
+- API database file persists at `/app/apps/api/data/qqcms.db` (from `new PGlite("./data/qqcms.db")` in `apps/api/src/db/index.ts`)
+- `DATABASE_URL` is not required unless you explicitly switch to PostgreSQL
+
+Minimal required setup:
+
+1. Set required API vars in Dokploy (`ADMIN_LOGIN`, `ADMIN_PASSWORD_HASH`, `JWT_SECRET`, `CORS_ORIGINS`)
+2. Set `CORS_ORIGINS` to the actual admin/web origins (IP/localhost is fine before a final domain is ready)
+3. Set `REVALIDATE_SECRET` for the `web` service in Dokploy environment variables
+4. Keep `DATABASE_URL` unset to stay on PGLite
+
+For optional API variables (such as `UPLOAD_DIR` or `RUN_MIGRATIONS_ON_STARTUP`), see [env.md](./env.md).
+
+### `ADMIN_PASSWORD_HASH` note (`$` interpolation)
+
+Avoid passing bcrypt hashes through Compose interpolation (e.g. `ADMIN_PASSWORD_HASH=${ADMIN_PASSWORD_HASH}`). The `$` characters in bcrypt hashes can be interpreted as variable references by Compose/Dokploy and corrupt the hash value.
+
+Recommended for this repo:
+
+- set API env vars directly in Dokploy (or an external secret manager)
+- do not put `ADMIN_PASSWORD_HASH` in compose `${...}` expressions
+- pass values via env passthrough entries used in `docker-compose.yml` (e.g. `- ADMIN_PASSWORD_HASH`)
+
+```yaml
+# ✅ correct passthrough
+environment:
+  - ADMIN_PASSWORD_HASH
+
+# ❌ avoid interpolation for bcrypt hashes
+environment:
+  - ADMIN_PASSWORD_HASH=${ADMIN_PASSWORD_HASH}
+```
 
 ## Architecture
 
