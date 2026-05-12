@@ -136,3 +136,12 @@
 - [x] Write unit tests for `media.service.ts` (MIME validation, size validation)
 - [x] Write unit tests for `languages.service.ts` (duplicate code conflict)
 - [x] Write unit tests for `settings.service.ts` (upsert behavior)
+
+## 16. Collections Module — Field Editing
+
+- [x] Add `getCollectionField` and `updateCollectionField` to `src/db/repository/collection-fields.ts`
+- [x] Add `nullifyEntryFieldKey` and `renameEntryFieldKey` to `src/db/repository/collection-entries.ts`
+- [x] Add `UpdateFieldSchema` and `UpdateFieldInput` to `collections.types.ts`
+- [x] Add `updateField` service function — handles rename (renames JSONB key) and type change (nullifies JSONB key)
+- [x] Update `removeField` to nullify JSONB key before deleting the field row
+- [x] Register `PATCH /:id/fields/:fieldId` in `collections.controller.ts`

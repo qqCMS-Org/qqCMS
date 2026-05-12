@@ -93,6 +93,27 @@
 - [x] Set up Drizzle with PGLite (schemas, migrations, repositories)
 - [x] Add core infrastructure (`Database`, `Logger`, `EventBus`, pagination utils)
 
+## Phase 2 (continued): Collections
+
+### Step 10 — Collections backend
+- [x] Add DB schema: `collections`, `collection_fields`, `collection_entries` tables
+- [x] Generate and run Drizzle migration
+- [x] Add repository functions: `collections.ts`, `collection-fields.ts`, `collection-entries.ts`
+- [x] Add `apps/api/src/modules/collections/` (types, service, controller, index)
+- [x] Register `collectionsModule` in `apps/api/src/index.ts`
+
+### Step 11 — Collections admin UI
+- [x] Create `apps/admin/src/pages/collections/index.astro`
+- [x] Create `apps/admin/src/widgets/collections/CollectionsManager.tsx` (full UI per prototype)
+- [x] Export widget from `apps/admin/src/widgets/collections/index.ts`
+
+### Step 12 — Collection field editing
+- [x] Add pencil icon button next to each field's delete button in `CollectionsManager.tsx`
+- [x] Implement inline edit form (or modal) to change field name and field type
+- [x] Add `PATCH /collections/:id/fields/:fieldId` endpoint in `apps/api/src/modules/collections/`
+- [x] On field rename or type change — clear all values for that column in `collection_entries` (nullify the key in the JSON data)
+- [x] On field delete — same clearing logic (already deletes the field row, ensure entry data is cleaned up too)
+
 ## Phase 4: CI/CD & Tooling
 - [x] Configure Biome for unified formatting across monorepo
 - [ ] Set up Turborepo remote caching (if applicable)

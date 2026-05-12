@@ -6,6 +6,7 @@ import { runMigrations } from "@core/Database";
 import { Logger } from "@core/Logger";
 import staticPlugin from "@elysiajs/static";
 import { authModule } from "@modules/auth";
+import { collectionsModule } from "@modules/collections";
 import { languagesModule } from "@modules/languages";
 import { mediaModule } from "@modules/media";
 import { ensureUploadDir } from "@modules/media/media.service";
@@ -63,6 +64,7 @@ const app = new Elysia()
 	.use(mediaModule)
 	.use(languagesModule)
 	.use(settingsModule)
+	.use(collectionsModule)
 	.listen(config.port);
 
 Logger.info(`Elysia is running at ${app.server?.hostname}:${app.server?.port}`);
