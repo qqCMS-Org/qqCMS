@@ -8,6 +8,7 @@ export const pages = pgTable("pages", {
 	status: pageStatusEnum("status").notNull().default("draft"),
 	hasDraft: boolean("has_draft").notNull().default(true),
 	isHomepage: boolean("is_homepage").notNull().default(false),
+	hideTitle: boolean("hide_title").notNull().default(false),
 	createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 	updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });

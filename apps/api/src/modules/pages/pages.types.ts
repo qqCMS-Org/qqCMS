@@ -8,6 +8,7 @@ export const CreatePageSchema = t.Object({
 export const UpdatePageSchema = t.Object({
 	slug: t.Optional(t.String({ minLength: 1 })),
 	isHomepage: t.Optional(t.Boolean()),
+	hideTitle: t.Optional(t.Boolean()),
 });
 
 export const UpdatePageStatusSchema = t.Object({

@@ -10,6 +10,7 @@ interface PageWithTranslations {
 	status: "draft" | "published" | "unpublished";
 	hasDraft: boolean;
 	isHomepage: boolean;
+	hideTitle: boolean;
 	translations: PageTranslationData[];
 }
 
@@ -25,7 +26,8 @@ function isPageWithTranslations(data: unknown): data is PageWithTranslations {
 		(PAGE_STATUSES as readonly string[]).includes(obj.status) &&
 		typeof obj.hasDraft === "boolean" &&
 		typeof obj.isHomepage === "boolean" &&
-		Array.isArray(obj.translations)
+		Array.isArray(obj.translations) &&
+		(typeof obj.hideTitle === "boolean" || obj.hideTitle === undefined)
 	);
 }
 
@@ -59,6 +61,7 @@ const languages = allLanguages.filter((lang) => lang.isActive);
     initialIsHomepage={page.isHomepage}
     initialStatus={page.status}
     initialHasDraft={page.hasDraft}
+    initialHideTitle={page.hideTitle ?? false}
     initialTranslations={page.translations}
     languages={languages}
     client:only="preact"

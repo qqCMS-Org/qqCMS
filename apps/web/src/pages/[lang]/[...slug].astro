@@ -1,5 +1,5 @@
 ---
-import { defaultRegistry, TipTapRenderer } from "@repo/ui";
+import { blockRegistry, defaultRegistry, TipTapRenderer } from "@repo/ui";
 import { WebLayout } from "@layouts";
 import { Header } from "@widgets/header";
 import { getPageTranslation } from "@entities/page";
@@ -68,6 +68,7 @@ try {
 
 const pageTitle = translation?.title ?? slug;
 const content = translation?.publishedContent ?? null;
+const hideTitle = page.hideTitle ?? false;
 ---
 
 <WebLayout title={pageTitle} lang={lang}>
@@ -79,7 +80,7 @@ const content = translation?.publishedContent ?? null;
     currentSlug={slug}
   />
   <main class="container mx-auto max-w-4xl px-4 py-10">
-    <h1 class="text-4xl font-bold mb-8">{pageTitle}</h1>
+    {!hideTitle && <h1 class="text-4xl font-bold mb-8">{pageTitle}</h1>}
     {
       content ? (
         <article class="prose prose-neutral max-w-none">

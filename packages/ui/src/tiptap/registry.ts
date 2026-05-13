@@ -1,3 +1,4 @@
+import { BlockNode } from "./nodes/BlockNode";
 import { BlockquoteNode } from "./nodes/BlockquoteNode";
 import { BulletListNode } from "./nodes/BulletListNode";
 import { CodeBlockNode } from "./nodes/CodeBlockNode";
@@ -27,4 +28,5 @@ export const defaultRegistry: NodeRegistry = {
 	horizontalRule: HorizontalRuleNode,
 	image: ImageNode,
 	youtube: YoutubeNode,
+	block: BlockNode,
 };

@@ -1,0 +1,1 @@
+ALTER TABLE "pages" ADD COLUMN "hide_title" boolean DEFAULT false NOT NULL;

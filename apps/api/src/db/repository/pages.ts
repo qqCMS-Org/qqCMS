@@ -12,6 +12,7 @@ export const getPages = () =>
 			status: pages.status,
 			hasDraft: pages.hasDraft,
 			isHomepage: pages.isHomepage,
+			hideTitle: pages.hideTitle,
 			createdAt: pages.createdAt,
 			updatedAt: pages.updatedAt,
 			title: pageTranslations.title,

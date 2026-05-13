@@ -9,6 +9,7 @@ const basePage = (overrides: Partial<Page> = {}): Page => ({
 	status: "draft",
 	hasDraft: true,
 	isHomepage: false,
+	hideTitle: false,
 	createdAt: new Date(),
 	updatedAt: new Date(),
 	...overrides,
