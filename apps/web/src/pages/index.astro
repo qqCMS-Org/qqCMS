@@ -2,57 +2,22 @@
 // SSR — this page is never prerendered, only runs at request time.
 export const prerender = false;
 
+import { resolveDefaultLang } from "@lib/resolveDefaultLang";
 import { api } from "@shared/api/client";
 
-// 1. Parse Accept-Language header into ordered lang codes
-// e.g. "uk-UA,uk;q=0.9,en;q=0.8" → ["uk", "en"]
-function parseAcceptLanguage(header: string | null): string[] {
-	if (!header) return [];
-	return header
-		.split(",")
-		.map((part) => {
-			const [lang, q] = part.trim().split(";q=");
-			return { code: lang.trim().split("-")[0].toLowerCase(), q: q ? parseFloat(q) : 1 };
-		})
-		.sort((a, b) => b.q - a.q)
-		.map((x) => x.code);
-}
-
-// 2. Fetch active languages + homepage slug
-let targetLang = "en";
+let targetLang = await resolveDefaultLang(Astro.request.headers.get("accept-language"));
 let targetSlug = "";
 
 try {
-	const [langsRes, pagesRes] = await Promise.all([
-		api.languages.get(),
-		api.pages.get(),
-	]);
-
-	if (!langsRes.error && !pagesRes.error) {
-		const activeLangs = langsRes.data.filter((l) => l.isActive);
-
-		// Match browser preference to an active language
-		const preferred = parseAcceptLanguage(
-			Astro.request.headers.get("accept-language"),
-		);
-		const matched = preferred.find((code) =>
-			activeLangs.some((l) => l.code === code),
-		);
-
-		// Fallback: use browser match → isDefault language → first active language → "en"
-		const defaultLang = activeLangs.find((l) => l.isDefault)?.code ?? activeLangs[0]?.code ?? "en";
-		targetLang = matched ?? defaultLang;
-
-		// Find homepage page slug
+	const pagesRes = await api.pages.get();
+	if (!pagesRes.error) {
 		const homepage = pagesRes.data.find((p) => p.isHomepage && p.status === "published");
-
 		targetSlug = homepage?.slug ?? "";
 	}
 } catch {
-	// API unreachable — fall back to /en/
+	// API unreachable — fall back to /{lang}/
 }
 
-// 3. Redirect — strip leading slash from slug to avoid double slashes
 const normalizedSlug = targetSlug.replace(/^\/+/, "");
 return Astro.redirect(
 	normalizedSlug ? `/${targetLang}/${normalizedSlug}` : `/${targetLang}/`,
