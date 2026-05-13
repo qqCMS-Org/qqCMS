@@ -3,12 +3,26 @@ import { defaultRegistry, TipTapRenderer } from "@repo/ui";
 import { WebLayout } from "@layouts";
 import { Header } from "@widgets/header";
 import { getPageTranslation } from "@entities/page";
+import { resolveDefaultLang } from "@lib/resolveDefaultLang";
 import { api } from "@shared/api/client";
 
 export const prerender = false;
 
 const lang = Astro.params.lang ?? "";
 const slug = Astro.params.slug ?? "";
+
+// Validate that lang is an active language code; if not, treat it as a slug segment
+const langsValidationRes = await api.languages.get().catch(() => null);
+const activeLangCodes = langsValidationRes && !langsValidationRes.error
+	? langsValidationRes.data.filter((l) => l.isActive).map((l) => l.code)
+	: [];
+
+if (activeLangCodes.length > 0 && !activeLangCodes.includes(lang)) {
+	// lang is not a real language — rebuild the full slug and redirect with resolved lang
+	const resolvedLang = await resolveDefaultLang(Astro.request.headers.get("accept-language"));
+	const fullSlug = slug ? `${lang}/${slug}` : lang;
+	return Astro.redirect(`/${resolvedLang}/${fullSlug}`, 302);
+}
 
 const pagesRes = await api.pages.get().catch(() => null);
 
@@ -32,16 +46,15 @@ let languages: Array<{ code: string; label: string }> = [];
 let navItems: Array<{ id: string; label: Record<string, string>; href: string }> = [];
 
 try {
-	const [t, langsRes, navRes] = await Promise.all([
+	const [t, navRes] = await Promise.all([
 		getPageTranslation(page.id, lang),
-		api.languages.get(),
 		api.navigation.get(),
 	]);
 
 	translation = t;
 
-	if (!langsRes.error) {
-		languages = langsRes.data
+	if (langsValidationRes && !langsValidationRes.error) {
+		languages = langsValidationRes.data
 			.filter((l) => l.isActive)
 			.map((l) => ({ code: l.code, label: l.label }));
 	}
