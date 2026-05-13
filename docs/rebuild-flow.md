@@ -1,12 +1,10 @@
 # Rebuild Flow
 
-> **Status: IMPLEMENTED** — `triggerRebuild` is called after every write in `apps/api`. `apps/web/src/pages/api/revalidate.ts` exists (webhook receiver logic not yet implemented).
+> **Status: IMPLEMENTED** — Full revalidation cycle is in place: API triggers the webhook, `apps/web` validates the secret, clears the in-memory HTML cache, and optionally calls a deploy hook.
 
 ## Overview
 
-`apps/web` is a **static site (SSG)**. Content is baked into HTML at build time. When the admin saves content in the admin panel, the public site must be rebuilt to reflect changes.
-
-The rebuild is triggered via an HTTP webhook.
+`apps/web` is **SSR with in-memory HTML caching** — effectively ISR without a TTL. Pages are rendered on first request and cached in memory. When content changes, the API sends a webhook that clears the cache so the next request re-renders from fresh data.
 
 ## Flow
 
@@ -37,11 +35,12 @@ Static HTML is regenerated from fresh API data
 POST /api/revalidate        (in apps/web)
 ```
 
-Located at `apps/web/src/pages/api/revalidate.ts` (file exists, logic not implemented).
+Located at `apps/web/src/pages/api/revalidate.ts`.
 
-This endpoint should:
-1. Verify the request is from the API server (shared secret or token)
-2. Trigger a rebuild (on Render.com: call the deploy hook URL; locally: run `astro build`)
+This endpoint:
+1. Verifies the `x-revalidate-secret` header against `REVALIDATE_SECRET` env var (timing-safe compare)
+2. Calls `invalidateAll()` to clear the in-memory HTML cache
+3. Optionally POSTs to `DEPLOY_HOOK_URL` (e.g. Render.com deploy hook) to trigger a full redeploy
 
 ## API Server Side
 
