@@ -1,7 +1,7 @@
 import { db } from "@core/Database";
 import type { NewLanguage } from "@schema/languages";
 import { languages } from "@schema/languages";
-import { eq } from "drizzle-orm";
+import { eq, ne } from "drizzle-orm";
 
 export const getLanguages = () => db.select().from(languages);
 
@@ -21,7 +21,11 @@ export const insertLanguage = (data: Omit<NewLanguage, "id">) =>
 		.values({ ...data, id: crypto.randomUUID() })
 		.returning();
 
-export const updateLanguage = (id: string, data: Partial<Omit<NewLanguage, "id">>) =>
-	db.update(languages).set(data).where(eq(languages.id, id)).returning();
+export const updateLanguage = async (id: string, data: Partial<Omit<NewLanguage, "id">>) => {
+	if (data.isDefault === true) {
+		await db.update(languages).set({ isDefault: false }).where(ne(languages.id, id));
+	}
+	return db.update(languages).set(data).where(eq(languages.id, id)).returning();
+};
 
 export const deleteLanguage = (id: string) => db.delete(languages).where(eq(languages.id, id));

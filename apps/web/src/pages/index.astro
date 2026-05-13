@@ -38,7 +38,10 @@ try {
 		const matched = preferred.find((code) =>
 			activeLangs.some((l) => l.code === code),
 		);
-		targetLang = matched ?? activeLangs[0]?.code ?? "en";
+
+		// Fallback: use browser match → isDefault language → first active language → "en"
+		const defaultLang = activeLangs.find((l) => l.isDefault)?.code ?? activeLangs[0]?.code ?? "en";
+		targetLang = matched ?? defaultLang;
 
 		// Find homepage page slug
 		const homepage = pagesRes.data.find((p) => p.isHomepage && p.status === "published");

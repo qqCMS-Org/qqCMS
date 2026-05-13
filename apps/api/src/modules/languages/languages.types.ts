@@ -9,6 +9,7 @@ export const CreateLanguageSchema = t.Object({
 export const UpdateLanguageSchema = t.Object({
 	label: t.Optional(t.String({ minLength: 1 })),
 	isActive: t.Optional(t.Boolean()),
+	isDefault: t.Optional(t.Boolean()),
 });
 
 export type CreateLanguageInput = Static<typeof CreateLanguageSchema>;

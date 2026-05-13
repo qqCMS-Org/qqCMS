@@ -7,6 +7,7 @@ export interface LanguageRow {
 	code: string;
 	label: string;
 	isActive: boolean;
+	isDefault: boolean;
 }
 
 interface LanguagesTableProps {
@@ -26,6 +27,14 @@ export function LanguagesTable({ initialLanguages }: LanguagesTableProps): JSX.E
 
 		if (!error) {
 			languages.value = languages.value.map((lang) => (lang.id === id ? { ...lang, isActive: !current } : lang));
+		}
+	};
+
+	const handleSetDefault = async (id: string): Promise<void> => {
+		const { error } = await api.languages({ id }).patch({ isDefault: true });
+
+		if (!error) {
+			languages.value = languages.value.map((lang) => ({ ...lang, isDefault: lang.id === id }));
 		}
 	};
 
@@ -84,6 +93,19 @@ export function LanguagesTable({ initialLanguages }: LanguagesTableProps): JSX.E
 					>
 						<span class="text-[10px] text-text2 font-mono w-5 shrink-0">{lang.code}</span>
 						<span class="text-[11px] text-text0 flex-1">{lang.label}</span>
+						{lang.isDefault ? (
+							<span class="text-[10px] text-accent font-medium px-1.5 py-0.5 rounded bg-accent-faint border border-accent/20">
+								default
+							</span>
+						) : (
+							<button
+								type="button"
+								onClick={() => handleSetDefault(lang.id)}
+								class="text-[10px] text-text2 bg-transparent border border-ui-border rounded px-1.5 py-0.5 cursor-pointer hover:text-text0 hover:border-ui-border-hover transition-colors"
+							>
+								Set default
+							</button>
+						)}
 						<Toggle value={lang.isActive} onChange={() => handleToggleActive(lang.id, lang.isActive)} />
 						<button
 							type="button"
