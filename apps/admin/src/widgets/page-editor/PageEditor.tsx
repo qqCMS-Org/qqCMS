@@ -21,6 +21,7 @@ export interface PageLanguage {
 	code: string;
 	label: string;
 	isActive: boolean;
+	isDefault: boolean;
 }
 
 export interface PageTranslationData {
@@ -55,7 +56,8 @@ export function PageEditor({
 	initialTranslations = [],
 	languages,
 }: PageEditorProps): JSX.Element {
-	const activeLang = useSignal(languages[0]?.code ?? "");
+	const defaultLang = languages.find((lang) => lang.isDefault) ?? languages[0];
+	const activeLang = useSignal(defaultLang?.code ?? "");
 	const slug = useSignal(initialSlug);
 	const isHomepage = useSignal(initialIsHomepage);
 	const hideTitle = useSignal(initialHideTitle);
@@ -143,7 +145,18 @@ export function PageEditor({
 		return pageIdArg;
 	};
 
+	const defaultLangCode = (languages.find((lang) => lang.isDefault) ?? languages[0])?.code;
+
+	const validateDefaultLangTitle = (): boolean => {
+		if (!defaultLangCode || savedTranslations.value[defaultLangCode]?.title.trim()) return true;
+		errorMsg.value = `Title in the default language (${defaultLangCode.toUpperCase()}) is required`;
+		activeLang.value = defaultLangCode;
+		activeTitle.value = savedTranslations.value[defaultLangCode]?.title ?? "";
+		return false;
+	};
+
 	const handleSaveDraft = async (): Promise<void> => {
+		if (!validateDefaultLangTitle()) return;
 		saving.value = true;
 		errorMsg.value = null;
 
@@ -162,6 +175,7 @@ export function PageEditor({
 	};
 
 	const handlePublish = async (): Promise<void> => {
+		if (!validateDefaultLangTitle()) return;
 		saving.value = true;
 		errorMsg.value = null;
 
@@ -298,6 +312,7 @@ export function PageEditor({
 								}`}
 							>
 								{lang.code.toUpperCase()}
+								{lang.isDefault && <span class="ml-0.5 text-[8px] opacity-60">*</span>}
 							</button>
 						))}
 					</div>
