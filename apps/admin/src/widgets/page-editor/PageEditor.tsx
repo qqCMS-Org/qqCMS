@@ -297,26 +297,6 @@ export function PageEditor({
 						Draft
 					</span>
 				)}
-
-				{languages.length > 1 && (
-					<div class="flex gap-1">
-						{languages.map((lang) => (
-							<button
-								key={lang.code}
-								type="button"
-								onClick={() => switchLang(lang.code)}
-								class={`px-2 py-1 text-[10px] rounded border cursor-pointer transition-all ${
-									activeLang.value === lang.code
-										? "bg-accent border-accent text-white"
-										: "bg-bg4 border-ui-border text-text1 hover:border-ui-border-hover"
-								}`}
-							>
-								{lang.code.toUpperCase()}
-								{lang.isDefault && <span class="ml-0.5 text-[8px] opacity-60">*</span>}
-							</button>
-						))}
-					</div>
-				)}
 			</div>
 
 			{/* ── Body ──────────────────────────────────────────── */}
@@ -393,7 +373,31 @@ export function PageEditor({
 				</div>
 
 				{/* ── Settings sidebar ────────────────────────── */}
-				<aside class="w-72 shrink-0 bg-bg0 border-l border-ui-border overflow-y-auto flex flex-col gap-3 p-3.5">
+				<aside class="w-80 shrink-0 bg-bg0 border-l border-ui-border overflow-y-auto flex flex-col gap-3 p-3.5">
+					{/* Language switcher */}
+					{languages.length > 1 && (
+						<div class="bg-bg2 border border-ui-border rounded-md p-3">
+							<div class="text-[11px] text-text0 mb-2.5">Language</div>
+							<div class="flex flex-wrap gap-1.5">
+								{languages.map((lang) => (
+									<button
+										key={lang.code}
+										type="button"
+										onClick={() => switchLang(lang.code)}
+										class={`px-3 py-1.5 text-[11px] rounded border cursor-pointer transition-all ${
+											activeLang.value === lang.code
+												? "bg-accent border-accent text-white"
+												: "bg-bg1 border-ui-border text-text1 hover:border-ui-border-hover"
+										}`}
+									>
+										{lang.label}
+										{lang.isDefault && <span class="ml-1 text-[9px] opacity-50">default</span>}
+									</button>
+								))}
+							</div>
+						</div>
+					)}
+
 					{/* Version status */}
 					<div class="bg-bg2 border border-ui-border rounded-md p-3">
 						<div class="text-[11px] text-text0 mb-2.5">Version status</div>
