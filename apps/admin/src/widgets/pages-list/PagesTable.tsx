@@ -63,15 +63,15 @@ export function PagesTable({ initialPages }: PagesTableProps): JSX.Element {
 						href={`/pages/${page.id}/edit`}
 						class="bg-bg2 border border-ui-border rounded-lg p-4 no-underline block hover:border-ui-border-hover transition-colors"
 					>
-						<div class="flex items-center gap-1.5 mb-2.5">
-							<span class="text-[10px] text-green font-mono">
+						<div class="flex items-center gap-1.5 mb-2.5 min-w-0">
+							<span class="text-[10px] text-green font-mono truncate min-w-0">
 								{page.slug.startsWith("/") ? page.slug : `/${page.slug}`}
 							</span>
 							{page.isHomepage && (
 								<span class="text-[9px] text-accent bg-accent/10 px-1 py-0.5 rounded font-mono">HOME</span>
 							)}
 						</div>
-						<div class="font-serif italic text-text0 mb-3.5" style="font-size: 22px; line-height: 1.2">
+						<div class="font-serif italic text-text0 mb-3.5 line-clamp-2" style="font-size: 22px; line-height: 1.2">
 							{page.title ?? <span class="text-text2">Untitled</span>}
 						</div>
 						<div class="flex justify-between items-center">

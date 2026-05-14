@@ -1,12 +1,12 @@
 import { type Static, t } from "elysia";
 
 export const CreatePageSchema = t.Object({
-	slug: t.String({ minLength: 1 }),
+	slug: t.String({ minLength: 1, maxLength: 255 }),
 	isHomepage: t.Optional(t.Boolean()),
 });
 
 export const UpdatePageSchema = t.Object({
-	slug: t.Optional(t.String({ minLength: 1 })),
+	slug: t.Optional(t.String({ minLength: 1, maxLength: 255 })),
 	isHomepage: t.Optional(t.Boolean()),
 	hideTitle: t.Optional(t.Boolean()),
 });

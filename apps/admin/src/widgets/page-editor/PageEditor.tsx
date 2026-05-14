@@ -64,7 +64,6 @@ export function PageEditor({
 	const saving = useSignal(false);
 	const errorMsg = useSignal<string | null>(null);
 	const showDeleteConfirm = useSignal(false);
-	const showMeta = useSignal(false);
 
 	const savedTranslations = useSignal<Record<string, TranslationEntry>>(
 		Object.fromEntries(
@@ -256,17 +255,17 @@ export function PageEditor({
 	return (
 		<div class="flex flex-col h-screen">
 			{/* ── Topbar ──────────────────────────────────────── */}
-			<div class="h-11 bg-bg0 border-b border-ui-border flex items-center px-3 gap-1.5 shrink-0 z-10">
+			<div class="h-11 bg-bg0 border-b border-ui-border flex items-center px-3 gap-1.5 shrink-0 z-10 min-w-0">
 				<a
 					href="/pages"
-					class="flex items-center gap-1 text-[11px] text-text1 hover:text-text0 transition-colors no-underline px-1.5 py-1 rounded hover:bg-bg3"
+					class="flex items-center gap-1 text-[11px] text-text1 hover:text-text0 transition-colors no-underline px-1.5 py-1 rounded hover:bg-bg3 shrink-0"
 				>
 					← Back
 				</a>
-				<span class="text-[11px] text-text2">/</span>
-				<span class="text-[11px] text-text0 font-mono">{slug.value || "new"}</span>
+				<span class="text-[11px] text-text2 shrink-0">/</span>
+				<span class="text-[11px] text-text0 font-mono truncate min-w-0">{slug.value || "new"}</span>
 
-				<div class="flex-1" />
+				<div class="flex-1 shrink-0" />
 
 				{status.value === "published" ? (
 					<span class="inline-flex items-center gap-1.5 text-[11px] text-green bg-green-faint px-2.5 py-1 rounded">
@@ -303,26 +302,31 @@ export function PageEditor({
 						))}
 					</div>
 				)}
-
-				<button
-					type="button"
-					onClick={() => {
-						showMeta.value = !showMeta.value;
-					}}
-					class={`px-2.5 py-1 text-[11px] rounded border transition-colors cursor-pointer ${
-						showMeta.value
-							? "bg-bg3 border-ui-border-hover text-text0"
-							: "bg-bg2 border-ui-border text-text1 hover:border-ui-border-hover"
-					}`}
-				>
-					Settings
-				</button>
 			</div>
 
 			{/* ── Body ──────────────────────────────────────────── */}
 			<div class="flex-1 flex overflow-hidden">
 				{/* ── Editor ──────────────────────────────────── */}
 				<div class="flex-1 flex flex-col overflow-hidden bg-bg1">
+					<div class="max-w-[720px] mx-auto w-full px-6 pt-10 pb-2 shrink-0">
+						<input
+							type="text"
+							key={activeLang.value}
+							value={activeTitle.value}
+							onInput={(event: Event & { currentTarget: HTMLInputElement }) => {
+								activeTitle.value = event.currentTarget.value;
+								savedTranslations.value = {
+									...savedTranslations.value,
+									[activeLang.value]: {
+										...savedTranslations.value[activeLang.value],
+										title: event.currentTarget.value,
+									},
+								};
+							}}
+							placeholder="Page title…"
+							class="font-serif italic text-[32px] text-text0 bg-transparent border-none outline-none w-full mb-2 leading-[1.3] placeholder-text2/40"
+						/>
+					</div>
 					<EditorRoot>
 						<EditorContent
 							key={activeLang.value}
@@ -334,7 +338,7 @@ export function PageEditor({
 									keydown: (_view: unknown, event: KeyboardEvent) => handleCommandNavigation(event),
 								},
 								attributes: {
-									class: "max-w-[720px] mx-auto px-6 py-10",
+									class: "max-w-[720px] mx-auto px-6 py-4",
 								},
 							}}
 							onUpdate={({ editor }: { editor: { getJSON: () => JSONContent } }) => {
@@ -347,25 +351,6 @@ export function PageEditor({
 								};
 							}}
 						>
-							<div class="max-w-[720px] mx-auto px-6 pt-10 pb-2">
-								<input
-									type="text"
-									value={activeTitle.value}
-									onInput={(event: Event & { currentTarget: HTMLInputElement }) => {
-										activeTitle.value = event.currentTarget.value;
-										savedTranslations.value = {
-											...savedTranslations.value,
-											[activeLang.value]: {
-												...savedTranslations.value[activeLang.value],
-												title: event.currentTarget.value,
-											},
-										};
-									}}
-									placeholder="Page title…"
-									class="font-serif italic text-[32px] text-text0 bg-transparent border-none outline-none w-full mb-2 leading-[1.3] placeholder-text2/40"
-								/>
-							</div>
-
 							<EditorCommand className="z-50 h-auto max-h-[330px] overflow-y-auto rounded-xl border border-ui-border bg-bg0 shadow-lg transition-all">
 								<EditorCommandEmpty className="px-3 py-3 text-[11px] text-text2">No results</EditorCommandEmpty>
 								<EditorCommandList className="px-1 py-1">
@@ -392,169 +377,166 @@ export function PageEditor({
 					</EditorRoot>
 				</div>
 
-				{/* ── Settings drawer ─────────────────────────── */}
-				{showMeta.value && (
-					<aside class="w-72 shrink-0 bg-bg0 border-l border-ui-border overflow-y-auto flex flex-col gap-3 p-3.5">
-						{/* Version status */}
-						<div class="bg-bg2 border border-ui-border rounded-md p-3">
-							<div class="text-[11px] text-text0 mb-2.5">Version status</div>
+				{/* ── Settings sidebar ────────────────────────── */}
+				<aside class="w-72 shrink-0 bg-bg0 border-l border-ui-border overflow-y-auto flex flex-col gap-3 p-3.5">
+					{/* Version status */}
+					<div class="bg-bg2 border border-ui-border rounded-md p-3">
+						<div class="text-[11px] text-text0 mb-2.5">Version status</div>
 
-							{pageId && status.value !== "draft" && (
-								<div class="flex items-center justify-between mb-2.5">
-									<span class="text-[10px] text-text1">
-										{status.value === "published" ? "Published" : "Unpublished"}
-									</span>
-									<Toggle
-										value={status.value === "published"}
-										onChange={handleToggleVisibility}
-										disabled={saving.value}
-									/>
-								</div>
-							)}
+						{pageId && status.value !== "draft" && (
+							<div class="flex items-center justify-between mb-2.5">
+								<span class="text-[10px] text-text1">{status.value === "published" ? "Published" : "Unpublished"}</span>
+								<Toggle
+									value={status.value === "published"}
+									onChange={handleToggleVisibility}
+									disabled={saving.value}
+								/>
+							</div>
+						)}
 
-							{pageId && hasDraft.value && (status.value === "published" || status.value === "unpublished") && (
-								<div class="bg-amber-faint border border-amber/20 rounded px-2 py-1.5 mb-2.5">
-									<div class="text-[10px] text-amber font-medium mb-1.5">Draft pending</div>
-									<div class="flex gap-1">
-										<button
-											type="button"
-											onClick={handlePublish}
-											disabled={saving.value}
-											class="flex-1 text-center text-[10px] bg-accent text-white border-none rounded py-1 cursor-pointer hover:bg-accent-hover transition-colors disabled:opacity-40"
-										>
-											{saving.value ? "…" : "Publish draft"}
-										</button>
-										<button
-											type="button"
-											onClick={handleDiscardDraft}
-											disabled={saving.value}
-											class="flex-1 text-center text-[10px] bg-bg3 border border-ui-border text-text1 rounded py-1 cursor-pointer hover:border-ui-border-hover transition-colors disabled:opacity-40"
-										>
-											Discard
-										</button>
-									</div>
-								</div>
-							)}
-
-							{!pageId && <div class="text-[10px] text-text1 mb-2.5">Not published yet</div>}
-
-							{errorMsg.value && (
-								<p class="text-[10px] text-coral bg-coral/10 border border-coral/20 rounded px-2 py-1.5 mb-2">
-									{errorMsg.value}
-								</p>
-							)}
-
-							{(!pageId || status.value === "draft" || !hasDraft.value) && (
-								<div class="flex gap-1.5">
-									<button
-										type="button"
-										onClick={handleSaveDraft}
-										disabled={saving.value}
-										class="flex-1 text-center text-[11px] bg-bg3 border border-ui-border text-text0 rounded py-1.5 cursor-pointer hover:border-ui-border-hover transition-colors disabled:opacity-40"
-									>
-										Save draft
-									</button>
+						{pageId && hasDraft.value && (status.value === "published" || status.value === "unpublished") && (
+							<div class="bg-amber-faint border border-amber/20 rounded px-2 py-1.5 mb-2.5">
+								<div class="text-[10px] text-amber font-medium mb-1.5">Draft pending</div>
+								<div class="flex gap-1">
 									<button
 										type="button"
 										onClick={handlePublish}
 										disabled={saving.value}
-										class="flex-1 text-center text-[11px] bg-accent text-white border-none rounded py-1.5 cursor-pointer hover:bg-accent-hover transition-colors disabled:opacity-40"
+										class="flex-1 text-center text-[10px] bg-accent text-white border-none rounded py-1 cursor-pointer hover:bg-accent-hover transition-colors disabled:opacity-40"
 									>
-										{saving.value ? "…" : "Publish ↑"}
+										{saving.value ? "…" : "Publish draft"}
 									</button>
-								</div>
-							)}
-						</div>
-
-						{/* Page meta */}
-						<div class="bg-bg2 border border-ui-border rounded-md p-3">
-							<div class="text-[11px] text-text0 mb-2.5">Page meta</div>
-
-							<label class="flex items-center gap-2.5 cursor-pointer select-none mb-2.5">
-								<input
-									type="checkbox"
-									checked={isHomepage.value}
-									onChange={(event: Event & { currentTarget: HTMLInputElement }) => {
-										isHomepage.value = event.currentTarget.checked;
-										if (event.currentTarget.checked) {
-											slug.value = "/";
-										}
-									}}
-									class="w-4 h-4 accent-accent cursor-pointer"
-								/>
-								<span class="text-[11px] text-text1">Set as homepage</span>
-							</label>
-
-							<label class="flex items-center gap-2.5 cursor-pointer select-none mb-2.5">
-								<input
-									type="checkbox"
-									checked={hideTitle.value}
-									onChange={(event: Event & { currentTarget: HTMLInputElement }) => {
-										hideTitle.value = event.currentTarget.checked;
-									}}
-									class="w-4 h-4 accent-accent cursor-pointer"
-								/>
-								<span class="text-[11px] text-text1">Hide title on page</span>
-							</label>
-
-							<div class="text-[10px] text-text2 mb-1">Slug</div>
-							<input
-								type="text"
-								value={isHomepage.value ? "/" : slug.value}
-								onInput={(event: Event & { currentTarget: HTMLInputElement }) => {
-									slug.value = event.currentTarget.value;
-								}}
-								placeholder="/about"
-								disabled={isHomepage.value}
-								class={`w-full bg-bg1 border border-ui-border rounded text-[11px] text-text0 px-2 py-1.5 outline-none focus:border-ui-border-hover transition-colors ${isHomepage.value ? "opacity-40 cursor-not-allowed" : ""}`}
-							/>
-						</div>
-
-						{/* Danger zone */}
-						{pageId && (
-							<div class="bg-bg2 border border-coral/30 rounded-md p-3">
-								<div class="text-[11px] text-coral mb-2.5">Danger zone</div>
-								{showDeleteConfirm.value ? (
-									<>
-										<p class="text-[10px] text-text1 mb-2">
-											Permanently deletes this page and all translations. Cannot be undone.
-										</p>
-										<div class="flex gap-1">
-											<button
-												type="button"
-												onClick={handleDeletePage}
-												disabled={saving.value}
-												class="flex-1 text-center text-[10px] bg-coral text-white border-none rounded py-1 cursor-pointer hover:opacity-80 transition-opacity disabled:opacity-40"
-											>
-												{saving.value ? "Deleting…" : "Yes, delete"}
-											</button>
-											<button
-												type="button"
-												onClick={() => {
-													showDeleteConfirm.value = false;
-												}}
-												disabled={saving.value}
-												class="flex-1 text-center text-[10px] bg-bg3 border border-ui-border text-text1 rounded py-1 cursor-pointer hover:border-ui-border-hover transition-colors disabled:opacity-40"
-											>
-												Cancel
-											</button>
-										</div>
-									</>
-								) : (
 									<button
 										type="button"
-										onClick={() => {
-											showDeleteConfirm.value = true;
-										}}
-										class="w-full text-center text-[10px] border border-coral/40 text-coral rounded py-1.5 cursor-pointer hover:bg-coral/10 transition-colors"
+										onClick={handleDiscardDraft}
+										disabled={saving.value}
+										class="flex-1 text-center text-[10px] bg-bg3 border border-ui-border text-text1 rounded py-1 cursor-pointer hover:border-ui-border-hover transition-colors disabled:opacity-40"
 									>
-										Delete page
+										Discard
 									</button>
-								)}
+								</div>
 							</div>
 						)}
-					</aside>
-				)}
+
+						{!pageId && <div class="text-[10px] text-text1 mb-2.5">Not published yet</div>}
+
+						{errorMsg.value && (
+							<p class="text-[10px] text-coral bg-coral/10 border border-coral/20 rounded px-2 py-1.5 mb-2">
+								{errorMsg.value}
+							</p>
+						)}
+
+						{(!pageId || status.value === "draft" || !hasDraft.value) && (
+							<div class="flex gap-1.5">
+								<button
+									type="button"
+									onClick={handleSaveDraft}
+									disabled={saving.value}
+									class="flex-1 text-center text-[11px] bg-bg3 border border-ui-border text-text0 rounded py-1.5 cursor-pointer hover:border-ui-border-hover transition-colors disabled:opacity-40"
+								>
+									Save draft
+								</button>
+								<button
+									type="button"
+									onClick={handlePublish}
+									disabled={saving.value}
+									class="flex-1 text-center text-[11px] bg-accent text-white border-none rounded py-1.5 cursor-pointer hover:bg-accent-hover transition-colors disabled:opacity-40"
+								>
+									{saving.value ? "…" : "Publish ↑"}
+								</button>
+							</div>
+						)}
+					</div>
+
+					{/* Page meta */}
+					<div class="bg-bg2 border border-ui-border rounded-md p-3">
+						<div class="text-[11px] text-text0 mb-2.5">Page meta</div>
+
+						<label class="flex items-center gap-2.5 cursor-pointer select-none mb-2.5">
+							<input
+								type="checkbox"
+								checked={isHomepage.value}
+								onChange={(event: Event & { currentTarget: HTMLInputElement }) => {
+									isHomepage.value = event.currentTarget.checked;
+									if (event.currentTarget.checked) {
+										slug.value = "/";
+									}
+								}}
+								class="w-4 h-4 accent-accent cursor-pointer"
+							/>
+							<span class="text-[11px] text-text1">Set as homepage</span>
+						</label>
+
+						<label class="flex items-center gap-2.5 cursor-pointer select-none mb-2.5">
+							<input
+								type="checkbox"
+								checked={hideTitle.value}
+								onChange={(event: Event & { currentTarget: HTMLInputElement }) => {
+									hideTitle.value = event.currentTarget.checked;
+								}}
+								class="w-4 h-4 accent-accent cursor-pointer"
+							/>
+							<span class="text-[11px] text-text1">Hide title on page</span>
+						</label>
+
+						<div class="text-[10px] text-text2 mb-1">Slug</div>
+						<input
+							type="text"
+							value={isHomepage.value ? "/" : slug.value}
+							onInput={(event: Event & { currentTarget: HTMLInputElement }) => {
+								slug.value = event.currentTarget.value;
+							}}
+							placeholder="/about"
+							maxLength={255}
+							disabled={isHomepage.value}
+							class={`w-full bg-bg1 border border-ui-border rounded text-[11px] text-text0 px-2 py-1.5 outline-none focus:border-ui-border-hover transition-colors ${isHomepage.value ? "opacity-40 cursor-not-allowed" : ""}`}
+						/>
+					</div>
+
+					{/* Danger zone */}
+					{pageId && (
+						<div class="bg-bg2 border border-coral/30 rounded-md p-3">
+							<div class="text-[11px] text-coral mb-2.5">Danger zone</div>
+							{showDeleteConfirm.value ? (
+								<>
+									<p class="text-[10px] text-text1 mb-2">
+										Permanently deletes this page and all translations. Cannot be undone.
+									</p>
+									<div class="flex gap-1">
+										<button
+											type="button"
+											onClick={handleDeletePage}
+											disabled={saving.value}
+											class="flex-1 text-center text-[10px] bg-coral text-white border-none rounded py-1 cursor-pointer hover:opacity-80 transition-opacity disabled:opacity-40"
+										>
+											{saving.value ? "Deleting…" : "Yes, delete"}
+										</button>
+										<button
+											type="button"
+											onClick={() => {
+												showDeleteConfirm.value = false;
+											}}
+											disabled={saving.value}
+											class="flex-1 text-center text-[10px] bg-bg3 border border-ui-border text-text1 rounded py-1 cursor-pointer hover:border-ui-border-hover transition-colors disabled:opacity-40"
+										>
+											Cancel
+										</button>
+									</div>
+								</>
+							) : (
+								<button
+									type="button"
+									onClick={() => {
+										showDeleteConfirm.value = true;
+									}}
+									class="w-full text-center text-[10px] border border-coral/40 text-coral rounded py-1.5 cursor-pointer hover:bg-coral/10 transition-colors"
+								>
+									Delete page
+								</button>
+							)}
+						</div>
+					)}
+				</aside>
 			</div>
 
 			{/* ── Bottom bar ──────────────────────────────────── */}
