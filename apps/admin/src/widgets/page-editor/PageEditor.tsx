@@ -69,6 +69,7 @@ export function PageEditor({
 	const saving = useSignal(false);
 	const errorMsg = useSignal<string | null>(null);
 	const showDeleteConfirm = useSignal(false);
+	const sidebarOpen = useSignal(false);
 
 	const savedTranslations = useSignal<Record<string, TranslationEntry>>(
 		Object.fromEntries(
@@ -304,6 +305,16 @@ export function PageEditor({
 
 			{/* ── Body ──────────────────────────────────────────── */}
 			<div class="flex-1 flex overflow-hidden">
+				{sidebarOpen.value && (
+					<button
+						type="button"
+						aria-label="Close settings"
+						class="fixed inset-0 z-40 bg-black/50 min-[841px]:hidden cursor-default border-none p-0"
+						onClick={() => {
+							sidebarOpen.value = false;
+						}}
+					/>
+				)}
 				{/* ── Editor ──────────────────────────────────── */}
 				<div class="flex-1 flex flex-col overflow-hidden bg-bg1">
 					<div class="max-w-180 mx-auto w-full px-6 pt-10 pb-2 shrink-0">
@@ -376,7 +387,22 @@ export function PageEditor({
 				</div>
 
 				{/* ── Settings sidebar ────────────────────────── */}
-				<aside class="w-80 shrink-0 bg-bg0 border-l border-ui-border overflow-y-auto flex flex-col gap-3 p-3.5">
+				<aside
+					class={`w-80 shrink-0 bg-bg0 border-l border-ui-border overflow-y-auto flex flex-col gap-3 p-3.5 max-[840px]:fixed max-[840px]:top-0 max-[840px]:right-0 max-[840px]:h-full max-[840px]:z-50 max-[840px]:shadow-2xl max-[840px]:transition-transform max-[840px]:duration-200 ${sidebarOpen.value ? "max-[840px]:translate-x-0" : "max-[840px]:translate-x-full"}`}
+				>
+					<div class="hidden max-[840px]:flex justify-between items-center">
+						<span class="text-[11px] text-text0">Settings</span>
+						<button
+							type="button"
+							onClick={() => {
+								sidebarOpen.value = false;
+							}}
+							class="flex items-center justify-center w-6 h-6 text-text1 hover:text-text0 hover:bg-bg3 rounded transition-colors"
+							aria-label="Close settings"
+						>
+							✕
+						</button>
+					</div>
 					{/* Language switcher */}
 					{languages.length > 1 && (
 						<div class="bg-bg2 border border-ui-border rounded-md p-3">
@@ -569,6 +595,23 @@ export function PageEditor({
 					)}
 				</aside>
 			</div>
+
+			{/* ── Mobile sidebar tab ─────────────────────────── */}
+			{!sidebarOpen.value && (
+				<button
+					type="button"
+					onClick={() => {
+						sidebarOpen.value = true;
+					}}
+					aria-label="Open page settings"
+					class="hidden max-[840px]:flex fixed right-0 bottom-1/3 z-30 flex-col items-center gap-1.5 bg-bg0 border border-r-0 border-ui-border rounded-l-xl px-2.5 py-3.5 shadow-lg text-text1 hover:text-text0 hover:bg-bg2 transition-colors"
+				>
+					<span class="text-[15px]">⚙</span>
+					<span class="text-[9px] [writing-mode:vertical-rl] rotate-180 tracking-widest uppercase text-text2">
+						Settings
+					</span>
+				</button>
+			)}
 		</div>
 	);
 }
