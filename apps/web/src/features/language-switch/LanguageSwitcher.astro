@@ -33,11 +33,15 @@ const { languages, currentLang, currentSlug } = Astro.props;
 </div>
 
 <script>
-  const el = document.getElementById("lang-switcher");
-  if (el instanceof HTMLSelectElement) {
-    el.addEventListener("change", () => {
-      const slug = el.dataset.slug ?? "";
-      window.location.href = slug ? `/${el.value}/${slug}` : `/${el.value}/`;
-    });
+  function initLangSwitcher() {
+    const el = document.getElementById("lang-switcher");
+    if (el instanceof HTMLSelectElement) {
+      el.addEventListener("change", () => {
+        const slug = el.dataset.slug ?? "";
+        window.location.href = slug ? `/${el.value}/${slug}` : `/${el.value}/`;
+      });
+    }
   }
+
+  document.addEventListener("astro:page-load", initLangSwitcher);
 </script>
