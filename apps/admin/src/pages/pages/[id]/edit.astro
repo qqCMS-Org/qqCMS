@@ -36,9 +36,10 @@ const API_URL = import.meta.env.PUBLIC_API_URL ?? DEFAULT_API_URL;
 const token = Astro.cookies.get(COOKIE_NAME)?.value;
 const authHeaders: Record<string, string> = token ? { Cookie: `${COOKIE_NAME}=${token}` } : {};
 
-const [pageRes, langsRes] = await Promise.all([
+const [pageRes, langsRes, pagesRes] = await Promise.all([
 	fetch(`${API_URL}/pages/${id}`, { headers: authHeaders }).catch(() => null),
 	fetch(`${API_URL}/languages`, { headers: authHeaders }).catch(() => null),
+	fetch(`${API_URL}/pages`, { headers: authHeaders }).catch(() => null),
 ]);
 
 if (!pageRes?.ok) {
@@ -50,6 +51,8 @@ if (!isPageWithTranslations(pageData)) {
 	return Astro.redirect("/pages");
 }
 const page = pageData;
+const allPages: { id: string; isHomepage: boolean }[] = pagesRes?.ok ? await pagesRes.json().catch(() => []) : [];
+const hasExistingHomepage = page.isHomepage ? false : allPages.some((p) => p.id !== page.id && p.isHomepage);
 const allLanguages: PageLanguage[] = langsRes?.ok ? await langsRes.json().catch(() => []) : [];
 const languages = allLanguages.filter((lang) => lang.isActive);
 ---
@@ -64,6 +67,7 @@ const languages = allLanguages.filter((lang) => lang.isActive);
     initialHideTitle={page.hideTitle ?? false}
     initialTranslations={page.translations}
     languages={languages}
+    hasExistingHomepage={hasExistingHomepage}
     client:only="preact"
   />
 </AdminLayout>

@@ -13,7 +13,7 @@ export default defineConfig({
 	output: "server",
 	adapter: node({ mode: "standalone" }),
 	integrations: [
-		preact({ compat: true, include: ["**/islands/**", "**/features/**", "**/widgets/**", "**/entities/**"] }),
+		preact({ compat: true, include: ["**/islands/**", "**/features/**", "**/widgets/**", "**/entities/**", "**/shared/**"] }),
 	],
 	vite: {
 		plugins: [

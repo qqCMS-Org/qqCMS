@@ -2,6 +2,7 @@
 import { useSignal } from "@preact/signals";
 import { Toggle } from "@repo/ui/Toggle";
 import { api, extractApiError } from "@shared/api/client";
+import { toast } from "@shared/toast";
 import type { JSONContent } from "@tiptap/core";
 import {
 	EditorCommand,
@@ -44,6 +45,7 @@ interface PageEditorProps {
 	initialHasDraft?: boolean;
 	initialTranslations?: PageTranslationData[];
 	languages: PageLanguage[];
+	hasExistingHomepage?: boolean;
 }
 
 export function PageEditor({
@@ -55,6 +57,7 @@ export function PageEditor({
 	initialHasDraft = true,
 	initialTranslations = [],
 	languages,
+	hasExistingHomepage = false,
 }: PageEditorProps): JSX.Element {
 	const defaultLang = languages.find((lang) => lang.isDefault) ?? languages[0];
 	const activeLang = useSignal(defaultLang?.code ?? "");
@@ -416,12 +419,12 @@ export function PageEditor({
 						{pageId && hasDraft.value && (status.value === "published" || status.value === "unpublished") && (
 							<div class="bg-amber-faint border border-amber/20 rounded px-2 py-1.5 mb-2.5">
 								<div class="text-[10px] text-amber font-medium mb-1.5">Draft pending</div>
-								<div class="flex gap-1">
+								<div class="flex flex-col gap-1">
 									<button
 										type="button"
 										onClick={handlePublish}
 										disabled={saving.value}
-										class="flex-1 text-center text-[10px] bg-accent text-white border-none rounded py-1 cursor-pointer hover:bg-accent-hover transition-colors disabled:opacity-40"
+										class="w-full text-center text-[10px] bg-accent text-white border-none rounded py-1 cursor-pointer hover:bg-accent-hover transition-colors disabled:opacity-40"
 									>
 										{saving.value ? "…" : "Publish draft"}
 									</button>
@@ -429,7 +432,7 @@ export function PageEditor({
 										type="button"
 										onClick={handleDiscardDraft}
 										disabled={saving.value}
-										class="flex-1 text-center text-[10px] bg-bg3 border border-ui-border text-text1 rounded py-1 cursor-pointer hover:border-ui-border-hover transition-colors disabled:opacity-40"
+										class="w-full text-center text-[10px] bg-bg3 border border-ui-border text-text1 rounded py-1 cursor-pointer hover:border-ui-border-hover transition-colors disabled:opacity-40"
 									>
 										Discard
 									</button>
@@ -476,6 +479,15 @@ export function PageEditor({
 								type="checkbox"
 								checked={isHomepage.value}
 								onChange={(event: Event & { currentTarget: HTMLInputElement }) => {
+									if (event.currentTarget.checked && hasExistingHomepage) {
+										event.currentTarget.checked = false;
+										toast({
+											title: "Homepage already set",
+											description: "Another page is already set as homepage. Remove that designation first.",
+											type: "warning",
+										});
+										return;
+									}
 									isHomepage.value = event.currentTarget.checked;
 									if (event.currentTarget.checked) {
 										slug.value = "/";
@@ -556,42 +568,6 @@ export function PageEditor({
 						</div>
 					)}
 				</aside>
-			</div>
-
-			{/* ── Bottom bar ──────────────────────────────────── */}
-			<div class="h-11 bg-bg0 border-t border-ui-border flex items-center px-4 gap-2 shrink-0 z-10">
-				{errorMsg.value && <span class="text-[11px] text-coral flex-1 truncate">{errorMsg.value}</span>}
-				<div class="flex-1" />
-				{(!pageId || status.value === "draft" || !hasDraft.value) && (
-					<>
-						<button
-							type="button"
-							onClick={handleSaveDraft}
-							disabled={saving.value}
-							class="px-3 py-1.5 text-[11px] bg-bg3 border border-ui-border text-text0 rounded cursor-pointer hover:border-ui-border-hover transition-colors disabled:opacity-40"
-						>
-							Save draft
-						</button>
-						<button
-							type="button"
-							onClick={handlePublish}
-							disabled={saving.value}
-							class="px-3 py-1.5 text-[11px] bg-accent text-white border-none rounded cursor-pointer hover:bg-accent-hover transition-colors disabled:opacity-40"
-						>
-							{saving.value ? "…" : "Publish ↑"}
-						</button>
-					</>
-				)}
-				{pageId && hasDraft.value && (status.value === "published" || status.value === "unpublished") && (
-					<button
-						type="button"
-						onClick={handlePublish}
-						disabled={saving.value}
-						class="px-3 py-1.5 text-[11px] bg-accent text-white border-none rounded cursor-pointer hover:bg-accent-hover transition-colors disabled:opacity-40"
-					>
-						{saving.value ? "…" : "Publish draft ↑"}
-					</button>
-				)}
 			</div>
 		</div>
 	);

@@ -8,11 +8,16 @@ const API_URL = import.meta.env.PUBLIC_API_URL ?? DEFAULT_API_URL;
 const token = Astro.cookies.get(COOKIE_NAME)?.value;
 const authHeaders: Record<string, string> = token ? { Cookie: `${COOKIE_NAME}=${token}` } : {};
 
-const langsRes = await fetch(`${API_URL}/languages`, { headers: authHeaders }).catch(() => null);
+const [langsRes, pagesRes] = await Promise.all([
+	fetch(`${API_URL}/languages`, { headers: authHeaders }).catch(() => null),
+	fetch(`${API_URL}/pages`, { headers: authHeaders }).catch(() => null),
+]);
 const allLanguages: PageLanguage[] = langsRes?.ok ? await langsRes.json().catch(() => []) : [];
 const languages = allLanguages.filter((lang) => lang.isActive);
+const allPages: { isHomepage: boolean }[] = pagesRes?.ok ? await pagesRes.json().catch(() => []) : [];
+const hasExistingHomepage = allPages.some((page) => page.isHomepage);
 ---
 
 <AdminLayout title="New page" activePage="pages" noPadding noTopbar>
-  <PageEditor languages={languages} client:only="preact" />
+  <PageEditor languages={languages} hasExistingHomepage={hasExistingHomepage} client:only="preact" />
 </AdminLayout>
