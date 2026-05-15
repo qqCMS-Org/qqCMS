@@ -1,6 +1,7 @@
 import { ConflictError, NotFoundError } from "@api/errors";
 import { triggerRebuild } from "@modules/rebuild";
 import {
+	clearDefaultsExcept,
 	deleteLanguage as deleteLanguageInDb,
 	getLanguageByCode,
 	getLanguage as getLanguageById,
@@ -17,6 +18,11 @@ export const createLanguage = async (data: CreateLanguageInput) => {
 	if (existing) throw new ConflictError(`Language with code "${data.code}" already exists`);
 
 	const [language] = await insertLanguage(data);
+
+	if (data.isDefault) {
+		await clearDefaultsExcept(language.id);
+	}
+
 	void triggerRebuild();
 	return language;
 };

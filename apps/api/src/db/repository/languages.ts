@@ -28,4 +28,7 @@ export const updateLanguage = async (id: string, data: Partial<Omit<NewLanguage,
 	return db.update(languages).set(data).where(eq(languages.id, id)).returning();
 };
 
+export const clearDefaultsExcept = (id: string) =>
+	db.update(languages).set({ isDefault: false }).where(ne(languages.id, id));
+
 export const deleteLanguage = (id: string) => db.delete(languages).where(eq(languages.id, id));

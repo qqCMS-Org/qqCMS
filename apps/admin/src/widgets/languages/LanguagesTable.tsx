@@ -55,10 +55,12 @@ export function LanguagesTable({ initialLanguages }: LanguagesTableProps): JSX.E
 			return;
 		}
 
+		const isFirst = languages.value.length === 0;
+
 		saving.value = true;
 		addError.value = null;
 
-		const { data: created, error } = await api.languages.post({ code, label, isActive: true });
+		const { data: created, error } = await api.languages.post({ code, label, isActive: true, isDefault: isFirst });
 
 		saving.value = false;
 
