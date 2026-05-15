@@ -2,6 +2,7 @@
 import { useSignal } from "@preact/signals";
 import { Toggle } from "@repo/ui/Toggle";
 import { api, extractApiError } from "@shared/api/client";
+import { Modal } from "@shared/modal";
 import { toast } from "@shared/toast";
 import type { JSONContent } from "@tiptap/core";
 import {
@@ -16,6 +17,7 @@ import {
 } from "novel";
 import type { JSX } from "preact";
 import { slashCommand, suggestionItems } from "./slashCommands";
+import { useUnsavedChanges } from "./useUnsavedChanges";
 
 export interface PageLanguage {
 	id: string;
@@ -70,6 +72,7 @@ export function PageEditor({
 	const errorMsg = useSignal<string | null>(null);
 	const showDeleteConfirm = useSignal(false);
 	const sidebarOpen = useSignal(false);
+	const { markDirty, resetDirty, navigateTo, confirmNavigation, modal } = useUnsavedChanges();
 
 	const savedTranslations = useSignal<Record<string, TranslationEntry>>(
 		Object.fromEntries(
@@ -174,6 +177,7 @@ export function PageEditor({
 		saving.value = false;
 
 		if (ok) {
+			resetDirty();
 			window.location.href = "/pages";
 		}
 	};
@@ -203,6 +207,7 @@ export function PageEditor({
 			return;
 		}
 
+		resetDirty();
 		saving.value = false;
 		window.location.href = "/pages";
 	};
@@ -234,6 +239,7 @@ export function PageEditor({
 		}
 
 		hasDraft.value = false;
+		resetDirty();
 		window.location.reload();
 	};
 
@@ -252,6 +258,7 @@ export function PageEditor({
 			return;
 		}
 
+		resetDirty();
 		window.location.href = "/pages";
 	};
 
@@ -274,12 +281,13 @@ export function PageEditor({
 		<div class="flex flex-col h-screen">
 			{/* ── Topbar ──────────────────────────────────────── */}
 			<div class="h-11 bg-bg0 border-b border-ui-border flex items-center px-3 gap-1.5 shrink-0 z-10 min-w-0">
-				<a
-					href="/pages"
-					class="flex items-center gap-1 text-[11px] text-text1 hover:text-text0 transition-colors no-underline px-1.5 py-1 rounded hover:bg-bg3 shrink-0"
+				<button
+					type="button"
+					onClick={() => navigateTo("/pages")}
+					class="flex items-center gap-1 text-[11px] text-text1 hover:text-text0 transition-colors bg-transparent border-none cursor-pointer px-1.5 py-1 rounded hover:bg-bg3 shrink-0"
 				>
 					← Back
-				</a>
+				</button>
 				<span class="text-[11px] text-text2 shrink-0">/</span>
 				<span class="text-[11px] text-text0 font-mono truncate min-w-0">{slug.value || "new"}</span>
 
@@ -331,6 +339,7 @@ export function PageEditor({
 										title: event.currentTarget.value,
 									},
 								};
+								markDirty();
 							}}
 							placeholder="Page title…"
 							class="font-serif italic text-[32px] text-text0 bg-transparent border-none outline-none w-full mb-2 leading-[1.3] placeholder-text2/40"
@@ -358,6 +367,7 @@ export function PageEditor({
 										content: editor.getJSON(),
 									},
 								};
+								markDirty();
 							}}
 						>
 							<EditorCommand className="z-50 h-auto max-h-82.5 overflow-y-auto rounded-xl border border-ui-border bg-bg0 shadow-lg transition-all">
@@ -518,6 +528,7 @@ export function PageEditor({
 									if (event.currentTarget.checked) {
 										slug.value = "/";
 									}
+									markDirty();
 								}}
 								class="w-4 h-4 accent-accent cursor-pointer"
 							/>
@@ -530,6 +541,7 @@ export function PageEditor({
 								checked={hideTitle.value}
 								onChange={(event: Event & { currentTarget: HTMLInputElement }) => {
 									hideTitle.value = event.currentTarget.checked;
+									markDirty();
 								}}
 								class="w-4 h-4 accent-accent cursor-pointer"
 							/>
@@ -542,6 +554,7 @@ export function PageEditor({
 							value={isHomepage.value ? "/" : slug.value}
 							onInput={(event: Event & { currentTarget: HTMLInputElement }) => {
 								slug.value = event.currentTarget.value;
+								markDirty();
 							}}
 							placeholder="/about"
 							maxLength={255}
@@ -612,6 +625,27 @@ export function PageEditor({
 					</span>
 				</button>
 			)}
+
+			<Modal isOpen={modal.isOpen.value} onClose={modal.hide}>
+				<div class="text-[14px] font-semibold text-text0 mb-2">Unsaved changes</div>
+				<p class="text-[12px] text-text2 mb-5">You have unsaved changes. If you leave now, they will be lost.</p>
+				<div class="flex gap-2 justify-end">
+					<button
+						type="button"
+						onClick={modal.hide}
+						class="px-4 py-1.5 text-[12px] bg-bg3 border border-ui-border text-text1 rounded cursor-pointer hover:border-ui-border-hover transition-colors"
+					>
+						Cancel
+					</button>
+					<button
+						type="button"
+						onClick={confirmNavigation}
+						class="px-4 py-1.5 text-[12px] bg-coral text-white border-none rounded cursor-pointer hover:opacity-80 transition-opacity"
+					>
+						Leave anyway
+					</button>
+				</div>
+			</Modal>
 		</div>
 	);
 }
