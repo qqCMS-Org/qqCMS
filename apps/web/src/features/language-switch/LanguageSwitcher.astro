@@ -13,15 +13,31 @@ interface Props {
 const { languages, currentLang, currentSlug } = Astro.props;
 ---
 
-<div class="flex items-center gap-1">
-  {
-    languages.map((lang) => (
-      <a
-        href={`/${lang.code}/${currentSlug}`}
-        class={`btn btn-ghost btn-xs${lang.code === currentLang ? " btn-active" : ""}`}
-      >
-        {lang.label}
-      </a>
-    ))
-  }
+<div class="relative inline-flex items-center">
+  <select
+    id="lang-switcher"
+    data-slug={currentSlug}
+    class="appearance-none bg-bg0 border border-ui-border rounded-md pl-2.5 pr-6 py-1.5 text-xs font-mono font-medium text-text0 cursor-pointer hover:border-ui-border-hover transition-colors outline-none"
+  >
+    {
+      languages.map((lang) => (
+        <option value={lang.code} selected={lang.code === currentLang}>
+          {lang.code.toUpperCase()}
+        </option>
+      ))
+    }
+  </select>
+  <span class="pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2 text-base-content/40 text-[10px] leading-none">
+    ▾
+  </span>
 </div>
+
+<script>
+  const el = document.getElementById("lang-switcher");
+  if (el instanceof HTMLSelectElement) {
+    el.addEventListener("change", () => {
+      const slug = el.dataset.slug ?? "";
+      window.location.href = slug ? `/${el.value}/${slug}` : `/${el.value}/`;
+    });
+  }
+</script>

@@ -1,6 +1,10 @@
-export function Logo() {
+interface LogoProps {
+	class?: string;
+}
+
+export function Logo({ class: className = "mb-10" }: LogoProps = {}) {
 	return (
-		<div class="flex items-center gap-2.5 mb-10">
+		<div class={`flex items-center gap-2.5 ${className}`}>
 			<div class="w-8 h-8 bg-accent rounded-[7px] flex items-center justify-center text-base text-white font-bold">
 				q
 			</div>

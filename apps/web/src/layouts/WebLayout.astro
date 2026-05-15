@@ -1,4 +1,5 @@
 ---
+import { ClientRouter } from "astro:transitions";
 import "@app/styles/global.css";
 
 interface Props {
@@ -17,6 +18,7 @@ const { title, description, lang = "en" } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
+    <ClientRouter />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@400;500&display=swap"
