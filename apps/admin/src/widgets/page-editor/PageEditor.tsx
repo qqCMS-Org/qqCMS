@@ -279,12 +279,12 @@ export function PageEditor({
 				<span class="text-[11px] text-text2 shrink-0">/</span>
 				<span class="text-[11px] text-text0 font-mono truncate min-w-0">{slug.value || "new"}</span>
 
-				<div class="flex-1 shrink-0" />
+				<div class="flex-1 shrink-0 min-w-2" />
 
 				{status.value === "published" ? (
 					<span class="inline-flex items-center gap-1.5 text-[11px] text-green bg-green-faint px-2.5 py-1 rounded">
 						<span class="w-1.5 h-1.5 rounded-full bg-green shrink-0" />
-						Published{hasDraft.value ? " · draft" : ""}
+						Published
 					</span>
 				) : status.value === "unpublished" ? (
 					<span class="inline-flex items-center gap-1.5 text-[11px] text-text2 bg-bg3 px-2.5 py-1 rounded">
@@ -303,7 +303,7 @@ export function PageEditor({
 			<div class="flex-1 flex overflow-hidden">
 				{/* ── Editor ──────────────────────────────────── */}
 				<div class="flex-1 flex flex-col overflow-hidden bg-bg1">
-					<div class="max-w-[720px] mx-auto w-full px-6 pt-10 pb-2 shrink-0">
+					<div class="max-w-180 mx-auto w-full px-6 pt-10 pb-2 shrink-0">
 						<input
 							type="text"
 							key={activeLang.value}
@@ -346,7 +346,7 @@ export function PageEditor({
 								};
 							}}
 						>
-							<EditorCommand className="z-50 h-auto max-h-[330px] overflow-y-auto rounded-xl border border-ui-border bg-bg0 shadow-lg transition-all">
+							<EditorCommand className="z-50 h-auto max-h-82.5 overflow-y-auto rounded-xl border border-ui-border bg-bg0 shadow-lg transition-all">
 								<EditorCommandEmpty className="px-3 py-3 text-[11px] text-text2">No results</EditorCommandEmpty>
 								<EditorCommandList className="px-1 py-1">
 									{suggestionItems.map((item) => (
