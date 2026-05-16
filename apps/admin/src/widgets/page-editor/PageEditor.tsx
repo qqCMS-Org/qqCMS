@@ -19,6 +19,52 @@ import type { JSX } from "preact";
 import { slashCommand, suggestionItems } from "./slashCommands";
 import { useUnsavedChanges } from "./useUnsavedChanges";
 
+function slugify(text: string): string {
+	const cyrillicToLatin: Record<string, string> = {
+		а: "a",
+		б: "b",
+		в: "v",
+		г: "g",
+		д: "d",
+		е: "e",
+		ё: "yo",
+		ж: "zh",
+		з: "z",
+		и: "i",
+		й: "j",
+		к: "k",
+		л: "l",
+		м: "m",
+		н: "n",
+		о: "o",
+		п: "p",
+		р: "r",
+		с: "s",
+		т: "t",
+		у: "u",
+		ф: "f",
+		х: "h",
+		ц: "c",
+		ч: "ch",
+		ш: "sh",
+		щ: "shch",
+		ъ: "",
+		ы: "y",
+		ь: "",
+		э: "e",
+		ю: "yu",
+		я: "ya",
+	};
+
+	return text
+		.toLowerCase()
+		.split("")
+		.map((char) => cyrillicToLatin[char] ?? char)
+		.join("")
+		.replace(/[^a-z0-9]+/g, "-")
+		.replace(/^-+|-+$/g, "");
+}
+
 export interface PageLanguage {
 	id: string;
 	code: string;
@@ -26,6 +72,7 @@ export interface PageLanguage {
 	isActive: boolean;
 	isDefault: boolean;
 }
+// ... (omitting some interfaces for brevity, will use full block in tool call)
 
 export interface PageTranslationData {
 	languageCode: string;
@@ -64,6 +111,7 @@ export function PageEditor({
 	const defaultLang = languages.find((lang) => lang.isDefault) ?? languages[0];
 	const activeLang = useSignal(defaultLang?.code ?? "");
 	const slug = useSignal(initialSlug);
+	const slugManuallyEdited = useSignal(false);
 	const isHomepage = useSignal(initialIsHomepage);
 	const hideTitle = useSignal(initialHideTitle);
 	const status = useSignal<"draft" | "published" | "unpublished">(initialStatus);
@@ -333,15 +381,25 @@ export function PageEditor({
 								key={activeLang.value}
 								value={activeTitle.value}
 								onInput={(event: Event & { currentTarget: HTMLInputElement }) => {
-									activeTitle.value = event.currentTarget.value;
+									const newTitle = event.currentTarget.value;
+									activeTitle.value = newTitle;
 									savedTranslations.value = {
 										...savedTranslations.value,
 										[activeLang.value]: {
 											...savedTranslations.value[activeLang.value],
-											title: event.currentTarget.value,
+											title: newTitle,
 										},
 									};
 									markDirty();
+
+									if (
+										!pageId &&
+										activeLang.value === defaultLangCode &&
+										!slugManuallyEdited.value &&
+										!isHomepage.value
+									) {
+										slug.value = slugify(newTitle);
+									}
 								}}
 								placeholder="Page title…"
 								class="font-serif italic text-[32px] text-text0 bg-transparent border-none outline-none w-full mb-2 leading-[1.3] placeholder-text2/40"
@@ -530,6 +588,9 @@ export function PageEditor({
 									isHomepage.value = event.currentTarget.checked;
 									if (event.currentTarget.checked) {
 										slug.value = "/";
+									} else if (!pageId && !slugManuallyEdited.value) {
+										const defaultTitle = savedTranslations.value[defaultLangCode ?? ""]?.title ?? "";
+										slug.value = slugify(defaultTitle);
 									}
 									markDirty();
 								}}
@@ -557,6 +618,7 @@ export function PageEditor({
 							value={isHomepage.value ? "/" : slug.value}
 							onInput={(event: Event & { currentTarget: HTMLInputElement }) => {
 								slug.value = event.currentTarget.value;
+								slugManuallyEdited.value = true;
 								markDirty();
 							}}
 							placeholder="/about"
