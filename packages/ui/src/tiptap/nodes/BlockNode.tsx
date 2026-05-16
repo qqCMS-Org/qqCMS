@@ -2,7 +2,17 @@ import { blockRegistry } from "../../blocks";
 import type { BlockAttrs } from "../../blocks/types";
 import type { TipTapNode } from "../types";
 
-export function BlockNode({ node }: { node: TipTapNode }) {
+export function BlockNode({
+	node,
+	isEditing,
+	updateAttrs,
+}: {
+	node: TipTapNode;
+	isEditing?: boolean;
+	updateAttrs?: (
+		newAttrs: Record<string, string | number | boolean | undefined>,
+	) => void;
+}) {
 	const blockType = node.attrs?.blockType as string | undefined;
 
 	if (!blockType) {
@@ -19,5 +29,7 @@ export function BlockNode({ node }: { node: TipTapNode }) {
 		definition.defaultAttrs) as BlockAttrs;
 	const { Component } = definition;
 
-	return <Component attrs={attrs} />;
+	return (
+		<Component attrs={attrs} isEditing={isEditing} updateAttrs={updateAttrs} />
+	);
 }
