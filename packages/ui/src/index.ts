@@ -16,4 +16,4 @@ export { Logo } from "./Logo";
 export type { ToggleProps } from "./Toggle";
 export { Toggle } from "./Toggle";
 export type { NodeRegistry, TipTapNode } from "./tiptap";
-export { defaultRegistry, TipTapRenderer } from "./tiptap";
+export { BlockNode, defaultRegistry, TipTapRenderer } from "./tiptap";

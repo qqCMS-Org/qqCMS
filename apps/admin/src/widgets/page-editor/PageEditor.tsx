@@ -17,6 +17,7 @@ import {
 } from "novel";
 import type { JSX } from "preact";
 import { useEffect } from "preact/hooks";
+import { BlockExtension } from "./extensions/BlockExtension";
 import { slashCommand, suggestionItems } from "./slashCommands";
 import { useUnsavedChanges } from "./useUnsavedChanges";
 
@@ -511,7 +512,7 @@ export function PageEditor({
 						<EditorRoot>
 							<EditorContent
 								key={`${activeLang.value}-${editorRevision.value}`}
-								extensions={[StarterKit, slashCommand]}
+								extensions={[StarterKit, slashCommand, BlockExtension]}
 								initialContent={savedTranslations.value[activeLang.value]?.content ?? undefined}
 								className={editorContentClass}
 								editorProps={{
