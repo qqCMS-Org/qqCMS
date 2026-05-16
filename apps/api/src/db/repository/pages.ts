@@ -3,11 +3,11 @@ import { languages } from "@schema/languages";
 import { pageTranslations } from "@schema/page-translations";
 import type { NewPage } from "@schema/pages";
 import { pages } from "@schema/pages";
-import { and, asc, desc, eq, ne } from "drizzle-orm";
+import { and, asc, eq, ne } from "drizzle-orm";
 
 export const getPages = () =>
 	db
-		.selectDistinctOn([pages.id], {
+		.select({
 			id: pages.id,
 			slug: pages.slug,
 			status: pages.status,
@@ -19,9 +19,12 @@ export const getPages = () =>
 			title: pageTranslations.title,
 		})
 		.from(pages)
-		.leftJoin(pageTranslations, eq(pageTranslations.pageId, pages.id))
-		.leftJoin(languages, and(eq(languages.code, pageTranslations.languageCode), eq(languages.isDefault, true)))
-		.orderBy(asc(pages.id), desc(languages.isDefault));
+		.leftJoin(languages, eq(languages.isDefault, true))
+		.leftJoin(
+			pageTranslations,
+			and(eq(pageTranslations.pageId, pages.id), eq(pageTranslations.languageCode, languages.code)),
+		)
+		.orderBy(asc(pages.id));
 
 export const getPage = (id: string) =>
 	db.query.pages.findFirst({

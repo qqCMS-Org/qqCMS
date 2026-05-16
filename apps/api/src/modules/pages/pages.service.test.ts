@@ -36,6 +36,7 @@ const mockGetTranslationsByPage = mock((): Promise<PageTranslation[]> => Promise
 const mockUpsertTranslation = mock((): Promise<PageTranslation[]> => Promise.resolve([baseTranslation()]));
 const mockPromoteTranslationsToPublished = mock((): Promise<PageTranslation[]> => Promise.resolve([]));
 const mockRevertTranslationsToDraft = mock((): Promise<PageTranslation[]> => Promise.resolve([]));
+const mockDeleteTranslation = mock(() => Promise.resolve());
 
 mock.module("@repository/pages", () => ({
 	getPages: mockGetPages,
@@ -51,6 +52,7 @@ mock.module("@repository/page-translations", () => ({
 	upsertTranslation: mockUpsertTranslation,
 	promoteTranslationsToPublished: mockPromoteTranslationsToPublished,
 	revertTranslationsToDraft: mockRevertTranslationsToDraft,
+	deleteTranslation: mockDeleteTranslation,
 }));
 
 mock.module("@modules/rebuild", () => ({
