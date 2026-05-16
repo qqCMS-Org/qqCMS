@@ -276,7 +276,7 @@ export function PageEditor({
 	}
 
 	const editorContentClass =
-		"flex-1 overflow-y-auto outline-none [&_.ProseMirror]:outline-none [&_.ProseMirror]:min-h-[60vh] [&_.ProseMirror]:text-[14px] [&_.ProseMirror]:text-text1 [&_.ProseMirror]:leading-relaxed [&_.ProseMirror_h1]:text-3xl [&_.ProseMirror_h1]:font-bold [&_.ProseMirror_h1]:text-text0 [&_.ProseMirror_h1]:mt-8 [&_.ProseMirror_h1]:mb-3 [&_.ProseMirror_h2]:text-xl [&_.ProseMirror_h2]:font-semibold [&_.ProseMirror_h2]:text-text0 [&_.ProseMirror_h2]:mt-6 [&_.ProseMirror_h2]:mb-2 [&_.ProseMirror_h3]:text-base [&_.ProseMirror_h3]:font-semibold [&_.ProseMirror_h3]:text-text0 [&_.ProseMirror_h3]:mt-4 [&_.ProseMirror_h3]:mb-1 [&_.ProseMirror_p]:mb-3 [&_.ProseMirror_ul]:list-disc [&_.ProseMirror_ul]:pl-5 [&_.ProseMirror_ul]:mb-3 [&_.ProseMirror_ol]:list-decimal [&_.ProseMirror_ol]:pl-5 [&_.ProseMirror_ol]:mb-3 [&_.ProseMirror_blockquote]:border-l-2 [&_.ProseMirror_blockquote]:border-ui-border [&_.ProseMirror_blockquote]:pl-4 [&_.ProseMirror_blockquote]:italic [&_.ProseMirror_blockquote]:text-text2 [&_.ProseMirror_pre]:bg-bg3 [&_.ProseMirror_pre]:rounded [&_.ProseMirror_pre]:p-3 [&_.ProseMirror_pre]:text-[12px] [&_.ProseMirror_pre]:font-mono [&_.ProseMirror_code]:bg-bg3 [&_.ProseMirror_code]:rounded [&_.ProseMirror_code]:px-1 [&_.ProseMirror_code]:text-[12px] [&_.ProseMirror_code]:font-mono [&_.ProseMirror_strong]:font-semibold [&_.ProseMirror_em]:italic [&_.ProseMirror_s]:line-through [&_.ProseMirror_hr]:border-ui-border [&_.ProseMirror_hr]:my-4";
+		"outline-none [&_.ProseMirror]:outline-none [&_.ProseMirror]:min-h-[60vh] [&_.ProseMirror]:text-[14px] [&_.ProseMirror]:text-text1 [&_.ProseMirror]:leading-relaxed [&_.ProseMirror_h1]:text-3xl [&_.ProseMirror_h1]:font-bold [&_.ProseMirror_h1]:text-text0 [&_.ProseMirror_h1]:mt-8 [&_.ProseMirror_h1]:mb-3 [&_.ProseMirror_h2]:text-xl [&_.ProseMirror_h2]:font-semibold [&_.ProseMirror_h2]:text-text0 [&_.ProseMirror_h2]:mt-6 [&_.ProseMirror_h2]:mb-2 [&_.ProseMirror_h3]:text-base [&_.ProseMirror_h3]:font-semibold [&_.ProseMirror_h3]:text-text0 [&_.ProseMirror_h3]:mt-4 [&_.ProseMirror_h3]:mb-1 [&_.ProseMirror_p]:mb-3 [&_.ProseMirror_ul]:list-disc [&_.ProseMirror_ul]:pl-5 [&_.ProseMirror_ul]:mb-3 [&_.ProseMirror_ol]:list-decimal [&_.ProseMirror_ol]:pl-5 [&_.ProseMirror_ol]:mb-3 [&_.ProseMirror_blockquote]:border-l-2 [&_.ProseMirror_blockquote]:border-ui-border [&_.ProseMirror_blockquote]:pl-4 [&_.ProseMirror_blockquote]:italic [&_.ProseMirror_blockquote]:text-text2 [&_.ProseMirror_pre]:bg-bg3 [&_.ProseMirror_pre]:rounded [&_.ProseMirror_pre]:p-3 [&_.ProseMirror_pre]:text-[12px] [&_.ProseMirror_pre]:font-mono [&_.ProseMirror_code]:bg-bg3 [&_.ProseMirror_code]:rounded [&_.ProseMirror_code]:px-1 [&_.ProseMirror_code]:text-[12px] [&_.ProseMirror_code]:font-mono [&_.ProseMirror_strong]:font-semibold [&_.ProseMirror_em]:italic [&_.ProseMirror_s]:line-through [&_.ProseMirror_hr]:border-ui-border [&_.ProseMirror_hr]:my-4";
 
 	return (
 		<div class="flex flex-col h-screen">
@@ -326,75 +326,77 @@ export function PageEditor({
 				)}
 				{/* ── Editor ──────────────────────────────────── */}
 				<div class="flex-1 flex flex-col overflow-hidden bg-bg1">
-					<div class="max-w-180 mx-auto w-full px-6 pt-10 pb-2 shrink-0">
-						<input
-							type="text"
-							key={activeLang.value}
-							value={activeTitle.value}
-							onInput={(event: Event & { currentTarget: HTMLInputElement }) => {
-								activeTitle.value = event.currentTarget.value;
-								savedTranslations.value = {
-									...savedTranslations.value,
-									[activeLang.value]: {
-										...savedTranslations.value[activeLang.value],
-										title: event.currentTarget.value,
+					<div class="flex-1 flex flex-col overflow-y-auto">
+						<div class="max-w-[720px] mx-auto w-full px-6 pt-10 pb-2 shrink-0">
+							<input
+								type="text"
+								key={activeLang.value}
+								value={activeTitle.value}
+								onInput={(event: Event & { currentTarget: HTMLInputElement }) => {
+									activeTitle.value = event.currentTarget.value;
+									savedTranslations.value = {
+										...savedTranslations.value,
+										[activeLang.value]: {
+											...savedTranslations.value[activeLang.value],
+											title: event.currentTarget.value,
+										},
+									};
+									markDirty();
+								}}
+								placeholder="Page title…"
+								class="font-serif italic text-[32px] text-text0 bg-transparent border-none outline-none w-full mb-2 leading-[1.3] placeholder-text2/40"
+							/>
+						</div>
+						<EditorRoot>
+							<EditorContent
+								key={activeLang.value}
+								extensions={[StarterKit, slashCommand]}
+								initialContent={savedTranslations.value[activeLang.value]?.content ?? undefined}
+								className={editorContentClass}
+								editorProps={{
+									handleDOMEvents: {
+										keydown: (_view: unknown, event: KeyboardEvent) => handleCommandNavigation(event),
 									},
-								};
-								markDirty();
-							}}
-							placeholder="Page title…"
-							class="font-serif italic text-[32px] text-text0 bg-transparent border-none outline-none w-full mb-2 leading-[1.3] placeholder-text2/40"
-						/>
+									attributes: {
+										class: "max-w-[720px] mx-auto px-6 py-4",
+									},
+								}}
+								onUpdate={({ editor }: { editor: { getJSON: () => JSONContent } }) => {
+									savedTranslations.value = {
+										...savedTranslations.value,
+										[activeLang.value]: {
+											...savedTranslations.value[activeLang.value],
+											content: editor.getJSON(),
+										},
+									};
+									markDirty();
+								}}
+							>
+								<EditorCommand className="z-50 h-auto max-h-82.5 overflow-y-auto rounded-xl border border-ui-border bg-bg0 shadow-lg transition-all">
+									<EditorCommandEmpty className="px-3 py-3 text-[11px] text-text2">No results</EditorCommandEmpty>
+									<EditorCommandList className="px-1 py-1">
+										{suggestionItems.map((item) => (
+											<EditorCommandItem
+												key={item.title}
+												value={item.title}
+												onCommand={(value: unknown) => {
+													if (item.command) {
+														item.command(value as Parameters<NonNullable<typeof item.command>>[0]);
+													}
+												}}
+												className="flex items-start gap-3 w-full rounded-lg px-3 py-2 text-left text-[12px] text-text1 hover:bg-bg2 cursor-pointer transition-colors aria-selected:bg-bg2 aria-selected:text-text0"
+											>
+												<div>
+													<div class="font-medium text-text0">{item.title}</div>
+													<div class="text-[11px] text-text2">{item.description}</div>
+												</div>
+											</EditorCommandItem>
+										))}
+									</EditorCommandList>
+								</EditorCommand>
+							</EditorContent>
+						</EditorRoot>
 					</div>
-					<EditorRoot>
-						<EditorContent
-							key={activeLang.value}
-							extensions={[StarterKit, slashCommand]}
-							initialContent={savedTranslations.value[activeLang.value]?.content ?? undefined}
-							className={editorContentClass}
-							editorProps={{
-								handleDOMEvents: {
-									keydown: (_view: unknown, event: KeyboardEvent) => handleCommandNavigation(event),
-								},
-								attributes: {
-									class: "max-w-[720px] mx-auto px-6 py-4",
-								},
-							}}
-							onUpdate={({ editor }: { editor: { getJSON: () => JSONContent } }) => {
-								savedTranslations.value = {
-									...savedTranslations.value,
-									[activeLang.value]: {
-										...savedTranslations.value[activeLang.value],
-										content: editor.getJSON(),
-									},
-								};
-								markDirty();
-							}}
-						>
-							<EditorCommand className="z-50 h-auto max-h-82.5 overflow-y-auto rounded-xl border border-ui-border bg-bg0 shadow-lg transition-all">
-								<EditorCommandEmpty className="px-3 py-3 text-[11px] text-text2">No results</EditorCommandEmpty>
-								<EditorCommandList className="px-1 py-1">
-									{suggestionItems.map((item) => (
-										<EditorCommandItem
-											key={item.title}
-											value={item.title}
-											onCommand={(value: unknown) => {
-												if (item.command) {
-													item.command(value as Parameters<NonNullable<typeof item.command>>[0]);
-												}
-											}}
-											className="flex items-start gap-3 w-full rounded-lg px-3 py-2 text-left text-[12px] text-text1 hover:bg-bg2 cursor-pointer transition-colors aria-selected:bg-bg2 aria-selected:text-text0"
-										>
-											<div>
-												<div class="font-medium text-text0">{item.title}</div>
-												<div class="text-[11px] text-text2">{item.description}</div>
-											</div>
-										</EditorCommandItem>
-									))}
-								</EditorCommandList>
-							</EditorCommand>
-						</EditorContent>
-					</EditorRoot>
 				</div>
 
 				{/* ── Settings sidebar ────────────────────────── */}
