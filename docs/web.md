@@ -85,44 +85,73 @@ packages/ui/src/tiptap/
 
 ## Adding a Custom Content Block
 
-To add a custom TipTap node (e.g., a "hero" full-width banner):
+Adding a new block (e.g., "Testimonial") is handled entirely within `packages/ui`. The Admin panel automatically detects new blocks and enables inline editing.
 
-**1. Create the renderer in `packages/ui`**
+**1. Create the block in `packages/ui/src/blocks/`**
 
 ```tsx
-// packages/ui/src/tiptap/nodes/HeroNode.tsx
-import type { TipTapNode } from "../types"
+// packages/ui/src/blocks/TestimonialBlock.tsx
+import { Editable } from "./Editable";
+import type { BlockComponentProps, BlockDefinition } from "./types";
 
-interface Props {
-  node: TipTapNode
+export interface TestimonialAttrs {
+  quote: string;
+  author: string;
 }
 
-export const HeroNode = ({ node }: Props) => (
-  <section class="hero">
-    <img src={node.attrs?.imageUrl} alt={node.attrs?.title} />
-    <h2>{node.attrs?.title}</h2>
-    {node.attrs?.buttonText && (
-      <a href={node.attrs.buttonHref}>{node.attrs.buttonText}</a>
-    )}
-  </section>
-)
+function TestimonialComponent({ attrs, isEditing, updateAttrs }: BlockComponentProps<TestimonialAttrs>) {
+  return (
+    <div class="p-8 border rounded-xl">
+      <Editable
+        tag="blockquote"
+        value={attrs.quote}
+        onChange={(val) => updateAttrs?.({ quote: val })}
+        isEditing={isEditing}
+        className="text-xl italic"
+        multiline
+      />
+      <Editable
+        tag="cite"
+        value={attrs.author}
+        onChange={(val) => updateAttrs?.({ author: val })}
+        isEditing={isEditing}
+        className="block mt-4 font-bold"
+      />
+    </div>
+  );
+}
+
+export const TestimonialBlock: BlockDefinition<TestimonialAttrs> = {
+  type: "testimonial",
+  label: "Testimonial",
+  description: "Customer quote with author name",
+  defaultAttrs: {
+    quote: "This is an amazing product!",
+    author: "John Doe",
+  },
+  Component: TestimonialComponent,
+};
 ```
 
-**2. Register it**
+**2. Register it in `packages/ui/src/blocks/index.ts`**
 
 ```ts
-// packages/ui/src/tiptap/registry.ts — add one line
-import { HeroNode } from "./nodes/HeroNode"
+import { HeroBlock } from "./HeroBlock";
+import { TestimonialBlock } from "./TestimonialBlock"; // Import
 
-export const defaultRegistry: NodeRegistry = {
-  // ... existing entries ...
-  hero: HeroNode,
-}
+export const blockRegistry: BlockRegistry = {
+  hero: HeroBlock,
+  testimonial: TestimonialBlock, // Add to registry
+};
 ```
 
-**3. Add the TipTap extension in `apps/admin`** (separate step — see TipTap extension docs).
+**3. Automatic Integration**
 
-No changes to `TipTapRenderer.tsx` or any page file in either app.
+Once registered:
+- The block appears in the Admin **Slash Menu** (`/`).
+- **Inline Editing** is enabled for all `<Editable />` fields.
+- **Technical Settings** (like `bgImage` or `buttonHref`) appear in a floating popover if defined in `defaultAttrs`.
+- The block renders identically on the live site.
 
 ## Path Aliases (mirrors `apps/admin`)
 

@@ -71,6 +71,10 @@ body {
   font-size: 14px;
 }
 
+button {
+  cursor: pointer;
+}
+
 ::-webkit-scrollbar {
   width: 4px;
   height: 4px;

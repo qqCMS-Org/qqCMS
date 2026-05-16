@@ -65,14 +65,23 @@ function HeroComponent({
 					<div
 						class={`flex flex-col gap-2 ${isCenter ? "items-center" : "items-start"}`}
 					>
-						<Editable
-							tag="div"
-							value={attrs.buttonLabel}
-							onChange={(val) => handleUpdate("buttonLabel", val)}
-							isEditing={isEditing}
-							className="inline-flex items-center px-8 py-4 rounded-lg bg-primary text-primary-content font-bold hover:opacity-90 transition-all w-fit shadow-lg active:scale-95"
-							placeholder="Button Label"
-						/>
+						{!isEditing ? (
+							<a
+								href={attrs.buttonHref}
+								class="inline-flex items-center px-8 py-4 rounded-lg bg-accent !text-white font-bold hover:opacity-90 transition-all w-fit shadow-lg active:scale-95 !no-underline"
+							>
+								{attrs.buttonLabel}
+							</a>
+						) : (
+							<Editable
+								tag="div"
+								value={attrs.buttonLabel}
+								onChange={(val) => handleUpdate("buttonLabel", val)}
+								isEditing={isEditing}
+								className="inline-flex items-center px-8 py-4 rounded-lg bg-accent !text-white font-bold hover:opacity-90 transition-all w-fit shadow-lg active:scale-95"
+								placeholder="Button Label"
+							/>
+						)}
 					</div>
 				)}
 			</div>
