@@ -1,4 +1,4 @@
-import { NotFoundError } from "@api/errors";
+import { ConflictError, NotFoundError } from "@api/errors";
 import { triggerRebuild } from "@modules/rebuild";
 import {
 	deleteTranslation,
@@ -11,6 +11,7 @@ import {
 	clearHomepageFlag,
 	deletePage as deletePageInDb,
 	getPage as getPageById,
+	getPageBySlug,
 	getPages,
 	insertPage,
 	updatePage as updatePageInDb,
@@ -28,6 +29,11 @@ export const getPage = async (id: string) => {
 };
 
 export const createPage = async (data: CreatePageInput) => {
+	const existingSlug = await getPageBySlug(data.slug);
+	if (existingSlug) {
+		throw new ConflictError("Slug already taken");
+	}
+
 	if (data.isHomepage) {
 		await clearHomepageFlag();
 	}
@@ -40,6 +46,13 @@ export const createPage = async (data: CreatePageInput) => {
 export const updatePage = async (id: string, data: UpdatePageInput) => {
 	const existing = await getPageById(id);
 	if (!existing) throw new NotFoundError("Page not found");
+
+	if (data.slug && data.slug !== existing.slug) {
+		const existingSlug = await getPageBySlug(data.slug);
+		if (existingSlug) {
+			throw new ConflictError("Slug already taken");
+		}
+	}
 
 	if (data.isHomepage) {
 		await clearHomepageFlag(id);

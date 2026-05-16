@@ -31,6 +31,11 @@ export const getPage = (id: string) =>
 		where: eq(pages.id, id),
 	});
 
+export const getPageBySlug = (slug: string) =>
+	db.query.pages.findFirst({
+		where: eq(pages.slug, slug),
+	});
+
 export const insertPage = (data: Omit<NewPage, "id" | "createdAt" | "updatedAt">) =>
 	db
 		.insert(pages)

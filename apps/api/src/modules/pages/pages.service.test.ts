@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, mock } from "bun:test";
-import { NotFoundError } from "@api/errors";
+import { ConflictError, NotFoundError } from "@api/errors";
 import type { PageTranslation } from "@schema/page-translations";
 import type { Page } from "@schema/pages";
 
@@ -28,6 +28,7 @@ const baseTranslation = (overrides: Partial<PageTranslation> = {}): PageTranslat
 
 const mockGetPages = mock((): Promise<Page[]> => Promise.resolve([]));
 const mockGetPage = mock((): Promise<Page | undefined> => Promise.resolve(undefined));
+const mockGetPageBySlug = mock((): Promise<Page | undefined> => Promise.resolve(undefined));
 const mockInsertPage = mock((): Promise<Page[]> => Promise.resolve([basePage({ isHomepage: true })]));
 const mockUpdatePage = mock((): Promise<Page[]> => Promise.resolve([basePage({ slug: "updated" })]));
 const mockDeletePage = mock(() => Promise.resolve());
@@ -41,6 +42,7 @@ const mockDeleteTranslation = mock(() => Promise.resolve());
 mock.module("@repository/pages", () => ({
 	getPages: mockGetPages,
 	getPage: mockGetPage,
+	getPageBySlug: mockGetPageBySlug,
 	insertPage: mockInsertPage,
 	updatePage: mockUpdatePage,
 	deletePage: mockDeletePage,
@@ -66,7 +68,9 @@ describe("createPage", () => {
 	beforeEach(() => {
 		mockClearHomepageFlag.mockReset();
 		mockInsertPage.mockReset();
+		mockGetPageBySlug.mockReset();
 		mockInsertPage.mockResolvedValue([basePage({ isHomepage: true })] as Page[]);
+		mockGetPageBySlug.mockResolvedValue(undefined);
 	});
 
 	it("creates a page without clearing homepage flag when isHomepage is false", async () => {
@@ -81,6 +85,12 @@ describe("createPage", () => {
 
 		expect(mockClearHomepageFlag).toHaveBeenCalledTimes(1);
 		expect(mockInsertPage).toHaveBeenCalledWith({ slug: "home", isHomepage: true });
+	});
+
+	it("throws ConflictError when slug already exists", async () => {
+		mockGetPageBySlug.mockResolvedValueOnce(basePage());
+
+		expect(createPage({ slug: "home", isHomepage: false })).rejects.toThrow(ConflictError);
 	});
 
 	it("returns the created page", async () => {
@@ -119,6 +129,8 @@ describe("updatePage", () => {
 		mockGetPage.mockReset();
 		mockUpdatePage.mockReset();
 		mockClearHomepageFlag.mockReset();
+		mockGetPageBySlug.mockReset();
+		mockGetPageBySlug.mockResolvedValue(undefined);
 	});
 
 	it("throws NotFoundError when page does not exist", async () => {
@@ -134,6 +146,13 @@ describe("updatePage", () => {
 		await updatePage("page-1", { isHomepage: true });
 
 		expect(mockClearHomepageFlag).toHaveBeenCalledWith("page-1");
+	});
+
+	it("throws ConflictError when new slug already exists", async () => {
+		mockGetPage.mockResolvedValueOnce(basePage({ slug: "home" }));
+		mockGetPageBySlug.mockResolvedValueOnce(basePage({ slug: "about", id: "page-2" }));
+
+		expect(updatePage("page-1", { slug: "about" })).rejects.toThrow(ConflictError);
 	});
 
 	it("does not clear homepage flag when isHomepage is not set", async () => {
