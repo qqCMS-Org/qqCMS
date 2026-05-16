@@ -16,6 +16,7 @@ import {
 	StarterKit,
 } from "novel";
 import type { JSX } from "preact";
+import { useEffect } from "preact/hooks";
 import { slashCommand, suggestionItems } from "./slashCommands";
 import { useUnsavedChanges } from "./useUnsavedChanges";
 
@@ -117,10 +118,13 @@ export function PageEditor({
 	const status = useSignal<"draft" | "published" | "unpublished">(initialStatus);
 	const hasDraft = useSignal(initialHasDraft);
 	const saving = useSignal(false);
+	const isAutoSaving = useSignal(false);
+	const editorRevision = useSignal(0);
+	const currentPageId = useSignal(pageId);
 	const errorMsg = useSignal<string | null>(null);
 	const showDeleteConfirm = useSignal(false);
 	const sidebarOpen = useSignal(false);
-	const { markDirty, resetDirty, navigateTo, confirmNavigation, modal } = useUnsavedChanges();
+	const { isDirty, markDirty, resetDirty, navigateTo, confirmNavigation, modal } = useUnsavedChanges();
 
 	const savedTranslations = useSignal<Record<string, TranslationEntry>>(
 		Object.fromEntries(
@@ -133,10 +137,59 @@ export function PageEditor({
 
 	const activeTitle = useSignal(savedTranslations.value[activeLang.value]?.title ?? "");
 
+	const defaultLangCode = (languages.find((lang) => lang.isDefault) ?? languages[0])?.code;
+
+	const validateDefaultLangTitle = (): boolean => {
+		if (!defaultLangCode || savedTranslations.value[defaultLangCode]?.title.trim()) return true;
+		errorMsg.value = `Title in the default language (${defaultLangCode.toUpperCase()}) is required`;
+		activeLang.value = defaultLangCode;
+		activeTitle.value = savedTranslations.value[defaultLangCode]?.title ?? "";
+		return false;
+	};
+
 	const switchLang = (code: string): void => {
 		activeLang.value = code;
 		activeTitle.value = savedTranslations.value[code]?.title ?? "";
 	};
+
+	useEffect(() => {
+		// Only auto-save if something changed
+		if (!modal) return; // Ensure hooks are ready
+
+		const timer = setTimeout(async () => {
+			// Don't auto-save if not dirty
+			if (!isDirty.value) return;
+			// Don't auto-save if title in default language is empty (required for creation)
+			if (!savedTranslations.value[defaultLangCode]?.title.trim()) return;
+			// Don't auto-save if already saving
+			if (isAutoSaving.value || saving.value) return;
+
+			isAutoSaving.value = true;
+			errorMsg.value = null;
+
+			const resolvedPageId = await upsertPage(currentPageId.value);
+			if (!resolvedPageId) {
+				isAutoSaving.value = false;
+				return;
+			}
+
+			if (!currentPageId.value && resolvedPageId) {
+				currentPageId.value = resolvedPageId;
+				window.history.replaceState({}, "", `/pages/${resolvedPageId}`);
+			}
+
+			const ok = await saveTranslations(resolvedPageId);
+			if (ok) {
+				resetDirty();
+				if (status.value !== "draft") {
+					hasDraft.value = true;
+				}
+			}
+			isAutoSaving.value = false;
+		}, 1500);
+
+		return () => clearTimeout(timer);
+	}, [activeTitle.value, slug.value, isHomepage.value, hideTitle.value, savedTranslations.value, currentPageId.value]);
 
 	const saveTranslations = async (resolvedPageId: string): Promise<boolean> => {
 		for (const [langCode, translation] of Object.entries(savedTranslations.value)) {
@@ -201,42 +254,12 @@ export function PageEditor({
 		return pageIdArg;
 	};
 
-	const defaultLangCode = (languages.find((lang) => lang.isDefault) ?? languages[0])?.code;
-
-	const validateDefaultLangTitle = (): boolean => {
-		if (!defaultLangCode || savedTranslations.value[defaultLangCode]?.title.trim()) return true;
-		errorMsg.value = `Title in the default language (${defaultLangCode.toUpperCase()}) is required`;
-		activeLang.value = defaultLangCode;
-		activeTitle.value = savedTranslations.value[defaultLangCode]?.title ?? "";
-		return false;
-	};
-
-	const handleSaveDraft = async (): Promise<void> => {
-		if (!validateDefaultLangTitle()) return;
-		saving.value = true;
-		errorMsg.value = null;
-
-		const resolvedPageId = await upsertPage(pageId);
-		if (!resolvedPageId) {
-			saving.value = false;
-			return;
-		}
-
-		const ok = await saveTranslations(resolvedPageId);
-		saving.value = false;
-
-		if (ok) {
-			resetDirty();
-			window.location.href = "/pages";
-		}
-	};
-
 	const handlePublish = async (): Promise<void> => {
 		if (!validateDefaultLangTitle()) return;
 		saving.value = true;
 		errorMsg.value = null;
 
-		const resolvedPageId = await upsertPage(pageId);
+		const resolvedPageId = await upsertPage(currentPageId.value);
 		if (!resolvedPageId) {
 			saving.value = false;
 			return;
@@ -256,16 +279,17 @@ export function PageEditor({
 			return;
 		}
 
+		status.value = "published";
+		hasDraft.value = false;
 		resetDirty();
 		saving.value = false;
-		window.location.href = "/pages";
 	};
 
 	const handleToggleVisibility = async (): Promise<void> => {
-		if (!pageId || status.value === "draft") return;
+		if (!currentPageId.value || status.value === "draft") return;
 		const newStatus = status.value === "published" ? "unpublished" : "published";
 
-		const { error: visibilityError } = await api.pages({ id: pageId }).status.patch({ status: newStatus });
+		const { error: visibilityError } = await api.pages({ id: currentPageId.value }).status.patch({ status: newStatus });
 
 		if (visibilityError) {
 			errorMsg.value = extractApiError(visibilityError) ?? "Failed to update visibility";
@@ -276,28 +300,59 @@ export function PageEditor({
 	};
 
 	const handleDiscardDraft = async (): Promise<void> => {
-		if (!pageId) return;
-		saving.value = true;
-
-		const { error } = await api.pages({ id: pageId }).draft.delete();
-
-		saving.value = false;
-		if (error) {
-			errorMsg.value = extractApiError(error) ?? "Failed to discard draft";
-			return;
-		}
-
-		hasDraft.value = false;
-		resetDirty();
-		window.location.reload();
-	};
-
-	const handleDeletePage = async (): Promise<void> => {
-		if (!pageId) return;
+		if (!currentPageId.value) return;
 		saving.value = true;
 		errorMsg.value = null;
 
-		const { error: deleteError } = await api.pages({ id: pageId }).delete();
+		const { error } = await api.pages({ id: currentPageId.value }).draft.delete();
+
+		if (error) {
+			errorMsg.value = extractApiError(error) ?? "Failed to discard draft";
+			saving.value = false;
+			return;
+		}
+
+		// Re-fetch original content to update UI in-place
+		const { data: pageData, error: fetchError } = await api.pages({ id: currentPageId.value }).get();
+
+		if (fetchError || !pageData) {
+			errorMsg.value = extractApiError(fetchError) ?? "Failed to refresh page data";
+			saving.value = false;
+			return;
+		}
+
+		// Update all signals with original data
+		slug.value = pageData.slug;
+		isHomepage.value = pageData.isHomepage;
+		hideTitle.value = pageData.hideTitle;
+		status.value = pageData.status;
+		hasDraft.value = false;
+
+		const newTranslations = Object.fromEntries(
+			languages.map((lang) => {
+				const found = pageData.translations?.find((t) => t.languageCode === lang.code);
+				return [lang.code, { title: found?.title ?? "", content: found?.content ?? null }];
+			}),
+		);
+		savedTranslations.value = newTranslations;
+		activeTitle.value = newTranslations[activeLang.value]?.title ?? "";
+		editorRevision.value += 1;
+
+		resetDirty();
+		saving.value = false;
+		toast({
+			title: "Draft discarded",
+			description: "Content has been reverted to the published version.",
+			type: "success",
+		});
+	};
+
+	const handleDeletePage = async (): Promise<void> => {
+		if (!currentPageId.value) return;
+		saving.value = true;
+		errorMsg.value = null;
+
+		const { error: deleteError } = await api.pages({ id: currentPageId.value }).delete();
 
 		saving.value = false;
 
@@ -326,6 +381,8 @@ export function PageEditor({
 	const editorContentClass =
 		"outline-none [&_.ProseMirror]:outline-none [&_.ProseMirror]:min-h-[60vh] [&_.ProseMirror]:text-[14px] [&_.ProseMirror]:text-text1 [&_.ProseMirror]:leading-relaxed [&_.ProseMirror_h1]:text-3xl [&_.ProseMirror_h1]:font-bold [&_.ProseMirror_h1]:text-text0 [&_.ProseMirror_h1]:mt-8 [&_.ProseMirror_h1]:mb-3 [&_.ProseMirror_h2]:text-xl [&_.ProseMirror_h2]:font-semibold [&_.ProseMirror_h2]:text-text0 [&_.ProseMirror_h2]:mt-6 [&_.ProseMirror_h2]:mb-2 [&_.ProseMirror_h3]:text-base [&_.ProseMirror_h3]:font-semibold [&_.ProseMirror_h3]:text-text0 [&_.ProseMirror_h3]:mt-4 [&_.ProseMirror_h3]:mb-1 [&_.ProseMirror_p]:mb-3 [&_.ProseMirror_ul]:list-disc [&_.ProseMirror_ul]:pl-5 [&_.ProseMirror_ul]:mb-3 [&_.ProseMirror_ol]:list-decimal [&_.ProseMirror_ol]:pl-5 [&_.ProseMirror_ol]:mb-3 [&_.ProseMirror_blockquote]:border-l-2 [&_.ProseMirror_blockquote]:border-ui-border [&_.ProseMirror_blockquote]:pl-4 [&_.ProseMirror_blockquote]:italic [&_.ProseMirror_blockquote]:text-text2 [&_.ProseMirror_pre]:bg-bg3 [&_.ProseMirror_pre]:rounded [&_.ProseMirror_pre]:p-3 [&_.ProseMirror_pre]:text-[12px] [&_.ProseMirror_pre]:font-mono [&_.ProseMirror_code]:bg-bg3 [&_.ProseMirror_code]:rounded [&_.ProseMirror_code]:px-1 [&_.ProseMirror_code]:text-[12px] [&_.ProseMirror_code]:font-mono [&_.ProseMirror_strong]:font-semibold [&_.ProseMirror_em]:italic [&_.ProseMirror_s]:line-through [&_.ProseMirror_hr]:border-ui-border [&_.ProseMirror_hr]:my-4";
 
+	const sortedLanguages = [...languages].sort((a, b) => (a.isDefault ? -1 : b.isDefault ? 1 : 0));
+
 	return (
 		<div class="flex flex-col h-screen">
 			{/* ── Topbar ──────────────────────────────────────── */}
@@ -341,6 +398,25 @@ export function PageEditor({
 				<span class="text-[11px] text-text0 font-mono truncate min-w-0">{slug.value || "new"}</span>
 
 				<div class="flex-1 shrink-0 min-w-2" />
+
+				<div class="flex items-center gap-2 mr-3 shrink-0">
+					{isAutoSaving.value ? (
+						<span class="inline-flex items-center gap-1.5 text-[10px] text-text2 italic">
+							<span class="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+							Saving...
+						</span>
+					) : isDirty.value ? (
+						<span class="inline-flex items-center gap-1.5 text-[10px] text-amber">
+							<span class="w-1.5 h-1.5 rounded-full bg-amber" />
+							Unsaved changes
+						</span>
+					) : currentPageId.value ? (
+						<span class="inline-flex items-center gap-1.5 text-[10px] text-green">
+							<span class="w-1.5 h-1.5 rounded-full bg-green" />
+							Saved
+						</span>
+					) : null}
+				</div>
 
 				{status.value === "published" ? (
 					<span class="inline-flex items-center gap-1.5 text-[11px] text-green bg-green-faint px-2.5 py-1 rounded">
@@ -376,12 +452,39 @@ export function PageEditor({
 				<div class="flex-1 flex flex-col overflow-hidden bg-bg1">
 					<div class="flex-1 flex flex-col overflow-y-auto">
 						<div class="max-w-[720px] mx-auto w-full px-6 pt-10 pb-2 shrink-0">
+							{languages.length > 1 && (
+								<div class="flex flex-wrap gap-1.5 mb-8">
+									{sortedLanguages.map((lang) => (
+										<button
+											key={lang.code}
+											type="button"
+											onClick={() => switchLang(lang.code)}
+											class={`px-3 py-1 rounded transition-all cursor-pointer border flex flex-col items-start justify-center min-h-[36px] ${
+												activeLang.value === lang.code
+													? "bg-bg3 border-ui-border-hover text-text0"
+													: "bg-transparent border-transparent text-text2 hover:text-text1 hover:bg-bg2"
+											}`}
+										>
+											{lang.isDefault && (
+												<span class="text-[8px] uppercase tracking-tight opacity-40 font-normal leading-none mb-0.5">
+													default
+												</span>
+											)}
+											<span class={`text-[11px] leading-tight ${activeLang.value === lang.code ? "font-medium" : ""}`}>
+												{lang.label}
+											</span>
+										</button>
+									))}
+								</div>
+							)}
 							<input
 								type="text"
-								key={activeLang.value}
+								key={`${activeLang.value}-${editorRevision.value}`}
 								value={activeTitle.value}
 								onInput={(event: Event & { currentTarget: HTMLInputElement }) => {
 									const newTitle = event.currentTarget.value;
+									if (newTitle === activeTitle.value) return;
+
 									activeTitle.value = newTitle;
 									savedTranslations.value = {
 										...savedTranslations.value,
@@ -393,7 +496,7 @@ export function PageEditor({
 									markDirty();
 
 									if (
-										!pageId &&
+										!currentPageId.value &&
 										activeLang.value === defaultLangCode &&
 										!slugManuallyEdited.value &&
 										!isHomepage.value
@@ -407,7 +510,7 @@ export function PageEditor({
 						</div>
 						<EditorRoot>
 							<EditorContent
-								key={activeLang.value}
+								key={`${activeLang.value}-${editorRevision.value}`}
 								extensions={[StarterKit, slashCommand]}
 								initialContent={savedTranslations.value[activeLang.value]?.content ?? undefined}
 								className={editorContentClass}
@@ -419,12 +522,26 @@ export function PageEditor({
 										class: "max-w-[720px] mx-auto px-6 py-4",
 									},
 								}}
-								onUpdate={({ editor }: { editor: { getJSON: () => JSONContent } }) => {
+								onUpdate={({
+									editor,
+									transaction,
+								}: {
+									editor: { getJSON: () => JSONContent };
+									transaction: { docChanged: boolean };
+								}) => {
+									if (!transaction.docChanged) return;
+
+									const newContent = editor.getJSON();
+									const oldContent = savedTranslations.value[activeLang.value]?.content;
+
+									// Prevent redundant updates on identical content
+									if (JSON.stringify(newContent) === JSON.stringify(oldContent)) return;
+
 									savedTranslations.value = {
 										...savedTranslations.value,
 										[activeLang.value]: {
 											...savedTranslations.value[activeLang.value],
-											content: editor.getJSON(),
+											content: newContent,
 										},
 									};
 									markDirty();
@@ -474,35 +591,11 @@ export function PageEditor({
 							✕
 						</button>
 					</div>
-					{/* Language switcher */}
-					{languages.length > 1 && (
-						<div class="bg-bg2 border border-ui-border rounded-md p-3">
-							<div class="text-[11px] text-text0 mb-2.5">Language</div>
-							<div class="flex flex-wrap gap-1.5">
-								{languages.map((lang) => (
-									<button
-										key={lang.code}
-										type="button"
-										onClick={() => switchLang(lang.code)}
-										class={`px-3 py-1.5 text-[11px] rounded border cursor-pointer transition-all ${
-											activeLang.value === lang.code
-												? "bg-accent border-accent text-white"
-												: "bg-bg1 border-ui-border text-text1 hover:border-ui-border-hover"
-										}`}
-									>
-										{lang.label}
-										{lang.isDefault && <span class="ml-1 text-[9px] opacity-50">default</span>}
-									</button>
-								))}
-							</div>
-						</div>
-					)}
-
 					{/* Version status */}
 					<div class="bg-bg2 border border-ui-border rounded-md p-3">
 						<div class="text-[11px] text-text0 mb-2.5">Version status</div>
 
-						{pageId && status.value !== "draft" && (
+						{currentPageId.value && status.value !== "draft" && (
 							<div class="flex items-center justify-between mb-2.5">
 								<span class="text-[10px] text-text1">{status.value === "published" ? "Published" : "Unpublished"}</span>
 								<Toggle
@@ -513,31 +606,33 @@ export function PageEditor({
 							</div>
 						)}
 
-						{pageId && hasDraft.value && (status.value === "published" || status.value === "unpublished") && (
-							<div class="bg-amber-faint border border-amber/20 rounded px-2 py-1.5 mb-2.5">
-								<div class="text-[10px] text-amber font-medium mb-1.5">Draft pending</div>
-								<div class="flex flex-col gap-1">
-									<button
-										type="button"
-										onClick={handlePublish}
-										disabled={saving.value}
-										class="w-full text-center text-[10px] bg-accent text-white border-none rounded py-1 cursor-pointer hover:bg-accent-hover transition-colors disabled:opacity-40"
-									>
-										{saving.value ? "…" : "Publish draft"}
-									</button>
-									<button
-										type="button"
-										onClick={handleDiscardDraft}
-										disabled={saving.value}
-										class="w-full text-center text-[10px] bg-bg3 border border-ui-border text-text1 rounded py-1 cursor-pointer hover:border-ui-border-hover transition-colors disabled:opacity-40"
-									>
-										Discard
-									</button>
+						{currentPageId.value &&
+							hasDraft.value &&
+							(status.value === "published" || status.value === "unpublished") && (
+								<div class="bg-amber-faint border border-amber/20 rounded px-2 py-1.5 mb-2.5">
+									<div class="text-[10px] text-amber font-medium mb-1.5">Draft pending</div>
+									<div class="flex flex-col gap-1">
+										<button
+											type="button"
+											onClick={handlePublish}
+											disabled={saving.value}
+											class="w-full text-center text-[10px] bg-accent text-white border-none rounded py-1 cursor-pointer hover:bg-accent-hover transition-colors disabled:opacity-40"
+										>
+											{saving.value ? "…" : "Publish draft"}
+										</button>
+										<button
+											type="button"
+											onClick={handleDiscardDraft}
+											disabled={saving.value}
+											class="w-full text-center text-[10px] bg-bg3 border border-ui-border text-text1 rounded py-1 cursor-pointer hover:border-ui-border-hover transition-colors disabled:opacity-40"
+										>
+											Discard
+										</button>
+									</div>
 								</div>
-							</div>
-						)}
+							)}
 
-						{!pageId && <div class="text-[10px] text-text1 mb-2.5">Not published yet</div>}
+						{!currentPageId.value && <div class="text-[10px] text-text1 mb-2.5">Not published yet</div>}
 
 						{errorMsg.value && (
 							<p class="text-[10px] text-coral bg-coral/10 border border-coral/20 rounded px-2 py-1.5 mb-2">
@@ -545,25 +640,15 @@ export function PageEditor({
 							</p>
 						)}
 
-						{(!pageId || status.value === "draft" || !hasDraft.value) && (
-							<div class="flex gap-1.5">
-								<button
-									type="button"
-									onClick={handleSaveDraft}
-									disabled={saving.value}
-									class="flex-1 text-center text-[11px] bg-bg3 border border-ui-border text-text0 rounded py-1.5 cursor-pointer hover:border-ui-border-hover transition-colors disabled:opacity-40"
-								>
-									Save draft
-								</button>
-								<button
-									type="button"
-									onClick={handlePublish}
-									disabled={saving.value}
-									class="flex-1 text-center text-[11px] bg-accent text-white border-none rounded py-1.5 cursor-pointer hover:bg-accent-hover transition-colors disabled:opacity-40"
-								>
-									{saving.value ? "…" : "Publish ↑"}
-								</button>
-							</div>
+						{(!currentPageId.value || status.value === "draft") && (
+							<button
+								type="button"
+								onClick={handlePublish}
+								disabled={saving.value}
+								class="w-full text-center text-[11px] bg-accent text-white border-none rounded py-1.5 cursor-pointer hover:bg-accent-hover transition-colors disabled:opacity-40"
+							>
+								{saving.value ? "…" : "Publish ↑"}
+							</button>
 						)}
 					</div>
 
@@ -585,10 +670,13 @@ export function PageEditor({
 										});
 										return;
 									}
+
+									if (isHomepage.value === event.currentTarget.checked) return;
+
 									isHomepage.value = event.currentTarget.checked;
 									if (event.currentTarget.checked) {
 										slug.value = "/";
-									} else if (!pageId && !slugManuallyEdited.value) {
+									} else if (!currentPageId.value && !slugManuallyEdited.value) {
 										const defaultTitle = savedTranslations.value[defaultLangCode ?? ""]?.title ?? "";
 										slug.value = slugify(defaultTitle);
 									}
@@ -604,6 +692,7 @@ export function PageEditor({
 								type="checkbox"
 								checked={hideTitle.value}
 								onChange={(event: Event & { currentTarget: HTMLInputElement }) => {
+									if (hideTitle.value === event.currentTarget.checked) return;
 									hideTitle.value = event.currentTarget.checked;
 									markDirty();
 								}}
@@ -617,6 +706,7 @@ export function PageEditor({
 							type="text"
 							value={isHomepage.value ? "/" : slug.value}
 							onInput={(event: Event & { currentTarget: HTMLInputElement }) => {
+								if (slug.value === event.currentTarget.value) return;
 								slug.value = event.currentTarget.value;
 								slugManuallyEdited.value = true;
 								markDirty();
@@ -629,7 +719,7 @@ export function PageEditor({
 					</div>
 
 					{/* Danger zone */}
-					{pageId && (
+					{currentPageId.value && (
 						<div class="bg-bg2 border border-coral/30 rounded-md p-3">
 							<div class="text-[11px] text-coral mb-2.5">Danger zone</div>
 							{showDeleteConfirm.value ? (

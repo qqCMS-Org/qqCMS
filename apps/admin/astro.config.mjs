@@ -1,9 +1,9 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import node from "@astrojs/node";
 import preact from "@astrojs/preact";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
-import { fileURLToPath } from "node:url";
-import path from "node:path";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const src = (p) => path.resolve(__dirname, "src", p);
@@ -16,7 +16,10 @@ export default defineConfig({
 		enabled: false,
 	},
 	integrations: [
-		preact({ compat: true, include: ["**/islands/**", "**/features/**", "**/widgets/**", "**/entities/**", "**/shared/**"] }),
+		preact({
+			compat: true,
+			include: ["**/islands/**", "**/features/**", "**/widgets/**", "**/entities/**", "**/shared/**"],
+		}),
 	],
 	vite: {
 		plugins: [

@@ -1,8 +1,8 @@
 ---
 import { AdminLayout } from "@layouts";
-import { CollectionsManager } from "@widgets/collections";
-import type { CollectionRow } from "@widgets/collections";
 import { COOKIE_NAME, DEFAULT_API_URL } from "@shared/constants";
+import type { CollectionRow } from "@widgets/collections";
+import { CollectionsManager } from "@widgets/collections";
 
 const API_URL = import.meta.env.PUBLIC_API_URL ?? DEFAULT_API_URL;
 const token = Astro.cookies.get(COOKIE_NAME)?.value;

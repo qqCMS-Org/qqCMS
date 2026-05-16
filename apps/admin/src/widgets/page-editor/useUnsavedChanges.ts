@@ -4,6 +4,7 @@ import { useModal } from "@shared/modal";
 import { useEffect } from "preact/hooks";
 
 export interface UnsavedChangesHook {
+	isDirty: { value: boolean };
 	markDirty: () => void;
 	resetDirty: () => void;
 	navigateTo: (href: string) => void;
@@ -48,5 +49,5 @@ export const useUnsavedChanges = (): UnsavedChangesHook => {
 		window.location.href = pendingHref.value;
 	};
 
-	return { markDirty, resetDirty, navigateTo, confirmNavigation, modal };
+	return { isDirty, markDirty, resetDirty, navigateTo, confirmNavigation, modal };
 };

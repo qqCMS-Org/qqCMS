@@ -1,8 +1,8 @@
 ---
 import { Layout } from "@layouts";
-import { SidebarNav } from "@widgets/sidebar";
-import type { NavItemId } from "@widgets/sidebar";
 import { COOKIE_NAME, DEFAULT_API_URL } from "@shared/constants";
+import type { NavItemId } from "@widgets/sidebar";
+import { SidebarNav } from "@widgets/sidebar";
 
 interface Props {
 	title: string;
@@ -21,13 +21,13 @@ const authHeaders: Record<string, string> = token ? { Cookie: `${COOKIE_NAME}=${
 const settingsRes = await fetch(`${API_URL}/settings`, { headers: authHeaders }).catch(() => null);
 const settings: any[] = settingsRes?.ok ? await settingsRes.json().catch(() => []) : [];
 
-const siteIconId = settings.find(s => s.key === 'siteIcon')?.value;
+const siteIconId = settings.find((s) => s.key === "siteIcon")?.value;
 
-let siteIconUrl = '';
+let siteIconUrl = "";
 if (siteIconId) {
-  const iconRes = await fetch(`${API_URL}/media/${siteIconId}`, { headers: authHeaders }).catch(() => null);
-  const iconData = iconRes?.ok ? await iconRes.json().catch(() => null) : null;
-  if (iconData?.url) siteIconUrl = `${API_URL}${iconData.url}`;
+	const iconRes = await fetch(`${API_URL}/media/${siteIconId}`, { headers: authHeaders }).catch(() => null);
+	const iconData = iconRes?.ok ? await iconRes.json().catch(() => null) : null;
+	if (iconData?.url) siteIconUrl = `${API_URL}${iconData.url}`;
 }
 ---
 

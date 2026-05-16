@@ -1,8 +1,8 @@
 ---
-import { AdminLayout } from "@layouts";
-import { StatsBar } from "@widgets/dashboard";
 import { LogoutButton } from "@features/auth";
+import { AdminLayout } from "@layouts";
 import { COOKIE_NAME, DEFAULT_API_URL } from "@shared/constants";
+import { StatsBar } from "@widgets/dashboard";
 
 const API_URL = import.meta.env.PUBLIC_API_URL ?? DEFAULT_API_URL;
 const token = Astro.cookies.get(COOKIE_NAME)?.value;

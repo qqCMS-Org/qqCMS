@@ -1,8 +1,8 @@
 ---
 import { AdminLayout } from "@layouts";
-import { PageEditor } from "@widgets/page-editor";
-import type { PageLanguage } from "@widgets/page-editor";
 import { COOKIE_NAME, DEFAULT_API_URL } from "@shared/constants";
+import type { PageLanguage } from "@widgets/page-editor";
+import { PageEditor } from "@widgets/page-editor";
 
 const API_URL = import.meta.env.PUBLIC_API_URL ?? DEFAULT_API_URL;
 const token = Astro.cookies.get(COOKIE_NAME)?.value;
