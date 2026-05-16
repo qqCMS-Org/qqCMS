@@ -92,7 +92,8 @@ export function PageEditor({
 
 	const saveTranslations = async (resolvedPageId: string): Promise<boolean> => {
 		for (const [langCode, translation] of Object.entries(savedTranslations.value)) {
-			if (!translation.title.trim()) continue;
+			const initial = initialTranslations.find((t) => t.languageCode === langCode);
+			if (!translation.title.trim() && !initial) continue;
 
 			const { error } = await api
 				.pages({ id: resolvedPageId })

@@ -46,21 +46,25 @@ let languages: Array<{ code: string; label: string }> = [];
 let navItems: Array<{ id: string; label: Record<string, string>; href: string }> = [];
 let siteName = "qqCMS";
 let siteLogoUrl = "";
+let defaultLangCode = "en";
 
 try {
-	const [t, navRes, settingsRes] = await Promise.all([
-		getPageTranslation(page.id, lang),
+	const [langsRes, navRes, settingsRes] = await Promise.all([
+		api.languages.get(),
 		api.navigation.get(),
 		api.settings.get(),
 	]);
 
-	translation = t;
-
-	if (langsValidationRes && !langsValidationRes.error) {
-		languages = langsValidationRes.data
+	if (langsRes && !langsRes.error) {
+		languages = langsRes.data
 			.filter((l) => l.isActive)
 			.map((l) => ({ code: l.code, label: l.label }));
+		defaultLangCode = langsRes.data.find((l) => l.isDefault)?.code ?? langsRes.data[0]?.code ?? "en";
 	}
+
+	// Logic for web: set fallback: true to enable fallback to default language
+	const useFallback = true;
+	translation = await getPageTranslation(page.id, lang, useFallback ? defaultLangCode : undefined);
 
 	if (!navRes.error) {
 		navItems = navRes.data.map((n) => ({ id: n.id, label: n.label, href: n.href }));
@@ -87,8 +91,10 @@ try {
 	// API unreachable — render page shell without nav/languages
 }
 
-const pageTitle = translation?.title ?? slug;
+const hasTranslation = !!translation;
+const pageTitle = translation?.title || (page.isHomepage ? "Home" : page.slug);
 const content = translation?.publishedContent ?? null;
+const isFallback = translation && translation.languageCode !== lang;
 const hideTitle = page.hideTitle ?? false;
 ---
 
@@ -102,19 +108,37 @@ const hideTitle = page.hideTitle ?? false;
     siteName={siteName}
     siteLogoUrl={siteLogoUrl}
   />
-  <main class="container mx-auto max-w-4xl px-4 py-10">
-    {!hideTitle && <h1 class="text-4xl font-bold mb-8">{pageTitle}</h1>}
+  <main class="container mx-auto max-w-4xl px-4 py-10 flex flex-col min-h-[60vh]">
     {
-      content ? (
-        <article class="content-article">
-          <TipTapRenderer
-            node={content}
-            registry={defaultRegistry}
-          />
-        </article>
+      hasTranslation && translation && content ? (
+        <>
+          {!hideTitle && <h1 class="text-4xl font-bold mb-8">{pageTitle}</h1>}
+          <article class="content-article flex-1">
+            {isFallback && (
+              <div class="bg-bg2/50 border border-ui-border rounded-lg p-3 mb-6 text-xs text-text2 italic">
+                Note: This content is not available in your language and is shown in {translation.languageCode.toUpperCase()}.
+              </div>
+            )}
+            <TipTapRenderer
+              node={content}
+              registry={defaultRegistry}
+            />
+          </article>
+        </>
       ) : (
-        <div class="flex items-center justify-center min-h-[40vh]">
-          <p class="text-sm text-text2">No content published for this language yet.</p>
+        <div class="flex-1 flex flex-col items-center justify-center text-center py-20">
+          <div class="w-16 h-16 bg-bg2 rounded-full flex items-center justify-center mb-6">
+            <span class="text-2xl">📄</span>
+          </div>
+          <p class="text-xl text-text0 font-semibold mb-2">Content not found</p>
+          <p class="text-sm text-text2 max-w-xs mx-auto">
+            There is no content published for this page in <strong>{lang.toUpperCase()}</strong> yet.
+          </p>
+          {languages.length > 1 && (
+            <p class="text-xs text-text2 mt-8 italic">
+              Try switching to another language in the header.
+            </p>
+          )}
         </div>
       )
     }

@@ -1,6 +1,7 @@
 import { NotFoundError } from "@api/errors";
 import { triggerRebuild } from "@modules/rebuild";
 import {
+	deleteTranslation,
 	getTranslationsByPage,
 	promoteTranslationsToPublished,
 	revertTranslationsToDraft,
@@ -89,6 +90,17 @@ export const discardDraft = async (id: string) => {
 export const upsertTranslation = async (pageId: string, languageCode: string, data: UpsertTranslationInput) => {
 	const page = await getPageById(pageId);
 	if (!page) throw new NotFoundError("Page not found");
+
+	const isTitleEmpty = !data.title.trim();
+	const isContentEmpty =
+		!data.content ||
+		(data.content.type === "doc" && (!data.content.content || (data.content.content as unknown[]).length === 0));
+
+	if (isTitleEmpty && isContentEmpty) {
+		await deleteTranslation(pageId, languageCode);
+		void triggerRebuild();
+		return { pageId, languageCode, title: "", content: null };
+	}
 
 	const [translation] = await upsertTranslationInDb({ pageId, languageCode, ...data });
 

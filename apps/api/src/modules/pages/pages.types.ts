@@ -16,7 +16,7 @@ export const UpdatePageStatusSchema = t.Object({
 });
 
 export const UpsertTranslationSchema = t.Object({
-	title: t.String({ minLength: 1 }),
+	title: t.String(),
 	content: t.Optional(t.Record(t.String(), t.Unknown())),
 });
 

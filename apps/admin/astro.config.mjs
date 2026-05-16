@@ -12,6 +12,9 @@ const src = (p) => path.resolve(__dirname, "src", p);
 export default defineConfig({
 	output: "server",
 	adapter: node({ mode: "standalone" }),
+	devToolbar: {
+		enabled: false,
+	},
 	integrations: [
 		preact({ compat: true, include: ["**/islands/**", "**/features/**", "**/widgets/**", "**/entities/**", "**/shared/**"] }),
 	],
@@ -28,6 +31,9 @@ export default defineConfig({
 				},
 			},
 		],
+		optimizeDeps: {
+			force: true,
+		},
 		resolve: {
 			alias: {
 				"@app": src("app"),

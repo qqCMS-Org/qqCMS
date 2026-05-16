@@ -17,11 +17,17 @@ export default defineConfig({
 		host: "localhost",
 		port: 4321,
 	},
+	devToolbar: {
+		enabled: false,
+	},
 	integrations: [
 		preact({ compat: true, include: ["**/islands/**", "**/features/**", "**/widgets/**", "**/entities/**"] }),
 	],
 	vite: {
 		plugins: [tailwindcss()],
+		optimizeDeps: {
+			force: true,
+		},
 		resolve: {
 			alias: {
 				"@lib": src("lib"),
