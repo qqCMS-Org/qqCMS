@@ -27,7 +27,7 @@
 		"@tiptap/core": "^3.22.5",
 		"@tiptap/react": "^3.22.5",
 		"@tiptap/starter-kit": "^3.22.5",
-		"astro": "^6.0.5",
+		"astro": "^6.3.1",
 		"daisyui": "^5.5.19",
 		"lucide-preact": "^1.14.0",
 		"preact": "^10.29.1",

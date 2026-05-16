@@ -1,0 +1,11 @@
+---
+export const prerender = false;
+
+import { resolveDefaultLang } from "@lib/resolveDefaultLang";
+
+const slug = Astro.params.slug ?? "";
+const lang = await resolveDefaultLang(Astro.request.headers.get("accept-language"));
+
+const cleanSlug = slug.replace(/^\/+/, "");
+return Astro.redirect(cleanSlug ? `/${lang}/${cleanSlug}` : `/${lang}/`, 302);
+---

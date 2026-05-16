@@ -1,5 +1,6 @@
 import { timingSafeEqual } from "node:crypto";
 import type { APIRoute } from "astro";
+import { invalidateAll } from "../../lib/cache";
 
 export const prerender = false;
 
@@ -28,6 +29,8 @@ export const POST: APIRoute = async ({ request }) => {
 			headers: { "Content-Type": "application/json" },
 		});
 	}
+
+	invalidateAll();
 
 	// Trigger deploy hook if configured
 	const deployHookUrl = import.meta.env.DEPLOY_HOOK_URL as string | undefined;

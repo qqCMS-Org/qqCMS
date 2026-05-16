@@ -2,46 +2,59 @@
 import { defaultRegistry, TipTapRenderer } from "@repo/ui";
 import { WebLayout } from "@layouts";
 import { Header } from "@widgets/header";
-import { getAllPublishedPages, getPageTranslation } from "@entities/page";
+import { getPageTranslation } from "@entities/page";
+import { resolveDefaultLang } from "@lib/resolveDefaultLang";
 import { api } from "@shared/api/client";
 
-export const prerender = true;
+export const prerender = false;
 
-export async function getStaticPaths() {
-	const entries = await getAllPublishedPages();
+const lang = Astro.params.lang ?? "";
+const slug = Astro.params.slug ?? "";
 
-	return entries.map(({ lang, slug, pageId, isHomepage }) => ({
-		params: { lang, slug },
-		props: { pageId, lang, slug, isHomepage },
-	}));
+// Validate that lang is an active language code; if not, treat it as a slug segment
+const langsValidationRes = await api.languages.get().catch(() => null);
+const activeLangCodes = langsValidationRes && !langsValidationRes.error
+	? langsValidationRes.data.filter((l) => l.isActive).map((l) => l.code)
+	: [];
+
+if (activeLangCodes.length > 0 && !activeLangCodes.includes(lang)) {
+	// lang is not a real language — rebuild the full slug and redirect with resolved lang
+	const resolvedLang = await resolveDefaultLang(Astro.request.headers.get("accept-language"));
+	const fullSlug = slug ? `${lang}/${slug}` : lang;
+	return Astro.redirect(`/${resolvedLang}/${fullSlug}`, 302);
 }
 
-interface Props {
-	pageId: string;
-	lang: string;
-	slug: string;
-	isHomepage: boolean;
+const pagesRes = await api.pages.get().catch(() => null);
+
+if (!pagesRes || pagesRes.error) {
+	return Astro.redirect("/404");
 }
 
-const { pageId, lang, slug } = Astro.props;
+// Normalize slug: strip leading slashes. Empty slug means homepage.
+const normalizedSlug = slug.replace(/^\/+/, "");
 
-// Fetch translation, languages, and nav items in parallel
-// Wrap in try-catch so an unavailable API doesn't crash a prerendered page.
+const page = normalizedSlug
+	? pagesRes.data.find((p) => p.slug.replace(/^\/+/, "") === normalizedSlug && p.status === "published")
+	: pagesRes.data.find((p) => p.isHomepage && p.status === "published");
+
+if (!page) {
+	return Astro.redirect("/404");
+}
+
 let translation: Awaited<ReturnType<typeof getPageTranslation>> = null;
 let languages: Array<{ code: string; label: string }> = [];
 let navItems: Array<{ id: string; label: Record<string, string>; href: string }> = [];
 
 try {
-	const [t, langsRes, navRes] = await Promise.all([
-		getPageTranslation(pageId, lang),
-		api.languages.get(),
+	const [t, navRes] = await Promise.all([
+		getPageTranslation(page.id, lang),
 		api.navigation.get(),
 	]);
 
 	translation = t;
 
-	if (!langsRes.error) {
-		languages = langsRes.data
+	if (langsValidationRes && !langsValidationRes.error) {
+		languages = langsValidationRes.data
 			.filter((l) => l.isActive)
 			.map((l) => ({ code: l.code, label: l.label }));
 	}

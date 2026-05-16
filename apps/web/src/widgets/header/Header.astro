@@ -55,7 +55,7 @@ const { navItems, languages, currentLang, currentSlug } = Astro.props;
           {
             navItems.map((item) => (
               <li>
-                <a href={item.href}>
+                <a href={`/${currentLang}${item.href.startsWith("/") ? item.href : `/${item.href}`}`}>
                   {item.label[currentLang] ?? item.label["en"] ?? item.href}
                 </a>
               </li>
@@ -72,7 +72,7 @@ const { navItems, languages, currentLang, currentSlug } = Astro.props;
         {
           navItems.map((item) => (
             <li>
-              <a href={item.href} class="btn btn-ghost btn-sm">
+              <a href={`/${currentLang}${item.href.startsWith("/") ? item.href : `/${item.href}`}`} class="btn btn-ghost btn-sm">
                 {item.label[currentLang] ?? item.label["en"] ?? item.href}
               </a>
             </li>

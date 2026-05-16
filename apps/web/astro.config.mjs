@@ -24,6 +24,7 @@ export default defineConfig({
 		plugins: [tailwindcss()],
 		resolve: {
 			alias: {
+				"@lib": src("lib"),
 				"@app": src("app"),
 				"@layouts": src("layouts/index.ts"),
 				"@widgets": src("widgets"),
