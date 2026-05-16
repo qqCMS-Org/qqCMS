@@ -1,10 +1,16 @@
+import { NotFoundError } from "@api/errors";
 import { authPlugin } from "@api/middleware/auth.middleware";
 import { Elysia, t } from "elysia";
-import { deleteMedia, listMedia, uploadMedia } from "./media.service";
+import { deleteMedia, getMedia, listMedia, uploadMedia } from "./media.service";
 
 export const mediaController = new Elysia({ prefix: "/media" })
 	.use(authPlugin)
 	.get("/", () => listMedia(), { requireAuth: true })
+	.get("/:id", async ({ params }) => {
+		const record = await getMedia(params.id);
+		if (!record) throw new NotFoundError("Media file not found");
+		return record;
+	})
 	.post(
 		"/",
 		async ({ body }) => {

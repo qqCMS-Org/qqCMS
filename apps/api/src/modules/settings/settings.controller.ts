@@ -9,7 +9,7 @@ const REBUILD_FAILED_CODE = "REBUILD_FAILED";
 
 export const settingsController = new Elysia({ prefix: "/settings" })
 	.use(authPlugin)
-	.get("/", () => listSettings(), { requireAuth: true })
+	.get("/", () => listSettings())
 	.post(
 		"/rebuilds",
 		async ({ set }) => {

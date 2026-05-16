@@ -2,6 +2,7 @@
 import { Layout } from "@layouts";
 import { SidebarNav } from "@widgets/sidebar";
 import type { NavItemId } from "@widgets/sidebar";
+import { COOKIE_NAME, DEFAULT_API_URL } from "@shared/constants";
 
 interface Props {
 	title: string;
@@ -11,11 +12,32 @@ interface Props {
 }
 
 const { title, activePage, noPadding = false, noTopbar = false } = Astro.props;
+
+// Fetch settings for favicon
+const API_URL = import.meta.env.PUBLIC_API_URL ?? DEFAULT_API_URL;
+const token = Astro.cookies.get(COOKIE_NAME)?.value;
+const authHeaders: Record<string, string> = token ? { Cookie: `${COOKIE_NAME}=${token}` } : {};
+
+const settingsRes = await fetch(`${API_URL}/settings`, { headers: authHeaders }).catch(() => null);
+const settings: any[] = settingsRes?.ok ? await settingsRes.json().catch(() => []) : [];
+
+const siteIconId = settings.find(s => s.key === 'siteIcon')?.value;
+
+let siteIconUrl = '';
+if (siteIconId) {
+  const iconRes = await fetch(`${API_URL}/media/${siteIconId}`, { headers: authHeaders }).catch(() => null);
+  const iconData = iconRes?.ok ? await iconRes.json().catch(() => null) : null;
+  if (iconData?.url) siteIconUrl = `${API_URL}${iconData.url}`;
+}
 ---
 
-<Layout title={`${title} — qqCMS`}>
+<Layout title={`qqCMS — ${title}`}>
+  {siteIconUrl && <link rel="icon" href={siteIconUrl} slot="head" />}
   <div class="admin-shell">
-    <SidebarNav activePage={activePage} client:load />
+    <SidebarNav 
+      activePage={activePage} 
+      client:load 
+    />
     <div class="admin-main">
       {!noTopbar && (
         <header class="admin-topbar">

@@ -44,11 +44,14 @@ if (!page) {
 let translation: Awaited<ReturnType<typeof getPageTranslation>> = null;
 let languages: Array<{ code: string; label: string }> = [];
 let navItems: Array<{ id: string; label: Record<string, string>; href: string }> = [];
+let siteName = "qqCMS";
+let siteLogoUrl = "";
 
 try {
-	const [t, navRes] = await Promise.all([
+	const [t, navRes, settingsRes] = await Promise.all([
 		getPageTranslation(page.id, lang),
 		api.navigation.get(),
+		api.settings.get(),
 	]);
 
 	translation = t;
@@ -61,6 +64,24 @@ try {
 
 	if (!navRes.error) {
 		navItems = navRes.data.map((n) => ({ id: n.id, label: n.label, href: n.href }));
+	}
+
+	if (settingsRes && !settingsRes.error) {
+		const settings = settingsRes.data;
+		siteName = settings.find((s) => s.key === "siteName")?.value as string || "qqCMS";
+		const siteLogoId = settings.find((s) => s.key === "siteLogo")?.value as string;
+
+		if (siteLogoId) {
+			const API_URL = import.meta.env.PUBLIC_API_URL ?? "http://localhost:3000";
+			const logoRes = await api.media({ id: siteLogoId }).get().catch(() => null);
+			if (logoRes?.data && "url" in logoRes.data && logoRes.data.url) {
+				siteLogoUrl = `${API_URL}${logoRes.data.url}`;
+			} else {
+				siteLogoUrl = "";
+			}
+		} else {
+			siteLogoUrl = "";
+		}
 	}
 } catch {
 	// API unreachable — render page shell without nav/languages
@@ -78,6 +99,8 @@ const hideTitle = page.hideTitle ?? false;
     languages={languages}
     currentLang={lang}
     currentSlug={slug}
+    siteName={siteName}
+    siteLogoUrl={siteLogoUrl}
   />
   <main class="container mx-auto max-w-4xl px-4 py-10">
     {!hideTitle && <h1 class="text-4xl font-bold mb-8">{pageTitle}</h1>}

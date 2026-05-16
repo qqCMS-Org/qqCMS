@@ -17,6 +17,8 @@ export const ensureUploadDir = async () => {
 
 export const listMedia = () => getMediaFiles();
 
+export const getMedia = (id: string) => getMediaFileById(id);
+
 export const uploadMedia = async (file: File) => {
 	if (!(ALLOWED_MIME_TYPES as readonly string[]).includes(file.type)) {
 		throw new BadRequestError(`Unsupported file type: ${file.type}`);

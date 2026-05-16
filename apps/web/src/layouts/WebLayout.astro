@@ -1,6 +1,7 @@
 ---
 import { ClientRouter } from "astro:transitions";
 import "@app/styles/global.css";
+import { api } from "@shared/api/client";
 
 interface Props {
 	title: string;
@@ -9,6 +10,23 @@ interface Props {
 }
 
 const { title, description, lang = "en" } = Astro.props;
+
+// Fetch settings for branding
+const settingsRes = await api.settings.get().catch(() => null);
+const settings = settingsRes && !settingsRes.error ? settingsRes.data : [];
+
+const siteName = settings.find((s) => s.key === "siteName")?.value as string || "qqCMS";
+const siteIconId = settings.find((s) => s.key === "siteIcon")?.value as string;
+
+const API_URL = import.meta.env.PUBLIC_API_URL ?? "http://localhost:3000";
+
+let siteIconUrl = "/favicon.ico";
+if (siteIconId) {
+	const iconRes = await api.media({ id: siteIconId }).get().catch(() => null);
+	if (iconRes?.data && "url" in iconRes.data && iconRes.data.url) {
+		siteIconUrl = `${API_URL}${iconRes.data.url}`;
+	}
+}
 ---
 
 <!doctype html>
@@ -16,8 +34,7 @@ const { title, description, lang = "en" } = Astro.props;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.ico" />
+    <link rel="icon" href={siteIconUrl} />
     <ClientRouter />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
@@ -25,7 +42,7 @@ const { title, description, lang = "en" } = Astro.props;
       rel="stylesheet"
     />
     <meta name="generator" content={Astro.generator} />
-    <title>{title}</title>
+    <title>{title} — {siteName}</title>
     {description && <meta name="description" content={description} />}
   </head>
   <body class="bg-base-100 text-base-content">

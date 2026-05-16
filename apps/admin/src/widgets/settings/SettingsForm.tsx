@@ -1,5 +1,6 @@
 import { Button, Input } from "@repo/ui";
 import { api, extractApiError } from "@shared/api/client";
+import { MediaSelect } from "@shared/MediaSelect";
 import type { ComponentChildren } from "preact";
 import { useState } from "preact/compat";
 
@@ -44,8 +45,9 @@ const FormRow = ({ label, hint, children }: { label: string; hint?: string; chil
 export const SettingsForm = ({ initialSettings }: SettingsFormProps) => {
 	const [settingsMap, setSettingsMap] = useState<Record<string, string>>(() => {
 		const map: Record<string, string> = {
-			projectName: "",
-			adminUrl: "",
+			siteName: "",
+			siteLogo: "",
+			siteIcon: "",
 			apiUrl: "",
 		};
 		initialSettings.forEach((s) => {
@@ -63,8 +65,8 @@ export const SettingsForm = ({ initialSettings }: SettingsFormProps) => {
 		type: "success" | "error";
 	} | null>(null);
 
-	const handleChange = (key: string, value: string) => {
-		setSettingsMap((prev) => ({ ...prev, [key]: value }));
+	const handleChange = (key: string, value: string | null) => {
+		setSettingsMap((prev) => ({ ...prev, [key]: value || "" }));
 	};
 
 	const showMessage = (text: string, type: "success" | "error") => {
@@ -110,7 +112,11 @@ export const SettingsForm = ({ initialSettings }: SettingsFormProps) => {
 		<div class="max-w-[660px]">
 			<div class="flex justify-between items-center mb-5">
 				<h2 class="text-base text-text0 font-medium">Global Settings</h2>
-				<Button variant="primary" loading={isSaving} onClick={() => handleSave(["projectName", "adminUrl", "apiUrl"])}>
+				<Button
+					variant="primary"
+					loading={isSaving}
+					onClick={() => handleSave(["siteName", "siteLogo", "siteIcon", "apiUrl"])}
+				>
 					Save all changes
 				</Button>
 			</div>
@@ -125,21 +131,29 @@ export const SettingsForm = ({ initialSettings }: SettingsFormProps) => {
 				</div>
 			)}
 
-			<SettingsBlock id="project" title="Project">
-				<FormRow label="Project name" hint="Display name shown in the browser tab.">
+			<SettingsBlock id="site" title="Site Branding">
+				<FormRow label="Site name" hint="Display name shown in the header and browser tab.">
 					<Input
-						value={settingsMap.projectName || ""}
-						onChange={(e) => handleChange("projectName", e.currentTarget.value)}
-						placeholder="My qqCMS Project"
+						value={settingsMap.siteName || ""}
+						onChange={(e) => handleChange("siteName", e.currentTarget.value)}
+						placeholder="My qqCMS Site"
 					/>
 				</FormRow>
-				<FormRow label="Admin URL" hint="Base URL for the admin interface.">
-					<Input
-						value={settingsMap.adminUrl || ""}
-						onChange={(e) => handleChange("adminUrl", e.currentTarget.value)}
-						placeholder="https://admin.example.com"
+
+				<div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
+					<MediaSelect
+						label="Logo"
+						hint="Displayed in the admin sidebar and web header."
+						value={settingsMap.siteLogo}
+						onChange={(id) => handleChange("siteLogo", id)}
 					/>
-				</FormRow>
+					<MediaSelect
+						label="Icon"
+						hint="Favicon for the browser tab (ICO/PNG/SVG)."
+						value={settingsMap.siteIcon}
+						onChange={(id) => handleChange("siteIcon", id)}
+					/>
+				</div>
 			</SettingsBlock>
 
 			<SettingsBlock id="api" title="API">

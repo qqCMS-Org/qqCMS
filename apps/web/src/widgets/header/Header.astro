@@ -1,5 +1,4 @@
 ---
-import { Logo } from "@repo/ui";
 import LanguageSwitcher from "@features/language-switch/LanguageSwitcher.astro";
 
 interface NavItem {
@@ -18,15 +17,23 @@ interface Props {
 	languages: Language[];
 	currentLang: string;
 	currentSlug: string;
+	siteName?: string;
+	siteLogoUrl?: string;
 }
 
-const { navItems, languages, currentLang, currentSlug } = Astro.props;
+const { navItems, languages, currentLang, currentSlug, siteName = "qqCMS", siteLogoUrl } = Astro.props;
 ---
 
 <header class="sticky top-0 z-50 border-b border-ui-border" style="background: rgb(247 247 247 / 0.96); backdrop-filter: blur(8px);">
   <div class="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center gap-4">
-    <a href={`/${currentLang}`} class="shrink-0 no-underline">
-      <Logo class="" />
+    <a href={`/${currentLang}`} class="shrink-0 no-underline flex items-center gap-2.5">
+      {siteLogoUrl ? (
+        <img src={siteLogoUrl} alt={siteName} class="h-8 w-auto max-w-[120px] object-contain" />
+      ) : (
+        <span class="font-serif italic text-[22px] text-text0 tracking-[-0.5px]">
+          {siteName}
+        </span>
+      )}
     </a>
 
     {navItems.length > 0 && (

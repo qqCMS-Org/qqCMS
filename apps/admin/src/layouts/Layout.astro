@@ -21,6 +21,7 @@ const { title = "qqCMS Admin" } = Astro.props;
       rel="stylesheet"
     />
     <title>{title}</title>
+    <slot name="head" />
   </head>
   <body>
     <slot />
